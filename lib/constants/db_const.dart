@@ -1,9 +1,6 @@
 import 'package:dotenv/dotenv.dart';
 
-class DbConst {
-  // the command to run on the server to listen run mongod server
-  //? sudo mongod --port 7000 --dbpath /var/lib/mongodb --bind_ip 0.0.0.0 --noauth
-
+class DbAuth {
   final String _dbName = 'admin';
   final _env = DotEnv(includePlatformEnvironment: true)..load();
 

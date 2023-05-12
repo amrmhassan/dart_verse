@@ -36,7 +36,7 @@ class App {
   Future<bool> _connDb() async {
     try {
       print('trying to connect to db...');
-      String uri = DbConst().connectionUri();
+      String uri = DbAuth().connectionUri();
       db = Db(uri);
       await db.open();
       print('connected to db.');
