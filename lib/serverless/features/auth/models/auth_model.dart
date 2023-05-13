@@ -8,15 +8,14 @@ part 'auth_model.g.dart';
 @JsonSerializable()
 class AuthModel {
   final String email;
-  final String name;
+  final String userId;
   final String passwordHash;
 
   const AuthModel({
+    required this.userId,
     required this.email,
-    required this.name,
     required this.passwordHash,
   });
-
   factory AuthModel.fromJson(Map<String, dynamic> json) =>
       _$AuthModelFromJson(json);
   Map<String, dynamic> toJson() => _$AuthModelToJson(this);

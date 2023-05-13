@@ -7,13 +7,13 @@ part of 'auth_model.dart';
 // **************************************************************************
 
 AuthModel _$AuthModelFromJson(Map<String, dynamic> json) => AuthModel(
+      userId: json['userId'] as String,
       email: json['email'] as String,
-      name: json['name'] as String,
       passwordHash: json['passwordHash'] as String,
     );
 
 Map<String, dynamic> _$AuthModelToJson(AuthModel instance) => <String, dynamic>{
       'email': instance.email,
-      'name': instance.name,
+      'userId': instance.userId,
       'passwordHash': instance.passwordHash,
     };
