@@ -1,4 +1,4 @@
-import 'package:auth_server/serverless/settings/auth_settings.dart';
+import 'package:auth_server/serverless/settings/auth_settings/auth_settings.dart';
 import 'package:auth_server/serverless/settings/user_data_settings/user_data_settings.dart';
 
 class DefaultSettings {
