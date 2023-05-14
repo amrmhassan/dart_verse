@@ -4,11 +4,11 @@ part 'jwt_payload.g.dart';
 
 @JsonSerializable()
 class JWTPayloadModel {
-  final String userId;
+  final String id;
   final String email;
 
   const JWTPayloadModel({
-    required this.userId,
+    required this.id,
     required this.email,
   });
   factory JWTPayloadModel.fromJson(Map<String, dynamic> json) =>

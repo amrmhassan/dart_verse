@@ -8,12 +8,12 @@ part of 'jwt_payload.dart';
 
 JWTPayloadModel _$JWTPayloadModelFromJson(Map<String, dynamic> json) =>
     JWTPayloadModel(
-      userId: json['userId'] as String,
+      id: json['id'] as String,
       email: json['email'] as String,
     );
 
 Map<String, dynamic> _$JWTPayloadModelToJson(JWTPayloadModel instance) =>
     <String, dynamic>{
-      'userId': instance.userId,
+      'id': instance.id,
       'email': instance.email,
     };
