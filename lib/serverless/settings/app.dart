@@ -1,6 +1,6 @@
 // this app is the starting point of the server
 // it will require settings for auth, database, realtime database, etc...
-import 'package:auth_server/serverless/app/defaults.dart';
+import 'package:auth_server/serverless/settings/defaults/default_app_settings.dart';
 import 'package:auth_server/serverless/features/database/controllers/db_connect.dart';
 import 'package:auth_server/serverless/settings/auth_settings/auth_settings.dart';
 import 'package:auth_server/serverless/settings/db_settings/db_settings.dart';
@@ -14,10 +14,10 @@ class App {
   Db? _db;
 
   App({
-    AuthSettings? authSettings,
+    required AuthSettings authSettings,
     DBSettings? dbSettings,
     UserDataSettings? userDataSettings,
-  })  : _authSettings = authSettings ?? DefaultSettings.authSettings,
+  })  : _authSettings = authSettings,
         _dbSettings = dbSettings,
         _userDataSettings =
             userDataSettings ?? DefaultSettings.userDataSettings;
@@ -32,7 +32,7 @@ class App {
     if (_dbSettings == null) {
       throw Exception('please provide DBSettings if you wanna use db');
     }
-    DbConnect dbConnect = DbConnect(_dbSettings!.getConnLink);
+    DbConnect dbConnect = DbConnect(_dbSettings!.connLink);
     Db db = await dbConnect.connect();
     _db = db;
   }

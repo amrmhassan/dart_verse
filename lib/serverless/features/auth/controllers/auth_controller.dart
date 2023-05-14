@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:auth_server/constants/model_fields.dart';
-import 'package:auth_server/serverless/app/app.dart';
+import 'package:auth_server/serverless/constants/model_fields.dart';
+import 'package:auth_server/serverless/settings/app.dart';
 import 'package:auth_server/serverless/features/auth/models/auth_model.dart';
 import 'package:auth_server/serverless/features/auth/models/jwt_payload.dart';
 import 'package:auth_server/serverless/features/database/controllers/auth_read.dart';

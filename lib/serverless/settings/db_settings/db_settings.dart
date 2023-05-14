@@ -5,5 +5,5 @@ class DBSettings {
   const DBSettings({
     required ConnLink connLink,
   }) : _connLink = connLink;
-  ConnLink get getConnLink => _connLink;
+  ConnLink get connLink => _connLink;
 }

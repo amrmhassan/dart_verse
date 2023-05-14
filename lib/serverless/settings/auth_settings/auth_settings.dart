@@ -1,4 +1,4 @@
-import 'package:auth_server/serverless/settings/auth_settings/default_auth_settings.dart';
+import 'package:auth_server/serverless/settings/defaults/default_auth_settings.dart';
 
 class AuthSettings {
   final String collectionName;
