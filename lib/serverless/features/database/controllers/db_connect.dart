@@ -1,4 +1,4 @@
-import 'package:auth_server/serverless/settings/db_settings/repo/conn_link.dart';
+import 'package:dart_verse/serverless/settings/db_settings/repo/conn_link.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
 class DbConnect {

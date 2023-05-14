@@ -1,9 +1,9 @@
 // flutter packages pub run build_runner build --delete-conflicting-outputs
 
-import 'package:auth_server/serverless/settings/app.dart';
-import 'package:auth_server/serverless/features/auth/controllers/auth_controller.dart';
-import 'package:auth_server/serverless/settings/auth_settings/auth_settings.dart';
-import 'package:auth_server/serverless/settings/db_settings/db_settings.dart';
+import 'package:dart_verse/serverless/settings/app.dart';
+import 'package:dart_verse/serverless/features/auth/controllers/auth_controller.dart';
+import 'package:dart_verse/serverless/settings/auth_settings/auth_settings.dart';
+import 'package:dart_verse/serverless/settings/db_settings/db_settings.dart';
 
 import 'constants.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';

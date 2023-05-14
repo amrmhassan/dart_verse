@@ -1,4 +1,4 @@
-import 'package:auth_server/serverless/constants/collections.dart';
+import 'package:dart_verse/serverless/constants/collections.dart';
 
 class DefaultAuthSettings {
   static const String collectionName = DBCollections.auth;

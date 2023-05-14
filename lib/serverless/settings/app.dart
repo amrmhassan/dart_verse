@@ -1,10 +1,10 @@
 // this app is the starting point of the server
 // it will require settings for auth, database, realtime database, etc...
-import 'package:auth_server/serverless/settings/defaults/default_app_settings.dart';
-import 'package:auth_server/serverless/features/database/controllers/db_connect.dart';
-import 'package:auth_server/serverless/settings/auth_settings/auth_settings.dart';
-import 'package:auth_server/serverless/settings/db_settings/db_settings.dart';
-import 'package:auth_server/serverless/settings/user_data_settings/user_data_settings.dart';
+import 'package:dart_verse/serverless/settings/defaults/default_app_settings.dart';
+import 'package:dart_verse/serverless/features/database/controllers/db_connect.dart';
+import 'package:dart_verse/serverless/settings/auth_settings/auth_settings.dart';
+import 'package:dart_verse/serverless/settings/db_settings/db_settings.dart';
+import 'package:dart_verse/serverless/settings/user_data_settings/user_data_settings.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
 class App {

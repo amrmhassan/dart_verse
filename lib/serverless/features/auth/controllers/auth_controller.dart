@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:auth_server/serverless/constants/model_fields.dart';
-import 'package:auth_server/serverless/settings/app.dart';
-import 'package:auth_server/serverless/features/auth/models/auth_model.dart';
-import 'package:auth_server/serverless/features/auth/models/jwt_payload.dart';
-import 'package:auth_server/serverless/features/database/controllers/auth_read.dart';
+import 'package:dart_verse/serverless/constants/model_fields.dart';
+import 'package:dart_verse/serverless/settings/app.dart';
+import 'package:dart_verse/serverless/features/auth/models/auth_model.dart';
+import 'package:dart_verse/serverless/features/auth/models/jwt_payload.dart';
+import 'package:dart_verse/serverless/features/database/controllers/auth_read.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:mongo_dart/mongo_dart.dart';

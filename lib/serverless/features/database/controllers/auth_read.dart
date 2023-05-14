@@ -1,6 +1,6 @@
-import 'package:auth_server/serverless/constants/model_fields.dart';
-import 'package:auth_server/serverless/settings/app.dart';
-import 'package:auth_server/serverless/features/auth/models/auth_model.dart';
+import 'package:dart_verse/serverless/constants/model_fields.dart';
+import 'package:dart_verse/serverless/settings/app.dart';
+import 'package:dart_verse/serverless/features/auth/models/auth_model.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
 class AuthRead {

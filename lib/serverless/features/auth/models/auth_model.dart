@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:auth_server/serverless/constants/model_fields.dart';
+import 'package:dart_verse/serverless/constants/model_fields.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'auth_model.g.dart';

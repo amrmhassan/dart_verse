@@ -1,4 +1,4 @@
-import 'package:auth_server/serverless/errors/serverless_exception.dart';
+import 'package:dart_verse/serverless/errors/serverless_exception.dart';
 
 class RegisterException implements ServerLessException {
   @override
