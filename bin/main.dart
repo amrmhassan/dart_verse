@@ -1,9 +1,8 @@
 // flutter packages pub run build_runner build --delete-conflicting-outputs
 
-import 'verse_db/modified.dart';
+import 'package:dart_verse/serverless/features/db_manager/repo/verse_db.dart';
 
 void main(List<String> arguments) async {
-  var d = db;
   var collection = VerseDb.instance.collection('users');
   var doc = collection.doc('hobbies');
   var hobbyDoc = doc.collection('hobbies').insertOne({
@@ -13,7 +12,6 @@ void main(List<String> arguments) async {
   });
   var userDoc = VerseDb.instance.collection('users').getAllDocuments().first;
   String userId = userDoc['_id'];
-  print(d);
   var finalDoc = VerseDb.instance
       .collection('users')
       .doc(userId)
@@ -21,7 +19,7 @@ void main(List<String> arguments) async {
       .doc(hobbyDoc.id)
       .getData();
 
-  print(d);
+  print(finalDoc);
 }
 
 // void runApp() async {
