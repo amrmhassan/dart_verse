@@ -1,26 +1,34 @@
 // flutter packages pub run build_runner build --delete-conflicting-outputs
 
-import 'package:dart_verse/serverless/features/db_manager/repo/verse_db.dart';
+import 'try2/coll_ref.dart';
 
 void main(List<String> arguments) async {
-  var collection = VerseDb.instance.collection('users');
-  var doc = collection.doc('hobbies');
-  var hobbyDoc = doc.collection('hobbies').insertOne({
-    '_id': 'running',
-    'name': 'Running Skill',
-    'skills': 'Very skilled',
-  });
-  var userDoc = VerseDb.instance.collection('users').getAllDocuments().first;
-  String userId = userDoc['_id'];
-  var finalDoc = VerseDb.instance
-      .collection('users')
-      .doc(userId)
+  var ref = DbRef.collection('users')
+      .doc('user1')
       .collection('hobbies')
-      .doc(hobbyDoc.id)
-      .getData();
-
-  print(finalDoc);
+      .doc('hobby1')
+      .collection('tracks')
+      .doc('track1');
+  print(ref.parentColl.id);
 }
+  // var collection = DbRef().collection('users');
+  // collection.ref
+  // var doc = collection.doc('hobbies');
+  // var hobbyDoc = doc.collection('hobbies').insertOne({
+  //   '_id': 'running',
+  //   'name': 'Running Skill',
+  //   'skills': 'Very skilled',
+  // });
+  // var userDoc = DbRef().collection('users').getAllDocuments().first;
+  // String userId = userDoc['_id'];
+  // var finalDoc = DbRef()
+  //     .collection('users')
+  //     .doc(userId)
+  //     .collection('hobbies')
+  //     .doc(hobbyDoc.id)
+  //     .getData();
+
+  // print(finalDoc);
 
 // void runApp() async {
 //   DBSettings dbSettings = DBSettings(connLink: atlasConnLink);

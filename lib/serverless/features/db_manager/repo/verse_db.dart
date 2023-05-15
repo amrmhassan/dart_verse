@@ -1,8 +1,4 @@
-import '../controllers/collection_ref.dart';
-
-abstract class VerseDb {
-  static DbRef get instance => DbRef();
-}
+import '../models/collection_ref.dart';
 
 class DbRef {
   CollectionRef collection(String name) {
@@ -11,5 +7,3 @@ class DbRef {
 }
 
 class DbRefEntity {}
-
-abstract class DbController {}

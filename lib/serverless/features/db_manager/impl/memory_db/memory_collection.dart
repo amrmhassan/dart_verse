@@ -1,21 +1,22 @@
 import 'package:dart_verse/serverless/features/db_manager/constants/reserved_keys.dart';
+import 'package:dart_verse/serverless/features/db_manager/repo/collection_controller.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
-import '../db_repo.dart';
-import '../repo/verse_db.dart';
-import 'collection_ref.dart';
-import 'doc_ref.dart';
+import '../../db_repo.dart';
+import '../../models/collection_ref.dart';
+import '../../models/doc_ref.dart';
 
-class CollectionController implements DbController {
+class MemoryCollectionController implements CollectionController {
   CollectionRef collection;
-  CollectionController(this.collection);
+  MemoryCollectionController(this.collection);
 
+  @override
   DocumentRef insertOne(Map<String, dynamic> doc) {
     if (collection.docRef != null) {
       String subCollId =
           insertSubCollection(collection.name, collection.docRef!).name;
       var newCollRef = CollectionRef(subCollId, null);
-      return CollectionController(newCollRef).insertOne(doc);
+      return MemoryCollectionController(newCollRef).insertOne(doc);
     }
 
     // Checking for the reserved key for collections, if it exists, throw an error
@@ -28,17 +29,18 @@ class CollectionController implements DbController {
     doc[DBRKeys.collections] = [];
 
     // Adding the id for the document
-    if (doc['_id'] == null) {
-      doc['_id'] = Uuid().v4();
+    if (doc[DBRKeys.id] == null) {
+      doc[DBRKeys.id] = Uuid().v4();
     }
 
     // Actual insertion to db
     db.putIfAbsent(collection.name, () => []);
     db[collection.name]!.add(doc);
 
-    return DocumentRef(doc['_id'], collection);
+    return DocumentRef(doc[DBRKeys.id], collection);
   }
 
+  @override
   CollectionRef insertSubCollection(
       String subCollName, DocumentRef documentRef) {
     String parentCollName = documentRef.collRef.name;
@@ -54,11 +56,11 @@ class CollectionController implements DbController {
     }
 
     var docMap = parentColl.firstWhere(
-      (element) => element['_id'] == docId,
+      (element) => element[DBRKeys.id] == docId,
       orElse: () {
         // Document doesn't exist, create it
         var newDoc = {
-          '_id': Uuid().v4(),
+          DBRKeys.id: Uuid().v4(),
           DBRKeys.collections: [],
         };
         parentColl!.add(newDoc);
@@ -83,6 +85,7 @@ class CollectionController implements DbController {
     return CollectionRef(subCollId, documentRef);
   }
 
+  @override
   List<Map<String, dynamic>> getAllDocuments() {
     if (db[collection.name] == null) {
       return [];
@@ -90,25 +93,33 @@ class CollectionController implements DbController {
     return List<Map<String, dynamic>>.from(db[collection.name]!);
   }
 
+  @override
   Map<String, dynamic>? getDocumentById(String id) {
     var documents = getAllDocuments();
     try {
-      return documents.firstWhere((doc) => doc['_id'] == id);
+      return documents.firstWhere((doc) => doc[DBRKeys.id] == id);
     } catch (e) {
       return null;
     }
   }
 
-  void updateDocumentById(String id, Map<String, dynamic> updatedDoc) {
+  @override
+  Map<String, dynamic> updateDocumentById(
+    String id,
+    Map<String, dynamic> updatedDoc,
+  ) {
     var documents = getAllDocuments();
-    var index = documents.indexWhere((doc) => doc['_id'] == id);
+    var index = documents.indexWhere((doc) => doc[DBRKeys.id] == id);
     if (index != -1) {
       documents[index] = {...documents[index], ...updatedDoc};
     }
+    return documents[index];
   }
 
-  void deleteDocumentById(String id) {
+  @override
+  Map<String, dynamic> deleteDocumentById(String id) {
     var documents = getAllDocuments();
-    documents.removeWhere((doc) => doc['_id'] == id);
+    int index = documents.indexWhere((doc) => doc[DBRKeys.id] == id);
+    return documents.removeAt(index);
   }
 }
