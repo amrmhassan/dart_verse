@@ -14,7 +14,7 @@ class JWTController {
 
   const JWTController(this._app, this._authCollections);
 
-  Future<String> createJwt({
+  Future<String> createJwtAndSave({
     required String id,
     required String email,
   }) async {
@@ -23,14 +23,12 @@ class JWTController {
       id: id,
       email: email,
     );
-    var jwt = JWT(
-      jwtPayload.toJson(),
-      issuer: id,
-    );
+    var jwt = JWT(jwtPayload.toJson());
     String signedJWT = jwt.sign(
+      // RSAPrivateKey(key),
       SecretKey(key),
       expiresIn: _app.authSettings.authExpireAfter,
-      algorithm: JWTAlgorithm.ES256,
+      // algorithm: JWTAlgorithm.RS256,
     );
     await _saveJWT(id: id, jwt: signedJWT);
     return signedJWT;
@@ -43,7 +41,11 @@ class JWTController {
     try {
       var selector = where.eq(ModelFields.id, id);
       var update = modify.push(ModelFields.activeTokens, jwt);
-      await _authCollections.activeJWTs.updateOne(selector, update);
+      await _authCollections.activeJWTs.updateOne(
+        selector,
+        update,
+        upsert: true,
+      );
     } catch (e) {
       logger.e(e);
       throw DBWriteException('failed to save active jwt');

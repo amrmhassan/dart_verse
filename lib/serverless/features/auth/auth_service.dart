@@ -1,3 +1,4 @@
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:dart_verse/serverless/errors/models/auth_errors.dart';
 import 'package:dart_verse/serverless/errors/models/database_errors.dart';
 import 'package:dart_verse/serverless/features/auth/controllers/auth_collections.dart';
@@ -21,14 +22,14 @@ class AuthService {
     _jwtController = JWTController(_app, _authCollections);
   }
 
-  // this should return a token for the user to use to sign in again without the need of the email and password again
+  /// this will return a jwt for the user to use to sign in again without the need of the email and password again
   Future<String> registerUser({
     required String email,
     required String password,
     Map<String, dynamic>? userData,
     String? customID,
   }) async {
-    String usersDataCollName = _app.userDataSettings.collectionName;
+    //! i want to add the functionality of reverting everything if an error occurred
     String id = customID ?? Uuid().v4();
     String passwordHash = SecurePassword(password).getPasswordHash();
 
@@ -54,12 +55,13 @@ class AuthService {
         throw DBWriteException('Failed to save user data');
       }
     }
+    String jwtToken =
+        await _jwtController.createJwtAndSave(id: id, email: email);
 
-    String jwtToken = await _jwtController.createJwt(id: id, email: email);
     return jwtToken;
   }
 
-  Future<String> loginUser({
+  Future<String> loginWithEmail({
     required String email,
     required String password,
   }) async {
@@ -69,16 +71,22 @@ class AuthService {
     }
     bool rightPassword =
         SecurePassword(password).checkPassword(savedModel.passwordHash);
-    if (rightPassword) {
+    if (!rightPassword) {
       throw Exception('invalid credentials');
     }
     String jwtToken =
-        await _jwtController.createJwt(id: savedModel.id, email: email);
+        await _jwtController.createJwtAndSave(id: savedModel.id, email: email);
 
     return jwtToken;
   }
 
   Future<void> loginWithJWT(String jwt) async {
-    throw UnimplementedError();
+    // verify the jwt isn't manipulated
+    // get the data from the jwt
+    // check for the jwt in the allowed jwt tokens and active
+    // check for the user id if it is a valid user
+    // then allow the user to continue
+    var res = JWT.tryVerify(jwt, SecretKey(_app.authSettings.jwtSecretKey));
+    print(res);
   }
 }
