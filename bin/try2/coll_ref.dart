@@ -1,4 +1,6 @@
-import 'package:mongo_dart/mongo_dart.dart';
+import 'package:uuid/uuid.dart';
+
+import 'controller.dart';
 
 //? max collection name is 255 letters so i have 250 letters to play with so 250/3 is 80 letters
 //? doc ids and coll naming restrictions
@@ -7,8 +9,11 @@ import 'package:mongo_dart/mongo_dart.dart';
 //# 3] can't contains   /\. "$*<>:|?   characters
 
 class DbRef {
-  static CollRef collection(String name) {
-    return CollRef(name, null);
+  final DatabaseSource databaseSource;
+  const DbRef(this.databaseSource);
+
+  CollRef collection(String name) {
+    return CollRef(name, null, databaseSource);
   }
 }
 
@@ -17,8 +22,12 @@ abstract class DbEntity {}
 class CollRef implements DbEntity {
   final String name;
   final DocRef? parentDoc;
+  final DatabaseSource databaseSource;
+  late CollectionController _controller;
 
-  const CollRef(this.name, this.parentDoc);
+  CollRef(this.name, this.parentDoc, this.databaseSource) {
+    _controller = CollectionController(this, databaseSource);
+  }
 
   String get id {
     if (parentDoc == null) {
@@ -47,15 +56,19 @@ class CollRef implements DbEntity {
   DocRef doc([String? id]) {
     //! apply doc id restriction
     String docId = id ?? Uuid().v4();
-    return DocRef(docId, this);
+    return DocRef(docId, this, databaseSource);
   }
 }
 
 class DocRef implements DbEntity {
   final String id;
   final CollRef parentColl;
+  late DocumentController _controller;
+  final DatabaseSource databaseSource;
 
-  const DocRef(this.id, this.parentColl);
+  DocRef(this.id, this.parentColl, this.databaseSource) {
+    _controller = DocumentController(this, databaseSource);
+  }
 
   PathEntity get path {
     return PathEntity(
@@ -66,8 +79,14 @@ class DocRef implements DbEntity {
   }
 
   CollRef collection(String name) {
-    return CollRef(name, this);
+    return CollRef(name, this, databaseSource);
   }
+
+  //? here just recreate all the _controller methods
+  // update()
+  // set()
+  // delete()
+  // getData()
 }
 
 // this class might be used to reconstruct the ref object from the path of the entity(doc or collection)

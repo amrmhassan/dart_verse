@@ -1,15 +1,17 @@
 // flutter packages pub run build_runner build --delete-conflicting-outputs
 
 import 'try2/coll_ref.dart';
+import 'try2/controller.dart';
 
 void main(List<String> arguments) async {
-  var ref = DbRef.collection('users')
+  var ref = DbRef(MemoryDataBase())
+      .collection('users')
       .doc('user1')
       .collection('hobbies')
       .doc('hobby1')
       .collection('tracks')
       .doc('track1');
-  print(ref.parentColl.id);
+  print(ref);
 }
   // var collection = DbRef().collection('users');
   // collection.ref

@@ -1,21 +1,26 @@
 import 'coll_ref.dart';
 
-class DbQuery {
-  DbController ref(DbEntity ref) {}
+class CollectionController {
+  //? here do the same as the document controller and control the collection
+  final CollRef collRef;
+  final DatabaseSource databaseSource;
+  const CollectionController(this.collRef, this.databaseSource);
+  void insertOne() {}
 }
 
-abstract class DbController {
-  late DbEntity _entity;
+class DocumentController {
+  final DocRef docRef;
+  final DatabaseSource databaseSource;
+  const DocumentController(this.docRef, this.databaseSource);
+  //? here use the database source document methods to control the document
+
+  void add() {}
 }
 
-class CollectionController implements DbController {
-  @override
-  DbEntity _entity;
-  CollectionController(this._entity);
+abstract class DatabaseSource {
+  //? here create all methods that will be used for documents and collections
 }
 
-class DocumentController implements DbController {
-  @override
-  DbEntity _entity;
-  DocumentController(this._entity);
-}
+class MemoryDataBase implements DatabaseSource {}
+
+class MongoDataBase implements DatabaseSource {}
