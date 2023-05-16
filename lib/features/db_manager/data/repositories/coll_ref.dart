@@ -73,7 +73,8 @@ class CollRefMemory extends MemoryDbCollection
   final DocRefMemory? parentDoc;
   final Map<String, List<Map<String, dynamic>>> _memoryDb;
 
-  CollRefMemory(this.name, this.parentDoc, this._memoryDb) : super(_memoryDb);
+  CollRefMemory(this.name, this.parentDoc, this._memoryDb)
+      : super(_memoryDb, _getCollId(name, parentDoc), name, parentDoc);
 
   @override
   DocRefMemory doc([String? id]) {

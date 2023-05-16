@@ -11,22 +11,26 @@ void main(List<String> arguments) async {
   MongoDBProvider mongoDBProvider = MongoDBProvider(localConnLink);
   MemoryDBProvider memoryDBProvider = MemoryDBProvider({});
   DBSettings dbSettings = DBSettings(
-    mongoDBProvider: mongoDBProvider,
+    // mongoDBProvider: mongoDBProvider,
     memoryDBProvider: memoryDBProvider,
   );
   App app = App(dbSettings: dbSettings);
   await app.run();
-  for (var i = 0; i < 30000; i++) {
-    DateTime before = DateTime.now();
-    var doc = app.mongoDbController.collection('users').doc();
-    await doc.set({'name': 'Amr'});
-    await doc.collection('hobbies').insertOne({'hobby': 'Sports'});
-    DateTime after = DateTime.now();
-    String time =
-        (after.difference(before).inMicroseconds / 1000).toStringAsFixed(2);
-    print('doc number $i with id ${doc.id} inserted in $time ms ');
-  }
-  print('all done');
+  // for (var i = 0; i < 30000; i++) {
+  //   DateTime before = DateTime.now();
+  //   var doc = app.mongoDbController.collection('users').doc();
+  //   await doc.set({'name': 'Amr'});
+  //   await doc.collection('hobbies').insertOne({'hobby': 'Sports'});
+  //   DateTime after = DateTime.now();
+  //   String time =
+  //       (after.difference(before).inMicroseconds / 1000).toStringAsFixed(2);
+  //   print('doc number $i with id ${doc.id} inserted in $time ms ');
+  // }
+  var coll = app.memoryDbController.collection('users');
+  coll.insertDoc({'id': 'userId', 'name': 'Amr Hassan'});
+  coll.insertDoc({'id': 'userId', 'name': 'Amr Hassan'});
+
+  print(coll.getAllDocuments().map((e) => e.getData()).toList());
 }
 //? before applying the new data manager in the app
 //? just find a way to handle querying with the mongodb

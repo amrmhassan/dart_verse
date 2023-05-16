@@ -24,7 +24,7 @@ class MemoryDbDocument {
 
     // insert new one if the old one doesn't exist
     if (index == -1) {
-      return _collRef.insertDoc(_collRef, doc: newDoc);
+      return _collRef.insertDoc(newDoc);
     }
     // or just remove the old one and set the new one
     // the id of a doc can't be changed
@@ -47,7 +47,7 @@ class MemoryDbDocument {
     int index =
         _memoryDb[collId]!.indexWhere((element) => element[DBRKeys.id] == _id);
     if (index == -1) {
-      return _collRef.insertDoc(_collRef, doc: newDoc);
+      return _collRef.insertDoc(newDoc);
     }
     var updatedOldDoc = _memoryDb[collId]![index];
     // the id of a doc can't be changed

@@ -69,9 +69,22 @@ class App {
     return _mongoDbController!;
   }
 
+  MemoryDbController? _memoryDbController;
+  MemoryDbController get memoryDbController {
+    if (_memoryDbController == null) {
+      throw Exception('no memory db provider, please add one to db settings');
+    }
+    return _memoryDbController!;
+  }
+
   //# settings db controllers
   void _setMongoController(MongoDbController controller) {
     _mongoDbController = controller;
+  }
+
+  /// you don't need to play with method
+  void setMemoryController(MemoryDbController controller, DbConnect source) {
+    _memoryDbController = controller;
   }
 
 //# getting difference settings instances
@@ -107,6 +120,11 @@ class MongoDbController implements DbController {
 }
 
 class MemoryDbController implements DbController {
-  final Map<String, List<Map<String, dynamic>>> memorydb;
-  const MemoryDbController(this.memorydb);
+  final Map<String, List<Map<String, dynamic>>> _memoryBb;
+  const MemoryDbController(this._memoryBb);
+
+  CollRefMemory collection(String name) {
+    CollRefMemory collRef = CollRefMemory(name, null, _memoryBb);
+    return collRef;
+  }
 }

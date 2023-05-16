@@ -8,7 +8,7 @@ class DBSettings {
 
   const DBSettings({
     MemoryDBProvider? memoryDBProvider,
-    required MongoDBProvider? mongoDBProvider,
+    MongoDBProvider? mongoDBProvider,
   })  : _mongoDBProvider = mongoDBProvider,
         _memoryDBProvider = memoryDBProvider;
 

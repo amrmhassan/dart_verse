@@ -7,14 +7,19 @@ import '../../validation/naming_restrictions.dart';
 
 class MemoryDbCollection {
   final Map<String, List<Map<String, dynamic>>> _memoryDb;
-  const MemoryDbCollection(this._memoryDb);
+  final String _id;
+  final String _name;
+  final DocRefMemory? _docRefMemory;
+  const MemoryDbCollection(
+      this._memoryDb, this._id, this._name, this._docRefMemory);
 
+  CollRefMemory get _collRefMemory =>
+      CollRefMemory(_name, _docRefMemory, _memoryDb);
   //? here i will add the code for controlling a collection from the memory db
   DocRefMemory insertDoc(
-    CollRefMemory collRef, {
-    required Map<String, dynamic> doc,
-  }) {
-    String collId = collRef.id;
+    Map<String, dynamic> doc,
+  ) {
+    String collId = _id;
     // first check if the collection exist
     // here i need to check if the collection has a parent doc or not
     //
@@ -29,14 +34,17 @@ class MemoryDbCollection {
     doc = docValidation.validate();
     // here just save the new doc
     _memoryDb[collId]!.add(doc);
-    return DocRefMemory(docId, collRef, _memoryDb);
+    return DocRefMemory(
+      docId,
+      _collRefMemory,
+      _memoryDb,
+    );
   }
 
   DocRefMemory? getDocRefById(
-    CollRefMemory collRef, {
-    required String docId,
-  }) {
-    String collId = collRef.id;
+    String docId,
+  ) {
+    String collId = _id;
     if (_memoryDb[collId] == null) return null;
     Map<String, dynamic>? doc = _memoryDb[collId]!.cast().firstWhere(
           (doc) => doc[DBRKeys.id] == docId,
@@ -46,19 +54,19 @@ class MemoryDbCollection {
       return null;
     } else {
       String docId = doc[DBRKeys.id];
-      return DocRefMemory(docId, collRef, _memoryDb);
+      return DocRefMemory(docId, _collRefMemory, _memoryDb);
     }
   }
 
-  Iterable<DocRefMemory> getAllDocuments(CollRefMemory collRef) {
-    String collId = collRef.id;
+  Iterable<DocRefMemory> getAllDocuments() {
+    String collId = _id;
     // check if coll exists or not
     if (_memoryDb[collId] == null) {
       return [];
     }
     // gets actual docs
     var docs = _memoryDb[collId]!.map((e) {
-      var docRef = DocRefMemory(e[DBRKeys.id], collRef, _memoryDb);
+      var docRef = DocRefMemory(e[DBRKeys.id], _collRefMemory, _memoryDb);
       return docRef;
     });
     return docs;

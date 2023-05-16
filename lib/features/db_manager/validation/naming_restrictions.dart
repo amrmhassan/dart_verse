@@ -22,7 +22,7 @@ class DocValidation {
     }
     // update the id
     doc[DBRKeys.id] = id;
-    doc[DBRKeys.collections] = [];
+    // doc[DBRKeys.collections] = [];
     return doc;
   }
 }
