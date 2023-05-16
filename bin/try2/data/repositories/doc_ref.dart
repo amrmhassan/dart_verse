@@ -1,5 +1,6 @@
+import 'dart:async';
+
 import '../../domain/repositories/db_entity.dart';
-import '../../presentation/controllers/document_controller.dart';
 import '../datasource/database_source.dart';
 import 'coll_ref.dart';
 import 'path_entity.dart';
@@ -7,12 +8,9 @@ import 'path_entity.dart';
 class DocRef implements DbEntity {
   final String id;
   final CollRef parentColl;
-  late DocumentController _controller;
   final DatabaseSource databaseSource;
 
-  DocRef(this.id, this.parentColl, this.databaseSource) {
-    _controller = DocumentController(this, databaseSource);
-  }
+  DocRef(this.id, this.parentColl, this.databaseSource);
 
   PathEntity get path {
     return PathEntity(
@@ -31,4 +29,10 @@ class DocRef implements DbEntity {
   // set()
   // delete()
   // getData()
+
+  //# here is the querying code
+  FutureOr<Map<String, dynamic>?> getData() async {
+    var data = (await databaseSource.getDocData(this))!;
+    return data;
+  }
 }

@@ -1,7 +1,8 @@
+import 'dart:async';
+
 import 'package:uuid/uuid.dart';
 
 import '../../domain/repositories/db_entity.dart';
-import '../../presentation/controllers/collection_controller.dart';
 import '../datasource/database_source.dart';
 import 'doc_ref.dart';
 import 'path_entity.dart';
@@ -10,11 +11,8 @@ class CollRef implements DbEntity {
   final String name;
   final DocRef? parentDoc;
   final DatabaseSource databaseSource;
-  late CollectionController _controller;
 
-  CollRef(this.name, this.parentDoc, this.databaseSource) {
-    _controller = CollectionController(this, databaseSource);
-  }
+  CollRef(this.name, this.parentDoc, this.databaseSource);
 
   String get id {
     if (parentDoc == null) {
@@ -44,5 +42,18 @@ class CollRef implements DbEntity {
     //! apply doc id restriction
     String docId = id ?? Uuid().v4();
     return DocRef(docId, this, databaseSource);
+  }
+
+  //# here are the code for querying databases
+  FutureOr<DocRef> insertDoc(
+    Map<String, dynamic> doc,
+  ) {
+    return databaseSource.insertDoc(this, doc: doc);
+  }
+
+  FutureOr<DocRef?> getDocById(
+    String docId,
+  ) {
+    return databaseSource.getDocRefById(this, docId: docId);
   }
 }

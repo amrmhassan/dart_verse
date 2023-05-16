@@ -12,7 +12,8 @@ class DocValidation {
     // check for the id length
     int idSize = utf8.encode(id).length;
     if (idSize > DocRestrictions.maxIdLength) {
-      throw Exception('id max length is ${DocRestrictions.maxIdLength} bytes');
+      throw Exception(
+          '${DBRKeys.id} max length is ${DocRestrictions.maxIdLength} bytes');
     }
     // checking for the _collections keyword
     if (doc[DBRKeys.collections] != null) {
