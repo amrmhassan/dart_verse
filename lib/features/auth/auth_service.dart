@@ -4,7 +4,7 @@ import 'package:dart_verse/errors/models/database_errors.dart';
 import 'package:dart_verse/features/auth/controllers/auth_collections.dart';
 import 'package:dart_verse/features/auth/controllers/jwt_controller.dart';
 import 'package:dart_verse/features/auth/controllers/secure_password.dart';
-import 'package:dart_verse/settings/app.dart';
+import 'package:dart_verse/settings/app/app.dart';
 import 'package:dart_verse/features/auth/models/auth_model.dart';
 import 'package:dart_verse/features/database/controllers/auth_read.dart';
 import 'package:mongo_dart/mongo_dart.dart';

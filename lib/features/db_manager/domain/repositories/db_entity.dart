@@ -1,1 +1,3 @@
-abstract class DbEntity {}
+abstract class DbEntity {
+  String get id;
+}

@@ -1,4 +1,4 @@
-import 'package:dart_verse/settings/app.dart';
+import 'package:dart_verse/settings/app/app.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
 class AuthCollections {

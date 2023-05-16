@@ -1,6 +1,6 @@
 import '../repo/conn_link.dart';
 
-class IpPortNoAuthConnLink implements ConnLink {
+class IpPortNoAuthConnLink implements MongoDbConnLink {
   final String ip;
   final int port;
   final String dbName;
@@ -18,7 +18,7 @@ class IpPortNoAuthConnLink implements ConnLink {
   }
 }
 
-class IpPortWithAuthConnLink implements ConnLink {
+class IpPortWithAuthConnLink implements MongoDbConnLink {
   final String ip;
   final int port;
   final String dbName;
@@ -39,7 +39,7 @@ class IpPortWithAuthConnLink implements ConnLink {
   }
 }
 
-class FullConnLink implements ConnLink {
+class FullConnLink implements MongoDbConnLink {
   final String connLink;
   const FullConnLink({
     required this.connLink,
@@ -48,7 +48,7 @@ class FullConnLink implements ConnLink {
   String get getConnLink => connLink;
 }
 
-class DNSHostWithAuthConnLink implements DNSConnLink {
+class DNSHostWithAuthConnLink implements MongoDbDNSConnLink {
   final String dbName;
   final String userName;
   final String password;
@@ -66,7 +66,7 @@ class DNSHostWithAuthConnLink implements DNSConnLink {
   }
 }
 
-class DNSHostNoAuthConnLink implements DNSConnLink {
+class DNSHostNoAuthConnLink implements MongoDbDNSConnLink {
   final String dbName;
   final String dnsHost;
   const DNSHostNoAuthConnLink({
@@ -80,7 +80,7 @@ class DNSHostNoAuthConnLink implements DNSConnLink {
   }
 }
 
-class DNSHostFullLink implements DNSConnLink {
+class DNSHostFullLink implements MongoDbDNSConnLink {
   final String connLink;
   const DNSHostFullLink({
     required this.connLink,

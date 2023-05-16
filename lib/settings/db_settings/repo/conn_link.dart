@@ -1,8 +1,8 @@
-abstract class ConnLink {
+abstract class MongoDbConnLink {
   String get getConnLink;
 }
 
-abstract class DNSConnLink implements ConnLink {}
+abstract class MongoDbDNSConnLink implements MongoDbConnLink {}
 // here i was supposed to add the classes for different ways to calc the conn link
 // for example with ip, port no auth
 // for example with ip, port auth

@@ -1,5 +1,5 @@
 import 'package:dart_verse/constants/model_fields.dart';
-import 'package:dart_verse/settings/app.dart';
+import 'package:dart_verse/settings/app/app.dart';
 import 'package:dart_verse/features/auth/models/auth_model.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 

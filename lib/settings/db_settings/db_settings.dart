@@ -1,9 +1,17 @@
-import 'package:dart_verse/settings/db_settings/repo/conn_link.dart';
+import 'package:dart_verse/features/db_providers/impl/memory_db/memory_db_provider.dart';
+import 'package:dart_verse/features/db_providers/impl/mongo_db/mongo_db_provider.dart';
 
 class DBSettings {
-  final ConnLink _connLink;
+  // final ConnLink _connLink;
+  final MemoryDBProvider? _memoryDBProvider;
+  final MongoDBProvider? _mongoDBProvider;
+
   const DBSettings({
-    required ConnLink connLink,
-  }) : _connLink = connLink;
-  ConnLink get connLink => _connLink;
+    MemoryDBProvider? memoryDBProvider,
+    required MongoDBProvider? mongoDBProvider,
+  })  : _mongoDBProvider = mongoDBProvider,
+        _memoryDBProvider = memoryDBProvider;
+
+  MemoryDBProvider? get memoryDBProvider => _memoryDBProvider;
+  MongoDBProvider? get mongoDBProvider => _mongoDBProvider;
 }

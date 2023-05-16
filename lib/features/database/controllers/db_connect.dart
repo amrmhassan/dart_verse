@@ -1,36 +1,29 @@
+import 'package:dart_verse/features/database/controllers/db_connect/memory_db_connect.dart';
+import 'package:dart_verse/features/database/controllers/db_connect/mongo_db_connect.dart';
+import 'package:dart_verse/settings/app/app.dart';
 import 'package:dart_verse/settings/db_settings/repo/conn_link.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
 class DbConnect {
-  final ConnLink _connLink;
-  const DbConnect(this._connLink);
+  final App _app;
+  const DbConnect(this._app);
 
-  Future<Db> connect() async {
-    late Db db;
-    String uri = _connLink.getConnLink;
-
-    print('trying to connect to db...');
-
-    if (_connLink is DNSConnLink) {
-      db = await _dnsConnect(uri);
-    } else {
-      db = await _normalConnect(uri);
+  Future<void> connectAllProvidedDBs() async {
+    //? trying to connect to mongodb if exist
+    MongoDbConnLink? mongoDbConnLink =
+        _app.dbSettings.mongoDBProvider?.connLink;
+    MongoDbConnect mongoDbConnect = MongoDbConnect(mongoDbConnLink);
+    Db? db = await mongoDbConnect.connect();
+    // setting the app _db because the app depends on it
+    if (db == null) {
+      throw Exception('can\'t connect to mongo db');
     }
 
-    print('connected to db.');
+    _app.setMongoDb(db);
 
-    return db;
-  }
-
-  Future<Db> _dnsConnect(String uri) async {
-    Db db = await Db.create(uri);
-    await db.open();
-    return db;
-  }
-
-  Future<Db> _normalConnect(String uri) async {
-    Db db = Db(uri);
-    await db.open();
-    return db;
+    //? trying to connect to memory db if exist
+    var memoryDb = _app.dbSettings.memoryDBProvider?.memoryDb;
+    MemoryDbConnect memoryDbConnect = MemoryDbConnect(memoryDb);
+    await memoryDbConnect.connect();
   }
 }
