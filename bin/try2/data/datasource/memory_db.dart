@@ -79,4 +79,57 @@ class MemoryDB implements DatabaseSource {
     });
     return docs;
   }
+
+  @override
+  FutureOr<DocRef> set(
+    DocRef docRef, {
+    required Map<String, dynamic> newDoc,
+  }) {
+    String collId = docRef.parentColl.id;
+    // create the doc parent collection if not exist
+    if (memoryDb[collId] == null) {
+      memoryDb[collId] = [];
+    }
+    // get the old data if not exist create one
+    int index = memoryDb[collId]!
+        .indexWhere((element) => element[DBRKeys.id] == docRef.id);
+
+    // insert new one if the old one doesn't exist
+    if (index == -1) {
+      return insertDoc(docRef.parentColl, doc: newDoc);
+    }
+    // or just remove the old one and set the new one
+    // the id of a doc can't be changed
+    var oldDoc = memoryDb[collId]![index];
+    String docId = oldDoc[DBRKeys.id];
+    newDoc[DBRKeys.id] = docId;
+    // get the old doc index in the collection
+    memoryDb[collId]![index] = newDoc;
+    var newDocRef = DocRef(docRef.id, docRef.parentColl, this);
+    newDocRef.setLocalData(this, newDoc);
+    return newDocRef;
+  }
+
+  @override
+  FutureOr<DocRef> update(
+    DocRef docRef, {
+    required Map<String, dynamic> newDoc,
+  }) {
+    String collId = docRef.parentColl.id;
+    if (memoryDb[collId] == null) {
+      memoryDb[collId] = [];
+    }
+    int index = memoryDb[collId]!
+        .indexWhere((element) => element[DBRKeys.id] == docRef.id);
+    if (index == -1) {
+      return insertDoc(docRef.parentColl, doc: newDoc);
+    }
+    var oldDoc = memoryDb[collId]![index];
+    // the id of a doc can't be changed
+    newDoc[DBRKeys.id] = oldDoc[DBRKeys.id];
+    newDoc.forEach((key, value) {
+      oldDoc[key] = value;
+    });
+    return set(docRef, newDoc: oldDoc);
+  }
 }
