@@ -18,6 +18,8 @@ class MemoryDB implements DatabaseSource {
   }) {
     String collId = collRef.id;
     // first check if the collection exist
+    // here i need to check if the collection has a parent doc or not
+    //
     if (memoryDb[collId] == null) {
       memoryDb[collId] = [];
     }

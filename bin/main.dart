@@ -4,13 +4,23 @@ import 'try2/data/datasource/memory_db.dart';
 import 'try2/presentation/db_ref.dart';
 
 void main(List<String> arguments) async {
-  var ref = await DbRef(MemoryDB()).collection('users').insertDoc({
-    'name': 'amr@gmail.com',
-    'age': 22,
+  var db = memoryDb;
+  var dbRef = DbRef(MemoryDB());
+  var users = dbRef.collection('users');
+  var user = await users.insertDoc({'name': 'user name', 'age': 22});
+  var hobbies = user.collection('hobbies');
+  var hobby = await hobbies.insertDoc({
+    'hobbyName': 'Football',
+    'skill': 5,
   });
-  var docData = await ref.getData();
-
-  print(docData);
+  var hobbiesRef2 = user.collection('hobbies');
+  var hobby2 = await hobbiesRef2.insertDoc({
+    'hobbyName': 'Feather ball',
+    'skill': 2,
+  });
+  print(db);
+  print(await hobby.getData());
+  print(await hobby2.getData());
 }
   // var collection = DbRef().collection('users');
   // collection.ref

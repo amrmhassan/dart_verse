@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:mongo_dart/mongo_dart.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../domain/repositories/db_entity.dart';
@@ -56,4 +57,6 @@ class CollRef implements DbEntity {
   ) {
     return databaseSource.getDocRefById(this, docId: docId);
   }
+
+  void test() {}
 }
