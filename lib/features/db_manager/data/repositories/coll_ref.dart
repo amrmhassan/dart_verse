@@ -1,27 +1,27 @@
-import 'dart:async';
-
+import 'package:dart_verse/features/db_manager/data/datasource/custom_db_collection.dart';
 import 'package:mongo_dart/mongo_dart.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../domain/repositories/db_entity.dart';
-import '../datasource/database_source.dart';
 import 'doc_ref.dart';
 import 'path_entity.dart';
 
-class CollRef implements DbEntity {
+String _getCollId(String name, DocRef? parentDoc) {
+  if (parentDoc == null) {
+    return name;
+  } else {
+    return '$name|${parentDoc.id}|${parentDoc.parentColl.name}';
+  }
+}
+
+class CollRef extends CustomDbCollection implements DbEntity {
   final String name;
   final DocRef? parentDoc;
-  final DatabaseSource databaseSource;
+  final Db db;
 
-  CollRef(this.name, this.parentDoc, this.databaseSource);
+  CollRef(this.name, this.parentDoc, this.db)
+      : super(db, _getCollId(name, parentDoc));
 
-  String get id {
-    if (parentDoc == null) {
-      return name;
-    } else {
-      return '$name|${parentDoc!.id}|${parentDoc!.parentColl.name}';
-    }
-  }
+  String get id => _getCollId(name, parentDoc);
 
   PathEntity get path {
     if (parentDoc == null) {
@@ -42,23 +42,23 @@ class CollRef implements DbEntity {
   DocRef doc([String? id]) {
     //! apply doc id restriction
     String docId = id ?? Uuid().v4();
-    return DocRef(docId, this, databaseSource);
+    return DocRef(docId, this, db);
   }
 
-  //# here are the code for querying databases
-  FutureOr<DocRef> insertDoc(
-    Map<String, dynamic> doc,
-  ) {
-    return databaseSource.insertDoc(this, doc: doc);
-  }
+  // //# here are the code for querying databases
+  // FutureOr<DocRef> insertDoc(
+  //   Map<String, dynamic> doc,
+  // ) {
+  //   return databaseSource.insertDoc(this, doc: doc);
+  // }
 
-  FutureOr<DocRef?> getDocById(
-    String docId,
-  ) {
-    return databaseSource.getDocRefById(this, docId: docId);
-  }
+  // FutureOr<DocRef?> getDocById(
+  //   String docId,
+  // ) {
+  //   return databaseSource.getDocRefById(this, docId: docId);
+  // }
 
-  FutureOr<Iterable<DocRef>> getAllDocuments() {
-    return databaseSource.getAllDocuments(this);
-  }
+  // FutureOr<Iterable<DocRef>> getAllDocuments() {
+  //   return databaseSource.getAllDocuments(this);
+  // }
 }

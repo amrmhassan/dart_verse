@@ -98,9 +98,8 @@ class MongoDbController {
   final Db _db;
   const MongoDbController(this._db);
 
-  DbCollection collection(CollRef collRef) {
-    String collectionId = collRef.id;
-    DbCollection dbCollection = DbCollection(_db, collectionId);
-    return dbCollection;
+  CollRef collection(String name) {
+    CollRef collRef = CollRef(name, null, _db);
+    return collRef;
   }
 }

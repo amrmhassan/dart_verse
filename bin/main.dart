@@ -7,6 +7,7 @@ import 'package:dart_verse/features/db_providers/impl/mongo_db/mongo_db_provider
 import 'package:dart_verse/settings/app/app.dart';
 import 'package:dart_verse/settings/db_settings/db_settings.dart';
 import 'package:dart_verse/settings/db_settings/repo/conn_link.dart';
+import 'package:mongo_dart/mongo_dart.dart';
 
 import 'constants.dart';
 
@@ -20,14 +21,9 @@ void main(List<String> arguments) async {
   );
   App app = App(dbSettings: dbSettings);
   await app.run();
-  var collection = DbRef(MemoryDB())
-      .collection('test_collection')
-      .doc('userId')
-      .collection('hobbies');
-  var coll = app.mongoDbController.collection(collection);
-  coll.find().listen((event) {
-    print(event);
-  });
+
+  var coll = app.mongoDbController.collection('collection');
+  print(await coll.firstDocument());
 }
 //? before applying the new data manager in the app
 //? just find a way to handle querying with the mongodb 
