@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:mongo_dart/mongo_dart.dart';
 
-class CustomDbCollection extends DbCollection {
-  CustomDbCollection(super.db, super.collectionName);
+class MongoDbCollection extends DbCollection {
+  MongoDbCollection(super.db, super.collectionName);
 
   /// this just convert the normal stream find method into a future return
   Future<List<Map<String, dynamic>>> futureFind([selector]) async {

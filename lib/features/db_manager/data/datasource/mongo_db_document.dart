@@ -1,10 +1,10 @@
 import 'package:dart_verse/features/db_manager/data/repositories/coll_ref.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
-class CustomDbDocument {
+class MongoDbDocument {
   final String _id;
   final CollRefMongo _collRef;
-  const CustomDbDocument(
+  const MongoDbDocument(
     this._id,
     this._collRef,
   );

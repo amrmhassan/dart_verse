@@ -1,4 +1,6 @@
-import 'package:dart_verse/features/db_manager/data/datasource/custom_db_document.dart';
+import 'package:dart_verse/features/db_manager/data/datasource/memory_db_collection.dart';
+import 'package:dart_verse/features/db_manager/data/datasource/memory_db_document.dart';
+import 'package:dart_verse/features/db_manager/data/datasource/mongo_db_document.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
 import '../../domain/repositories/db_entity.dart';
@@ -23,7 +25,7 @@ abstract class DocRefRepo {
   CollRefRepo collection(String name);
 }
 
-class DocRefMongo extends CustomDbDocument implements DbEntity, DocRefRepo {
+class DocRefMongo extends MongoDbDocument implements DbEntity, DocRefRepo {
   @override
   final String id;
   @override
@@ -41,17 +43,19 @@ class DocRefMongo extends CustomDbDocument implements DbEntity, DocRefRepo {
   }
 }
 
-class DocRefMemory implements DocRefRepo, DbEntity {
+class DocRefMemory extends MemoryDbDocument implements DocRefRepo, DbEntity {
   @override
   final String id;
   @override
   final CollRefMemory parentColl;
+  final Map<String, List<Map<String, dynamic>>> _memoryDb;
 
-  const DocRefMemory(this.id, this.parentColl);
+  const DocRefMemory(this.id, this.parentColl, this._memoryDb)
+      : super(_memoryDb, parentColl, id);
 
   @override
   CollRefRepo collection(String name) {
-    return CollRefMemory(name, this);
+    return CollRefMemory(name, this, _memoryDb);
   }
 
   @override

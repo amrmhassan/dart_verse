@@ -54,17 +54,6 @@
 //   }
 
 //   @override
-//   FutureOr<Map<String, dynamic>?> getDocData(DocRef docRef) {
-//     String collId = docRef.parentColl.id;
-//     if (memoryDb[collId] == null) return null;
-//     Map<String, dynamic>? doc = memoryDb[collId]!.cast().firstWhere(
-//           (doc) => doc[DBRKeys.id] == docRef.id,
-//           orElse: () => null,
-//         );
-//     return doc;
-//   }
-
-//   @override
 //   FutureOr<Iterable<DocRef>> getAllDocuments(CollRef collRef) {
 //     String collId = collRef.id;
 //     // check if coll exists or not
@@ -131,5 +120,16 @@
 //       oldDoc[key] = value;
 //     });
 //     return set(docRef, newDoc: oldDoc);
+//   }
+
+//   @override
+//   FutureOr<Map<String, dynamic>?> getDocData(DocRef docRef) {
+//     String collId = docRef.parentColl.id;
+//     if (memoryDb[collId] == null) return null;
+//     Map<String, dynamic>? doc = memoryDb[collId]!.cast().firstWhere(
+//           (doc) => doc[DBRKeys.id] == docRef.id,
+//           orElse: () => null,
+//         );
+//     return doc;
 //   }
 // }
