@@ -3,7 +3,7 @@ import 'package:mongo_dart/mongo_dart.dart';
 
 class CustomDbDocument {
   final String _id;
-  final CollRef _collRef;
+  final CollRefMongo _collRef;
   const CustomDbDocument(
     this._id,
     this._collRef,

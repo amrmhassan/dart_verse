@@ -100,8 +100,8 @@ class MongoDbController implements DbController {
   final Db _db;
   const MongoDbController(this._db);
 
-  CollRef collection(String name) {
-    CollRef collRef = CollRef(name, null, _db);
+  CollRefMongo collection(String name) {
+    CollRefMongo collRef = CollRefMongo(name, null, _db);
     return collRef;
   }
 }

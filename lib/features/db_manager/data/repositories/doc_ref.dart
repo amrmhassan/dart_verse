@@ -5,60 +5,55 @@ import '../../domain/repositories/db_entity.dart';
 import 'coll_ref.dart';
 import 'path_entity.dart';
 
-abstract class DocRefRepo {}
+PathEntity _getDocPath(String id, DbEntity entity, CollRefRepo parentColl) {
+  return PathEntity(
+    name: id,
+    entity: entity,
+    parentPath: parentColl.path,
+  );
+}
 
-class DocRef extends CustomDbDocument implements DbEntity, DocRefRepo {
+abstract class DocRefRepo {
   final String id;
-  final CollRef parentColl;
+  final CollRefRepo parentColl;
+  PathEntity get path;
+
+  const DocRefRepo(this.id, this.parentColl);
+
+  CollRefRepo collection(String name);
+}
+
+class DocRefMongo extends CustomDbDocument implements DbEntity, DocRefRepo {
+  @override
+  final String id;
+  @override
+  final CollRefMongo parentColl;
   final Db _db;
 
-  DocRef(this.id, this.parentColl, this._db) : super(id, parentColl);
+  DocRefMongo(this.id, this.parentColl, this._db) : super(id, parentColl);
 
-  PathEntity get path {
-    return PathEntity(
-      name: id,
-      entity: this,
-      parentPath: parentColl.path,
-    );
+  @override
+  PathEntity get path => _getDocPath(id, this, parentColl);
+
+  @override
+  CollRefMongo collection(String name) {
+    return CollRefMongo(name, this, _db);
+  }
+}
+
+class DocRefMemory implements DocRefRepo, DbEntity {
+  @override
+  final String id;
+  @override
+  final CollRefMemory parentColl;
+
+  const DocRefMemory(this.id, this.parentColl);
+
+  @override
+  CollRefRepo collection(String name) {
+    return CollRefMemory(name, this);
   }
 
-  CollRef collection(String name) {
-    return CollRef(name, this, _db);
-  }
-
-  //? doc data
-  // Map<String, dynamic>? _data;
-
-  // void setLocalData(DatabaseSource source, Map<String, dynamic> data) {
-  //   if (source.hashCode != databaseSource.hashCode) {
-  //     throw Exception('you can\'t edit the doc data by yourself');
-  //   }
-  //   _data = {};
-  //   data.forEach((key, value) {
-  //     _data![key] = value;
-  //   });
-  //   _data = data;
-  // }
-
-  // Map<String, dynamic>? get data => _data;
-
-  // //# here is the querying code
-  // FutureOr<Map<String, dynamic>?> getData() async {
-  //   var data = (await databaseSource.getDocData(this))!;
-  //   _data = data;
-  //   setLocalData(databaseSource, data);
-  //   return data;
-  // }
-
-  // FutureOr<DocRef> set(
-  //   Map<String, dynamic> newDoc,
-  // ) {
-  //   return databaseSource.set(this, newDoc: newDoc);
-  // }
-
-  // FutureOr<DocRef> update(
-  //   Map<String, dynamic> newDoc,
-  // ) {
-  //   return databaseSource.update(this, newDoc: newDoc);
-  // }
+  @override
+  PathEntity get path => _getDocPath(id, this, parentColl);
 }
