@@ -16,4 +16,6 @@ abstract class DatabaseSource {
   });
 
   FutureOr<Map<String, dynamic>?> getDocData(DocRef docRef);
+
+  FutureOr<Iterable<DocRef>> getAllDocuments(CollRef collRef);
 }

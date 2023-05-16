@@ -58,5 +58,7 @@ class CollRef implements DbEntity {
     return databaseSource.getDocRefById(this, docId: docId);
   }
 
-  void test() {}
+  FutureOr<Iterable<DocRef>> getAllDocuments() {
+    return databaseSource.getAllDocuments(this);
+  }
 }

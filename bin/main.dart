@@ -18,6 +18,8 @@ void main(List<String> arguments) async {
     'hobbyName': 'Feather ball',
     'skill': 2,
   });
+  var docs = await hobbies.getAllDocuments();
+  var docs2 = await hobbiesRef2.getAllDocuments();
   print(db);
   print(await hobby.getData());
   print(await hobby2.getData());

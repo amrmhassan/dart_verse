@@ -63,4 +63,20 @@ class MemoryDB implements DatabaseSource {
         );
     return doc;
   }
+
+  @override
+  FutureOr<Iterable<DocRef>> getAllDocuments(CollRef collRef) {
+    String collId = collRef.id;
+    // check if coll exists or not
+    if (memoryDb[collId] == null) {
+      return [];
+    }
+    // gets actual docs
+    var docs = memoryDb[collId]!.map((e) {
+      var docRef = DocRef(e[DBRKeys.id], collRef, this);
+      docRef.setLocalData(this, e);
+      return docRef;
+    });
+    return docs;
+  }
 }
