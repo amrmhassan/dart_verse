@@ -13,13 +13,23 @@ String _getCollId(String name, DocRef? parentDoc) {
   }
 }
 
-class CollRef extends CustomDbCollection implements DbEntity {
+abstract class CollRefRepo {
   final String name;
-  final DocRef? parentDoc;
-  final Db db;
+  String get id;
+  final DocRefRepo? parentDoc;
 
-  CollRef(this.name, this.parentDoc, this.db)
-      : super(db, _getCollId(name, parentDoc));
+  const CollRefRepo(this.name, this.parentDoc);
+}
+
+class CollRef extends CustomDbCollection implements DbEntity, CollRefRepo {
+  @override
+  final String name;
+  @override
+  final DocRef? parentDoc;
+  final Db _db;
+
+  CollRef(this.name, this.parentDoc, this._db)
+      : super(_db, _getCollId(name, parentDoc));
 
   String get id => _getCollId(name, parentDoc);
 
@@ -41,24 +51,7 @@ class CollRef extends CustomDbCollection implements DbEntity {
 
   DocRef doc([String? id]) {
     //! apply doc id restriction
-    String docId = id ?? Uuid().v4();
-    return DocRef(docId, this, db);
+    String docId = id ?? ObjectId().toHexString();
+    return DocRef(docId, this, _db);
   }
-
-  // //# here are the code for querying databases
-  // FutureOr<DocRef> insertDoc(
-  //   Map<String, dynamic> doc,
-  // ) {
-  //   return databaseSource.insertDoc(this, doc: doc);
-  // }
-
-  // FutureOr<DocRef?> getDocById(
-  //   String docId,
-  // ) {
-  //   return databaseSource.getDocRefById(this, docId: docId);
-  // }
-
-  // FutureOr<Iterable<DocRef>> getAllDocuments() {
-  //   return databaseSource.getAllDocuments(this);
-  // }
 }

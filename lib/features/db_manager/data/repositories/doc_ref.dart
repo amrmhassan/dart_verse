@@ -5,17 +5,14 @@ import '../../domain/repositories/db_entity.dart';
 import 'coll_ref.dart';
 import 'path_entity.dart';
 
-class DocRef extends CustomDbDocument implements DbEntity {
+abstract class DocRefRepo {}
+
+class DocRef extends CustomDbDocument implements DbEntity, DocRefRepo {
   final String id;
   final CollRef parentColl;
-  final Db db;
+  final Db _db;
 
-  DocRef(this.id, this.parentColl, this.db)
-      : super(
-          db,
-          id,
-          parentColl,
-        );
+  DocRef(this.id, this.parentColl, this._db) : super(id, parentColl);
 
   PathEntity get path {
     return PathEntity(
@@ -26,7 +23,7 @@ class DocRef extends CustomDbDocument implements DbEntity {
   }
 
   CollRef collection(String name) {
-    return CollRef(name, this, db);
+    return CollRef(name, this, _db);
   }
 
   //? doc data

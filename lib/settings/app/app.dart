@@ -1,14 +1,14 @@
 // this app is the starting point of the server
 // it will require settings for auth, database, realtime database, etc...
 import 'package:dart_verse/features/db_manager/data/repositories/coll_ref.dart';
-import 'package:dart_verse/features/db_manager/domain/repositories/db_entity.dart';
-import 'package:dart_verse/settings/db_settings/repo/conn_link.dart';
 import 'package:dart_verse/settings/defaults/default_app_settings.dart';
 import 'package:dart_verse/features/database/controllers/db_connect.dart';
 import 'package:dart_verse/settings/auth_settings/auth_settings.dart';
 import 'package:dart_verse/settings/db_settings/db_settings.dart';
 import 'package:dart_verse/settings/user_data_settings/user_data_settings.dart';
 import 'package:mongo_dart/mongo_dart.dart';
+
+//! i should keep track of collections and sub collections names in a string file or something
 
 class App {
   final AuthSettings? _authSettings;
@@ -94,7 +94,9 @@ class App {
   }
 }
 
-class MongoDbController {
+abstract class DbController {}
+
+class MongoDbController implements DbController {
   final Db _db;
   const MongoDbController(this._db);
 
@@ -102,4 +104,9 @@ class MongoDbController {
     CollRef collRef = CollRef(name, null, _db);
     return collRef;
   }
+}
+
+class MemoryDbController implements DbController {
+  final Map<String, List<Map<String, dynamic>>> memorydb;
+  const MemoryDbController(this.memorydb);
 }
