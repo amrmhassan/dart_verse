@@ -1,10 +1,10 @@
 // flutter packages pub run build_runner build --delete-conflicting-outputs
 
-import 'try2/coll_ref.dart';
-import 'try2/controller.dart';
+import 'try2/data/datasource/memory_db.dart';
+import 'try2/presentation/db_ref.dart';
 
 void main(List<String> arguments) async {
-  var ref = DbRef(MemoryDataBase())
+  var ref = DbRef(MemoryDB())
       .collection('users')
       .doc('user1')
       .collection('hobbies')
