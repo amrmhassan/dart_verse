@@ -67,12 +67,12 @@ class AuthService {
   }) async {
     AuthModel? savedModel = await _authRead.getByEmail(email);
     if (savedModel == null) {
-      throw Exception('No user registered');
+      throw NoUserRegistered();
     }
     bool rightPassword =
         SecurePassword(password).checkPassword(savedModel.passwordHash);
     if (!rightPassword) {
-      throw Exception('invalid credentials');
+      throw InvalidPassword();
     }
     String jwtToken =
         await _jwtController.createJwtAndSave(id: savedModel.id, email: email);

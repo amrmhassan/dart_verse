@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:dart_verse/errors/models/database_errors.dart';
+
 import '../../../constants/reserved_keys.dart';
 
 class DocValidation {
@@ -12,12 +14,12 @@ class DocValidation {
     // check for the id length
     int idSize = utf8.encode(id).length;
     if (idSize > DocRestrictions.maxIdLength) {
-      throw Exception(
+      throw DbDocValidationException(
           '${DBRKeys.id} max length is ${DocRestrictions.maxIdLength} bytes');
     }
     // checking for the _collections keyword
     if (doc[DBRKeys.collections] != null) {
-      throw Exception(
+      throw DbDocValidationException(
           'you can\'t use ${DBRKeys.collections} keyword as it is reserved');
     }
     // update the id

@@ -18,7 +18,6 @@ class DbConnect {
     Db? db = await mongoDbConnect.connect();
     // setting the app _db because the app depends on it
     if (db != null) {
-      // throw Exception('can\'t connect to mongo db');
       _app.setMongoDb(db);
     }
 

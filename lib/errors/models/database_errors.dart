@@ -6,6 +6,7 @@ class DBException implements ServerLessException {
   DBException(this.message);
 }
 
+//? db exceptions
 class DBReadException implements DBException {
   @override
   String message;
@@ -18,4 +19,11 @@ class DBWriteException implements DBException {
   String message;
 
   DBWriteException(this.message);
+}
+
+class DbDocValidationException implements DBException {
+  @override
+  String message;
+
+  DbDocValidationException(this.message);
 }

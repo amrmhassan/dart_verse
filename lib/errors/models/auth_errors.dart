@@ -17,5 +17,23 @@ class RegisterUserException implements AuthException {
 
 class DuplicateEmailException implements RegisterUserException {
   @override
-  String message = 'Email already exists';
+  String message = 'email already exists';
+}
+
+//? login exceptions
+class LoginUserException implements AuthException {
+  @override
+  String message;
+
+  LoginUserException(this.message);
+}
+
+class NoUserRegistered implements LoginUserException {
+  @override
+  String message = 'no user registered';
+}
+
+class InvalidPassword implements LoginUserException {
+  @override
+  String message = 'invalid password';
 }

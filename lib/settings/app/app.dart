@@ -1,6 +1,6 @@
 // this app is the starting point of the server
 // it will require settings for auth, database, realtime database, etc...
-import 'package:dart_verse/features/db_manager/data/repositories/mongo_ref/coll_ref_mongo.dart';
+import 'package:dart_verse/errors/models/app_exceptions.dart';
 import 'package:dart_verse/settings/defaults/default_app_settings.dart';
 import 'package:dart_verse/features/app_database/controllers/db_connect.dart';
 import 'package:dart_verse/settings/auth_settings/auth_settings.dart';
@@ -10,7 +10,6 @@ import 'package:mongo_dart/mongo_dart.dart';
 
 import '../../features/db_manager/data/repositories/db_controllers/memory_db_controller.dart';
 import '../../features/db_manager/data/repositories/db_controllers/mongo_db_controller.dart';
-import '../../features/db_manager/data/repositories/memory_ref/coll_ref_memory.dart';
 
 //! i should keep track of collections and sub collections names in a string file or something
 
@@ -44,7 +43,7 @@ class App {
 
   Future<void> _connectToDb() async {
     if (_dbSettings == null) {
-      throw Exception('please provide DBSettings if you wanna use db');
+      throw NoDbSettingsExceptions();
     }
     DbConnect dbConnect = DbConnect(this);
     await dbConnect.connectAllProvidedDBs();
@@ -59,7 +58,7 @@ class App {
 
   Db get getDB {
     if (_db == null) {
-      throw Exception('please provide DBSettings if you wanna use db');
+      throw NoDbSettingsExceptions();
     }
     return _db!;
   }
@@ -68,7 +67,7 @@ class App {
   MongoDbController? _mongoDbController;
   MongoDbController get mongoDbController {
     if (_mongoDbController == null) {
-      throw Exception('no mongo db provider, please add one to db settings');
+      throw NoMongoDbProviderExceptions();
     }
     return _mongoDbController!;
   }
@@ -76,7 +75,7 @@ class App {
   MemoryDbController? _memoryDbController;
   MemoryDbController get memoryDbController {
     if (_memoryDbController == null) {
-      throw Exception('no memory db provider, please add one to db settings');
+      throw NoMemoryDbProviderExceptions();
     }
     return _memoryDbController!;
   }
@@ -94,7 +93,7 @@ class App {
 //# getting difference settings instances
   AuthSettings get authSettings {
     if (_authSettings == null) {
-      throw Exception('please provider authSettings to the app');
+      throw NoAuthSettings();
     }
     return _authSettings!;
   }
@@ -105,7 +104,7 @@ class App {
 
   DBSettings get dbSettings {
     if (_dbSettings == null) {
-      throw Exception('please provide DBSettings if you wanna use db');
+      throw NoDbSettingsExceptions();
     }
     return _dbSettings!;
   }
