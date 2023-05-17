@@ -1,4 +1,4 @@
-import 'package:dart_verse/features/db_manager/data/repositories/coll_ref.dart';
+import 'package:dart_verse/features/db_manager/data/repositories/mongo_ref/coll_ref_mongo.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
 class MongoDbDocument {

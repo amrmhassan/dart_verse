@@ -1,7 +1,6 @@
-import 'package:dart_verse/features/db_manager/data/repositories/coll_ref.dart';
-import 'package:dart_verse/features/db_manager/data/repositories/doc_ref.dart';
-
-import '../../../../constants/reserved_keys.dart';
+import '../../../../../constants/reserved_keys.dart';
+import '../../repositories/memory_ref/coll_ref_memory.dart';
+import '../../repositories/memory_ref/doc_ref_memory.dart';
 
 class MemoryDbDocument {
   final Map<String, List<Map<String, dynamic>>> _memoryDb;
