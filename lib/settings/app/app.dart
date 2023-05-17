@@ -1,7 +1,7 @@
 // this app is the starting point of the server
 // it will require settings for auth, database, realtime database, etc...
 import 'package:dart_verse/errors/models/app_exceptions.dart';
-import 'package:dart_verse/settings/defaults/default_app_settings.dart';
+import 'package:dart_verse/errors/models/user_data_errors.dart';
 import 'package:dart_verse/features/app_database/controllers/db_connect.dart';
 import 'package:dart_verse/settings/auth_settings/auth_settings.dart';
 import 'package:dart_verse/settings/db_settings/db_settings.dart';
@@ -16,7 +16,7 @@ import '../../features/db_manager/data/repositories/db_controllers/mongo_db_cont
 class App {
   final AuthSettings? _authSettings;
   final DBSettings? _dbSettings;
-  final UserDataSettings _userDataSettings;
+  final UserDataSettings? _userDataSettings;
 
   App({
     AuthSettings? authSettings,
@@ -24,8 +24,7 @@ class App {
     UserDataSettings? userDataSettings,
   })  : _authSettings = authSettings,
         _dbSettings = dbSettings,
-        _userDataSettings =
-            userDataSettings ?? DefaultSettings.userDataSettings;
+        _userDataSettings = userDataSettings;
 
   //? the app starting point
   Future<App> run({
@@ -38,29 +37,37 @@ class App {
     return this;
   }
 
-  //# mongo DB stuff
-  Db? _db;
-
+  //#  Connect DBs
   Future<void> _connectToDb() async {
     if (_dbSettings == null) {
       throw NoDbSettingsExceptions();
     }
     DbConnect dbConnect = DbConnect(this);
-    await dbConnect.connectAllProvidedDBs();
-    // Db db = await dbConnect.connect();
-    // _db = db;
+    await dbConnect.connectAllProvidedDBs(
+      setMemoryController: _setMemoryController,
+      setMongoDb: _setMongoDb,
+    );
   }
 
-  void setMongoDb(Db db) {
-    _db = db;
+  //# setting DBs after connecting
+  void _setMongoDb(Db db) {
+    dbSettings.mongoDBProvider!.setDb(db);
     _setMongoController(MongoDbController(db));
   }
 
-  Db get getDB {
-    if (_db == null) {
-      throw NoDbSettingsExceptions();
+  //# getting Dbs references
+  Db get getMongoDB {
+    if (dbSettings.mongoDBProvider == null) {
+      throw NoMongoDbProviderExceptions();
     }
-    return _db!;
+    return dbSettings.mongoDBProvider!.db;
+  }
+
+  Map<String, List<Map<String, dynamic>>> get getMemoryDb {
+    if (dbSettings.memoryDBProvider == null) {
+      throw NoMemoryDbProviderExceptions();
+    }
+    return dbSettings.memoryDBProvider!.memoryDb;
   }
 
   //# getting db controllers
@@ -86,11 +93,11 @@ class App {
   }
 
   /// you don't need to play with method
-  void setMemoryController(MemoryDbController controller, DbConnect source) {
+  void _setMemoryController(MemoryDbController controller) {
     _memoryDbController = controller;
   }
 
-//# getting difference settings instances
+  //# getting difference settings instances
   AuthSettings get authSettings {
     if (_authSettings == null) {
       throw NoAuthSettings();
@@ -99,7 +106,10 @@ class App {
   }
 
   UserDataSettings get userDataSettings {
-    return _userDataSettings;
+    if (_userDataSettings == null) {
+      throw NoUserDataSettingsException();
+    }
+    return _userDataSettings!;
   }
 
   DBSettings get dbSettings {

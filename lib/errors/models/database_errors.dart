@@ -1,3 +1,5 @@
+// ignore_for_file: overridden_fields
+
 import 'package:dart_verse/errors/serverless_exception.dart';
 
 class DBException extends ServerLessException {
@@ -26,4 +28,8 @@ class DbDocValidationException extends DBException {
   String message;
 
   DbDocValidationException(this.message) : super(message);
+}
+
+class MongoDbNotInitializedYet extends DBException {
+  MongoDbNotInitializedYet() : super('mongo db not initialized yet');
 }

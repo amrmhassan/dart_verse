@@ -8,7 +8,7 @@ class AuthRead {
   const AuthRead(this._app);
 
   Future<AuthModel?> getByEmail(String email) async {
-    var res = await _app.getDB
+    var res = await _app.getMongoDB
         .collection(_app.authSettings.collectionName)
         .findOne(where.eq(ModelFields.email, email));
     if (res == null) return null;

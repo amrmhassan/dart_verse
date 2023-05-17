@@ -1,3 +1,5 @@
+// ignore_for_file: overridden_fields
+
 import 'package:dart_verse/errors/serverless_exception.dart';
 
 //# auth exceptions

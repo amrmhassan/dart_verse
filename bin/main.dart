@@ -22,11 +22,12 @@ void main(List<String> arguments) async {
   App app = App(dbSettings: dbSettings);
 
   await app.run();
+  app.userDataSettings;
 
-  var coll = app.memoryDbController.collection('users');
-  coll.insertDoc({'name': 'Amr Hassan', '_id': 'userId'});
-  coll.insertDoc({'name': 'Amr Hassan'});
+  // var coll = app.memoryDbController.collection('users');
+  // coll.insertDoc({'name': 'Amr Hassan', '_id': 'userId'});
+  // coll.insertDoc({'name': 'Amr Hassan'});
 
-  print(coll.getAllDocuments().map((e) => e.getData()).toList());
-  print(coll.getDocRefById('userId')!.getData());
+  // print(coll.getAllDocuments().map((e) => e.getData()).toList());
+  // print(coll.getDocRefById('userId')!.getData());
 }

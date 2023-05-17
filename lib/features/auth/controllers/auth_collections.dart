@@ -5,16 +5,16 @@ class AuthCollections {
   final App _app;
   const AuthCollections(this._app);
   DbCollection get auth => DbCollection(
-        _app.getDB,
+        _app.getMongoDB,
         _app.authSettings.collectionName,
       );
 
   DbCollection get activeJWTs => DbCollection(
-        _app.getDB,
+        _app.getMongoDB,
         _app.authSettings.activeJWTCollName,
       );
   DbCollection get usersData => DbCollection(
-        _app.getDB,
+        _app.getMongoDB,
         _app.userDataSettings.collectionName,
       );
 }

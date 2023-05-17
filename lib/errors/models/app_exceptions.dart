@@ -1,9 +1,14 @@
 import 'package:dart_verse/errors/serverless_exception.dart';
 
 class AppExceptions extends ServerLessException {
+  String _message;
+
+  AppExceptions(this._message);
   @override
-  String message;
-  AppExceptions(this.message);
+  String get message => _message;
+
+  @override
+  set message(String value) => _message = value;
 }
 
 //? app exceptions

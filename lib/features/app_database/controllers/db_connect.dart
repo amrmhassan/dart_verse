@@ -9,24 +9,28 @@ import '../../db_manager/data/repositories/db_controllers/memory_db_controller.d
 class DbConnect {
   final App _app;
   const DbConnect(this._app);
-
-  Future<void> connectAllProvidedDBs() async {
+  Future<void> connectAllProvidedDBs({
+    required Function(MemoryDbController) setMemoryController,
+    required Function(Db) setMongoDb,
+  }) async {
     //? trying to connect to mongodb if exist
-    MongoDbConnLink? mongoDbConnLink =
-        _app.dbSettings.mongoDBProvider?.connLink;
-    MongoDbConnect mongoDbConnect = MongoDbConnect(mongoDbConnLink);
-    Db? db = await mongoDbConnect.connect();
-    // setting the app _db because the app depends on it
-    if (db != null) {
-      _app.setMongoDb(db);
+    if (_app.dbSettings.mongoDBProvider != null) {
+      MongoDbConnLink mongoDbConnLink =
+          _app.dbSettings.mongoDBProvider!.connLink;
+      MongoDbConnect mongoDbConnect = MongoDbConnect(mongoDbConnLink);
+      Db? db = await mongoDbConnect.connect();
+      // setting the app _db because the app depends on it
+      if (db != null) {
+        setMongoDb(db);
+      }
     }
 
     //? trying to connect to memory db if exist
-    var memoryDb = _app.dbSettings.memoryDBProvider?.memoryDb;
-    MemoryDbConnect memoryDbConnect = MemoryDbConnect(memoryDb);
-    await memoryDbConnect.connect();
-    if (memoryDb != null) {
-      _app.setMemoryController(MemoryDbController(memoryDb), this);
+    if (_app.dbSettings.memoryDBProvider != null) {
+      var memoryDb = _app.dbSettings.memoryDBProvider!.memoryDb;
+      MemoryDbConnect memoryDbConnect = MemoryDbConnect(memoryDb);
+      await memoryDbConnect.connect();
+      setMemoryController(MemoryDbController(memoryDb));
     }
   }
 }
