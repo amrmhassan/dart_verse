@@ -4,7 +4,7 @@ import 'package:dart_verse/settings/app/app.dart';
 import 'package:dart_verse/settings/db_settings/repo/conn_link.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
-import '../../db_manager/data/repositories/db_controllers/memory_db_controller.dart';
+import '../../../services/db_manager/data/repositories/db_controllers/memory_db_controller.dart';
 
 class DbConnect {
   final App _app;

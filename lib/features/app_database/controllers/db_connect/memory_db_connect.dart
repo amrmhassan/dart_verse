@@ -7,7 +7,7 @@ class MemoryDbConnect {
       print('no memory db provided, skipping');
       return null;
     }
-    print('creating memory db');
+    print('connected to memory db');
     return memoryDb;
   }
 }

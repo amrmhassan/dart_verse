@@ -1,4 +1,4 @@
-import 'package:dart_verse/features/db_manager/data/datasource/mongo_db/mongo_db_document.dart';
+import 'package:dart_verse/services/db_manager/data/datasource/mongo_db/mongo_db_document.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
 import '../../../domain/repositories/db_entity.dart';

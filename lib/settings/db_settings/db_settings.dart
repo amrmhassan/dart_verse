@@ -1,5 +1,5 @@
-import 'package:dart_verse/features/db_providers/impl/memory_db/memory_db_provider.dart';
-import 'package:dart_verse/features/db_providers/impl/mongo_db/mongo_db_provider.dart';
+import 'package:dart_verse/services/db_manager/db_providers/impl/memory_db/memory_db_provider.dart';
+import 'package:dart_verse/services/db_manager/db_providers/impl/mongo_db/mongo_db_provider.dart';
 
 class DBSettings {
   // final ConnLink _connLink;

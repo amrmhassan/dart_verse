@@ -23,6 +23,7 @@ class MemoryDbDocument {
 
     // insert new one if the old one doesn't exist
     if (index == -1) {
+      newDoc[DBRKeys.id] = newDoc[DBRKeys.id] ?? _id;
       return _collRef.insertDoc(newDoc);
     }
     // or just remove the old one and set the new one

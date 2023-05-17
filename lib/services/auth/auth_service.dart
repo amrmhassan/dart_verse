@@ -1,24 +1,26 @@
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:dart_verse/errors/models/auth_errors.dart';
 import 'package:dart_verse/errors/models/database_errors.dart';
-import 'package:dart_verse/features/auth/controllers/auth_collections.dart';
-import 'package:dart_verse/features/auth/controllers/jwt_controller.dart';
-import 'package:dart_verse/features/auth/controllers/secure_password.dart';
+import 'package:dart_verse/services/db_manager/db_service.dart';
 import 'package:dart_verse/settings/app/app.dart';
-import 'package:dart_verse/features/auth/models/auth_model.dart';
 import 'package:dart_verse/features/app_database/controllers/auth_read.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
+import 'controllers/auth_collections.dart';
+import 'controllers/jwt_controller.dart';
+import 'controllers/secure_password.dart';
+import 'models/auth_model.dart';
+
 class AuthService {
   final App _app;
-
+  final DbService _dbService;
   late JWTController _jwtController;
   late AuthRead _authRead;
   late AuthCollections _authCollections;
 
-  AuthService(this._app) {
-    _authCollections = AuthCollections(_app);
-    _authRead = AuthRead(_app);
+  AuthService(this._app, this._dbService) {
+    _authCollections = AuthCollections(_app, _dbService);
+    _authRead = AuthRead(_app, _dbService);
     _jwtController = JWTController(_app, _authCollections);
   }
 

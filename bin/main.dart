@@ -1,7 +1,8 @@
 // flutter packages pub run build_runner build --delete-conflicting-outputs
 
-import 'package:dart_verse/features/db_providers/impl/memory_db/memory_db_provider.dart';
-import 'package:dart_verse/features/db_providers/impl/mongo_db/mongo_db_provider.dart';
+import 'package:dart_verse/services/db_manager/db_providers/impl/memory_db/memory_db_provider.dart';
+import 'package:dart_verse/services/db_manager/db_providers/impl/mongo_db/mongo_db_provider.dart';
+import 'package:dart_verse/services/db_manager/db_service.dart';
 import 'package:dart_verse/settings/app/app.dart';
 import 'package:dart_verse/settings/db_settings/db_settings.dart';
 
@@ -20,14 +21,11 @@ void main(List<String> arguments) async {
     memoryDBProvider: memoryDBProvider,
   );
   App app = App(dbSettings: dbSettings);
-
-  await app.run();
-  app.userDataSettings;
-
-  // var coll = app.memoryDbController.collection('users');
-  // coll.insertDoc({'name': 'Amr Hassan', '_id': 'userId'});
-  // coll.insertDoc({'name': 'Amr Hassan'});
-
-  // print(coll.getAllDocuments().map((e) => e.getData()).toList());
-  // print(coll.getDocRefById('userId')!.getData());
+  DbService dbService = DbService(app);
+  await dbService.connectToDb();
+  var doc = dbService.memoryDbController
+      .collection('name')
+      .doc()
+      .set({'name': 'Amr'});
+  print(doc.getData());
 }

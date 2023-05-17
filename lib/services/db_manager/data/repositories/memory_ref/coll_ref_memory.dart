@@ -23,6 +23,7 @@ class CollRefMemory extends MemoryDbCollection
   DocRefMemory doc([String? id]) {
     //! apply doc id restriction
     String docId = id ?? ObjectId().toHexString();
+    print(docId);
     return DocRefMemory(docId, this, _memoryDb);
   }
 

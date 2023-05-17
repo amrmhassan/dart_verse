@@ -2,11 +2,11 @@ import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:dart_verse/constants/logger.dart';
 import 'package:dart_verse/constants/model_fields.dart';
 import 'package:dart_verse/errors/models/database_errors.dart';
-import 'package:dart_verse/features/auth/controllers/auth_collections.dart';
 import 'package:dart_verse/settings/app/app.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
 import '../models/jwt_payload.dart';
+import 'auth_collections.dart';
 
 class JWTController {
   final App _app;

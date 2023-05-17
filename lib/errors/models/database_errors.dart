@@ -33,3 +33,8 @@ class DbDocValidationException extends DBException {
 class MongoDbNotInitializedYet extends DBException {
   MongoDbNotInitializedYet() : super('mongo db not initialized yet');
 }
+
+class DbNotConnectedException extends DBException {
+  DbNotConnectedException()
+      : super('db not connected yet, please run dbService.connectToDb()');
+}
