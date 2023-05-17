@@ -1,39 +1,36 @@
 import 'package:dart_verse/errors/serverless_exception.dart';
 
 //# auth exceptions
-class AuthException implements ServerLessException {
+class AuthException extends ServerLessException {
   @override
   String message;
   AuthException(this.message);
 }
 
 //? register exceptions
-class RegisterUserException implements AuthException {
+class RegisterUserException extends AuthException {
   @override
   String message;
 
-  RegisterUserException(this.message);
+  RegisterUserException(this.message) : super(message);
 }
 
-class DuplicateEmailException implements RegisterUserException {
-  @override
-  String message = 'email already exists';
+class DuplicateEmailException extends RegisterUserException {
+  DuplicateEmailException() : super('email already exists');
 }
 
 //? login exceptions
-class LoginUserException implements AuthException {
+class LoginUserException extends AuthException {
   @override
   String message;
 
-  LoginUserException(this.message);
+  LoginUserException(this.message) : super(message);
 }
 
-class NoUserRegistered implements LoginUserException {
-  @override
-  String message = 'no user registered';
+class NoUserRegistered extends LoginUserException {
+  NoUserRegistered() : super('no user registered');
 }
 
-class InvalidPassword implements LoginUserException {
-  @override
-  String message = 'invalid password';
+class InvalidPassword extends LoginUserException {
+  InvalidPassword() : super('invalid password');
 }
