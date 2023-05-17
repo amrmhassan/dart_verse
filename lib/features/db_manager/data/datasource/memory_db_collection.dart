@@ -2,16 +2,20 @@ import 'package:dart_verse/features/db_manager/data/repositories/coll_ref.dart';
 import 'package:dart_verse/features/db_manager/data/repositories/doc_ref.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../constants/reserved_keys.dart';
+import '../../../../constants/reserved_keys.dart';
+import '../../../memory_db/memory_db_driver.dart';
 import '../../validation/naming_restrictions.dart';
 
-class MemoryDbCollection {
+//! i must define the memory controlling code in the memory db driver and just get a ref of that driver here to use it
+//
+class MemoryDbCollection extends MemoryDbDriver {
   final Map<String, List<Map<String, dynamic>>> _memoryDb;
   final String _id;
   final String _name;
   final DocRefMemory? _docRefMemory;
   const MemoryDbCollection(
-      this._memoryDb, this._id, this._name, this._docRefMemory);
+      this._memoryDb, this._id, this._name, this._docRefMemory)
+      : super(_memoryDb);
 
   CollRefMemory get _collRefMemory =>
       CollRefMemory(_name, _docRefMemory, _memoryDb);

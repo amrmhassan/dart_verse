@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import '../constants/reserved_keys.dart';
+import '../../../constants/reserved_keys.dart';
 
 class DocValidation {
   final String id;
