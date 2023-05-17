@@ -1,3 +1,5 @@
+// ignore_for_file: overridden_fields
+
 import 'package:dart_verse/features/auth_db_provider/auth_db_provider.dart';
 import 'package:dart_verse/services/auth/controllers/jwt_controller.dart';
 import 'package:dart_verse/services/auth/models/auth_model.dart';

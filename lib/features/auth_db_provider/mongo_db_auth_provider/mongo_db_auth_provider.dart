@@ -1,3 +1,5 @@
+// ignore_for_file: overridden_fields
+
 import 'package:dart_verse/constants/model_fields.dart';
 import 'package:dart_verse/constants/reserved_keys.dart';
 import 'package:dart_verse/features/auth_db_provider/auth_db_provider.dart';
@@ -80,13 +82,14 @@ class MongoDbAuthProvider extends AuthDbProvider {
         .collection(app.authSettings.activeJWTCollName)
         .findOne(where.eq(DBRKeys.id, id));
 
-    List<String> jwts = data?[ModelFields.activeTokens] ?? [];
+    List<String> jwts =
+        ((data?[ModelFields.activeTokens] ?? []) as List).cast();
     // checking if saved jwts list contains the new jwt to skip adding it
     if (jwts.any((element) => element == jwt)) {
       return;
     }
     jwts.add(jwt);
-    dbService.mongoDbController
+    await dbService.mongoDbController
         .collection(app.authSettings.activeJWTCollName)
         .doc(id)
         .set({
@@ -100,7 +103,8 @@ class MongoDbAuthProvider extends AuthDbProvider {
         .collection(app.authSettings.activeJWTCollName)
         .findOne(where.eq(DBRKeys.id, id));
 
-    List<String> jwts = data?[ModelFields.activeTokens] ?? [];
+    List<String> jwts =
+        ((data?[ModelFields.activeTokens] ?? []) as List).cast();
     // checking if saved jwts list contains the new jwt to skip adding it
     if (jwts.any((element) => element == jwt)) {
       return true;

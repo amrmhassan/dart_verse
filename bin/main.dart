@@ -1,6 +1,7 @@
 // flutter packages pub run build_runner build --delete-conflicting-outputs
 
 import 'package:dart_verse/features/auth_db_provider/memory_db_auth_provider/memory_db_auth_provider.dart';
+import 'package:dart_verse/features/auth_db_provider/mongo_db_auth_provider/mongo_db_auth_provider.dart';
 import 'package:dart_verse/services/auth/auth_service.dart';
 import 'package:dart_verse/services/db_manager/db_providers/impl/memory_db/memory_db_provider.dart';
 import 'package:dart_verse/services/db_manager/db_providers/impl/mongo_db/mongo_db_provider.dart';
@@ -30,11 +31,9 @@ void main(List<String> arguments) async {
   );
   DbService dbService = DbService(app);
   await dbService.connectToDb();
-  AuthService authService = AuthService(MemoryDbAuthProvider(app, dbService));
-  String jwt = await authService.registerUser(
-    email: 'amr@gmail.com',
-    password: 'password',
-  );
-  var allow = await authService.loginWithJWT(jwt);
+  AuthService authService = AuthService(MongoDbAuthProvider(app, dbService));
+
+  var allow = await authService.loginWithJWT(
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRiYzVhODZiLWVkM2MtNDZlZS1iYWU2LTIxODBlOTRhZjVlNiIsImVtYWlsIjoiYW1yQGdtYWlsLmNvbSIsImlhdCI6MTY4NDMzMTgyMywiZXhwIjoxNjkyMTA3ODIzfQ.WWbUaWo6enq0-2XbzpR2ypKEcgB4gPB_GqiEKldRJZU');
   print(allow);
 }
