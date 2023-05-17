@@ -42,13 +42,10 @@ class MemoryDbAuthProvider extends AuthDbProvider {
   @override
   Future<bool> saveUserAuth(AuthModel authModel) async {
     try {
-      var docRef = dbService.memoryDbController
+      dbService.memoryDbController
           .collection(app.authSettings.collectionName)
           .insertDoc(authModel.toJson());
-      var data = docRef.getData();
-      if (data == null) {
-        return false;
-      }
+
       return true;
     } catch (e) {
       return false;

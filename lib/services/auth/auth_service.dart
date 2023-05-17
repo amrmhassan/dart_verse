@@ -34,7 +34,6 @@ class AuthService {
     String passwordHash = SecurePassword(password).getPasswordHash();
 
     // first check if email already exists
-    //! AuthModel? savedModel = await _authRead.getByEmail(email);
     AuthModel? savedModel = await _authDbProvider.getUserByEmail(email);
     if (savedModel != null) {
       throw DuplicateEmailException();
@@ -46,20 +45,16 @@ class AuthService {
       passwordHash: passwordHash,
     );
 
-    //! var authData = await _authCollections.auth.insertOne(authModel.toJson());
     bool authSaved = await _authDbProvider.saveUserAuth(authModel);
     if (!authSaved) {
       throw DBWriteException('failed to register user');
     }
     if (userData != null) {
-      //! var userDataRes = await _authCollections.usersData.insertOne(userData);
       var userDataSaved = await _authDbProvider.saveUserData(userData);
       if (!userDataSaved) {
         throw DBWriteException('failed to save user data');
       }
     }
-    //! String jwtToken =
-    // !    await _jwtController.createJwtAndSave(id: id, email: email);
 
     String jwtToken = await _authDbProvider.createJwtAndSave(id, email);
 
@@ -70,7 +65,6 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    //! AuthModel? savedModel = await _authRead.getByEmail(email);
     AuthModel? savedModel = await _authDbProvider.getUserByEmail(email);
 
     if (savedModel == null) {
@@ -81,8 +75,6 @@ class AuthService {
     if (!rightPassword) {
       throw InvalidPassword();
     }
-    //! String jwtToken =
-    // !    await _jwtController.createJwtAndSave(id: savedModel.id, email: email);
     String jwtToken =
         await _authDbProvider.createJwtAndSave(savedModel.id, email);
 
