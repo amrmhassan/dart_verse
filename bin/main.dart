@@ -1,9 +1,12 @@
 // flutter packages pub run build_runner build --delete-conflicting-outputs
 
+import 'package:dart_verse/features/auth_db_provider/memory_db_auth_provider/memory_db_auth_provider.dart';
+import 'package:dart_verse/services/auth/auth_service.dart';
 import 'package:dart_verse/services/db_manager/db_providers/impl/memory_db/memory_db_provider.dart';
 import 'package:dart_verse/services/db_manager/db_providers/impl/mongo_db/mongo_db_provider.dart';
 import 'package:dart_verse/services/db_manager/db_service.dart';
 import 'package:dart_verse/settings/app/app.dart';
+import 'package:dart_verse/settings/auth_settings/auth_settings.dart';
 import 'package:dart_verse/settings/db_settings/db_settings.dart';
 
 import 'constants.dart';
@@ -20,12 +23,18 @@ void main(List<String> arguments) async {
     mongoDBProvider: mongoDBProvider,
     memoryDBProvider: memoryDBProvider,
   );
-  App app = App(dbSettings: dbSettings);
+  AuthSettings authSettings = AuthSettings(jwtSecretKey: 'jwtSecretKey');
+  App app = App(
+    dbSettings: dbSettings,
+    authSettings: authSettings,
+  );
   DbService dbService = DbService(app);
   await dbService.connectToDb();
-  var doc = dbService.memoryDbController
-      .collection('name')
-      .doc()
-      .set({'name': 'Amr'});
-  print(doc.getData());
+  AuthService authService = AuthService(MemoryDbAuthProvider(app, dbService));
+  String jwt = await authService.registerUser(
+    email: 'amr@gmail.com',
+    password: 'password',
+  );
+  var allow = await authService.loginWithJWT(jwt);
+  print(allow);
 }

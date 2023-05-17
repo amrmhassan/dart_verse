@@ -38,3 +38,7 @@ class DbNotConnectedException extends DBException {
   DbNotConnectedException()
       : super('db not connected yet, please run dbService.connectToDb()');
 }
+
+class DbAlreadyConnectedException extends DBException {
+  DbAlreadyConnectedException() : super('db already connected before.');
+}

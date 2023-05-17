@@ -65,6 +65,23 @@ class MemoryDbCollection {
     }
   }
 
+  DocRefMemory? getDocWhere(
+    bool Function(dynamic element) testMethod,
+  ) {
+    String collId = _id;
+    if (_memoryDb[collId] == null) return null;
+    Map<String, dynamic>? doc = _memoryDb[collId]!.cast().firstWhere(
+          testMethod,
+          orElse: () => null,
+        );
+    if (doc == null) {
+      return null;
+    } else {
+      String docId = doc[DBRKeys.id];
+      return DocRefMemory(docId, _collRefMemory, _memoryDb);
+    }
+  }
+
   Iterable<DocRefMemory> getAllDocuments() {
     String collId = _id;
     // check if coll exists or not

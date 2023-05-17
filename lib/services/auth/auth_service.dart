@@ -1,27 +1,25 @@
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:dart_verse/errors/models/auth_errors.dart';
 import 'package:dart_verse/errors/models/database_errors.dart';
-import 'package:dart_verse/services/db_manager/db_service.dart';
-import 'package:dart_verse/settings/app/app.dart';
-import 'package:dart_verse/features/app_database/controllers/auth_read.dart';
+import 'package:dart_verse/features/auth_db_provider/auth_db_provider.dart';
+import 'package:dart_verse/services/auth/models/jwt_payload.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
-import 'controllers/auth_collections.dart';
-import 'controllers/jwt_controller.dart';
 import 'controllers/secure_password.dart';
 import 'models/auth_model.dart';
 
 class AuthService {
-  final App _app;
-  final DbService _dbService;
-  late JWTController _jwtController;
-  late AuthRead _authRead;
-  late AuthCollections _authCollections;
+  // final DbService _dbService;
+  final AuthDbProvider _authDbProvider;
+  // late JWTController _jwtController;
+  // late AuthCollections _authCollections;
 
-  AuthService(this._app, this._dbService) {
-    _authCollections = AuthCollections(_app, _dbService);
-    _authRead = AuthRead(_app, _dbService);
-    _jwtController = JWTController(_app, _authCollections);
+  AuthService(
+    //  this._dbService,
+    this._authDbProvider,
+  ) {
+    // _authCollections = AuthCollections(_app, _dbService);
+    // _jwtController = JWTController(_app, _authCollections);
   }
 
   /// this will return a jwt for the user to use to sign in again without the need of the email and password again
@@ -36,7 +34,8 @@ class AuthService {
     String passwordHash = SecurePassword(password).getPasswordHash();
 
     // first check if email already exists
-    AuthModel? savedModel = await _authRead.getByEmail(email);
+    //! AuthModel? savedModel = await _authRead.getByEmail(email);
+    AuthModel? savedModel = await _authDbProvider.getUserByEmail(email);
     if (savedModel != null) {
       throw DuplicateEmailException();
     }
@@ -47,18 +46,22 @@ class AuthService {
       passwordHash: passwordHash,
     );
 
-    var authData = await _authCollections.auth.insertOne(authModel.toJson());
-    if (authData.failure) {
+    //! var authData = await _authCollections.auth.insertOne(authModel.toJson());
+    bool authSaved = await _authDbProvider.saveUserAuth(authModel);
+    if (!authSaved) {
       throw DBWriteException('failed to register user');
     }
     if (userData != null) {
-      var userDataRes = await _authCollections.usersData.insertOne(userData);
-      if (userDataRes.failure) {
-        throw DBWriteException('Failed to save user data');
+      //! var userDataRes = await _authCollections.usersData.insertOne(userData);
+      var userDataSaved = await _authDbProvider.saveUserData(userData);
+      if (!userDataSaved) {
+        throw DBWriteException('failed to save user data');
       }
     }
-    String jwtToken =
-        await _jwtController.createJwtAndSave(id: id, email: email);
+    //! String jwtToken =
+    // !    await _jwtController.createJwtAndSave(id: id, email: email);
+
+    String jwtToken = await _authDbProvider.createJwtAndSave(id, email);
 
     return jwtToken;
   }
@@ -67,7 +70,9 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    AuthModel? savedModel = await _authRead.getByEmail(email);
+    //! AuthModel? savedModel = await _authRead.getByEmail(email);
+    AuthModel? savedModel = await _authDbProvider.getUserByEmail(email);
+
     if (savedModel == null) {
       throw NoUserRegistered();
     }
@@ -76,19 +81,36 @@ class AuthService {
     if (!rightPassword) {
       throw InvalidPassword();
     }
+    //! String jwtToken =
+    // !    await _jwtController.createJwtAndSave(id: savedModel.id, email: email);
     String jwtToken =
-        await _jwtController.createJwtAndSave(id: savedModel.id, email: email);
+        await _authDbProvider.createJwtAndSave(savedModel.id, email);
 
     return jwtToken;
   }
 
-  Future<void> loginWithJWT(String jwt) async {
+  /// if the jwt is valid and allowed then it will return true else false
+  Future<bool> loginWithJWT(String jwt) async {
     // verify the jwt isn't manipulated
+    var res = JWT.tryVerify(
+        jwt, SecretKey(_authDbProvider.app.authSettings.jwtSecretKey));
+    if (res == null) {
+      return false;
+    }
     // get the data from the jwt
+    JWTPayloadModel model = JWTPayloadModel.fromJson(res.payload);
+
     // check for the jwt in the allowed jwt tokens and active
+    bool jwtIsActive = await _authDbProvider.checkIfJwtIsActive(jwt, model.id);
+    if (!jwtIsActive) {
+      return jwtIsActive;
+    }
     // check for the user id if it is a valid user
+    AuthModel? authModel = await _authDbProvider.getUserByEmail(model.email);
+    if (authModel == null) {
+      return false;
+    }
     // then allow the user to continue
-    var res = JWT.tryVerify(jwt, SecretKey(_app.authSettings.jwtSecretKey));
-    print(res);
+    return true;
   }
 }

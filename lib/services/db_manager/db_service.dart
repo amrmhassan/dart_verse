@@ -12,6 +12,7 @@ class DbService {
   DbService(App app) : _app = app;
   bool _dbConnected = false;
 
+  /// MongoDb controller
   MongoDbController get mongoDbController {
     if (!_dbConnected) {
       throw DbNotConnectedException();
@@ -25,6 +26,7 @@ class DbService {
     return _mongoDbController!;
   }
 
+  /// `Non persistent` db, data saved to RAM
   MemoryDbController get memoryDbController {
     if (!_dbConnected) {
       throw DbNotConnectedException();
@@ -42,6 +44,9 @@ class DbService {
 
   //#  Connect DBs
   Future<void> connectToDb() async {
+    if (_dbConnected) {
+      throw DbAlreadyConnectedException();
+    }
     DbConnect dbConnect = DbConnect(_app);
     await dbConnect.connectAllProvidedDBs(
       setMemoryController: _setMemoryController,
@@ -57,6 +62,7 @@ class DbService {
   }
 
   //# getting Dbs references
+  /// get the actual mongoDb reference for more control on the mongo db
   Db get getMongoDB {
     if (_app.dbSettings.mongoDBProvider == null) {
       throw NoMongoDbProviderExceptions();
@@ -64,6 +70,7 @@ class DbService {
     return _app.dbSettings.mongoDBProvider!.db;
   }
 
+  /// get the actual memory db Object(data stored on this object)
   Map<String, List<Map<String, dynamic>>> get getMemoryDb {
     if (_app.dbSettings.memoryDBProvider == null) {
       throw NoMemoryDbProviderExceptions();
