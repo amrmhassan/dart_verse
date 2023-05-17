@@ -3,6 +3,7 @@
 import 'package:dart_verse/constants/model_fields.dart';
 import 'package:dart_verse/constants/reserved_keys.dart';
 import 'package:dart_verse/features/auth_db_provider/auth_db_provider.dart';
+import 'package:dart_verse/features/repo/mongo_db_repo_provider.dart';
 import 'package:dart_verse/services/auth/models/auth_model.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
@@ -10,7 +11,8 @@ import '../../../services/auth/controllers/jwt_controller.dart';
 import '../../../services/db_manager/db_service.dart';
 import '../../../settings/app/app.dart';
 
-class MongoDbAuthProvider extends AuthDbProvider {
+class MongoDbAuthProvider extends AuthDbProvider
+    implements MongoDbRepoProvider {
   @override
   final App app;
   @override
@@ -46,15 +48,15 @@ class MongoDbAuthProvider extends AuthDbProvider {
     try {
       var docRef = await dbService.mongoDbController
           .collection(app.authSettings.collectionName)
-          .insertOne(authModel.toJson());
+          .insertOne(authModel.toJsonWith_Id());
 
-      bool failure = docRef.failure || docRef.isFailure;
+      bool failure = docRef.failure;
       if (failure) {
         return false;
       }
       return true;
     } catch (e) {
-      return false;
+      rethrow;
     }
   }
 
@@ -64,14 +66,14 @@ class MongoDbAuthProvider extends AuthDbProvider {
       var docRef = await dbService.mongoDbController
           .collection(app.userDataSettings.collectionName)
           .insertOne(userData);
-      bool failure = docRef.failure || docRef.isFailure;
+      bool failure = docRef.failure;
       if (failure) {
         return false;
       }
 
       return true;
     } catch (e) {
-      return false;
+      rethrow;
     }
   }
 

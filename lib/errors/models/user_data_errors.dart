@@ -14,3 +14,9 @@ class NoUserDataSettingsException extends UserDataExceptions {
       : super(
             'no user data settings provided, please add UserDataSettings to the app');
 }
+
+class UserDataServiceDependOnAuthServiceException extends UserDataExceptions {
+  UserDataServiceDependOnAuthServiceException()
+      : super(
+            'the _authService.authDbProvider in userDataService does\'nt match any of the userDataServiceDbProviders, please check your userDataDbProviders');
+}

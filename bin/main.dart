@@ -1,14 +1,15 @@
 // flutter packages pub run build_runner build --delete-conflicting-outputs
 
-import 'package:dart_verse/features/auth_db_provider/memory_db_auth_provider/memory_db_auth_provider.dart';
 import 'package:dart_verse/features/auth_db_provider/mongo_db_auth_provider/mongo_db_auth_provider.dart';
 import 'package:dart_verse/services/auth/auth_service.dart';
 import 'package:dart_verse/services/db_manager/db_providers/impl/memory_db/memory_db_provider.dart';
 import 'package:dart_verse/services/db_manager/db_providers/impl/mongo_db/mongo_db_provider.dart';
 import 'package:dart_verse/services/db_manager/db_service.dart';
+import 'package:dart_verse/services/user_data/user_data_service.dart';
 import 'package:dart_verse/settings/app/app.dart';
 import 'package:dart_verse/settings/auth_settings/auth_settings.dart';
 import 'package:dart_verse/settings/db_settings/db_settings.dart';
+import 'package:dart_verse/settings/user_data_settings/user_data_settings.dart';
 
 import 'constants.dart';
 
@@ -24,16 +25,27 @@ void main(List<String> arguments) async {
     mongoDBProvider: mongoDBProvider,
     memoryDBProvider: memoryDBProvider,
   );
+  UserDataSettings userDataSettings = UserDataSettings();
   AuthSettings authSettings = AuthSettings(jwtSecretKey: 'jwtSecretKey');
   App app = App(
     dbSettings: dbSettings,
     authSettings: authSettings,
+    userDataSettings: userDataSettings,
   );
+
   DbService dbService = DbService(app);
   await dbService.connectToDb();
   AuthService authService = AuthService(MongoDbAuthProvider(app, dbService));
-
-  var allow = await authService.loginWithJWT(
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRiYzVhODZiLWVkM2MtNDZlZS1iYWU2LTIxODBlOTRhZjVlNiIsImVtYWlsIjoiYW1yQGdtYWlsLmNvbSIsImlhdCI6MTY4NDMzMTgyMywiZXhwIjoxNjkyMTA3ODIzfQ.WWbUaWo6enq0-2XbzpR2ypKEcgB4gPB_GqiEKldRJZU');
-  print(allow);
+  UserDataService userDataService = UserDataService(authService);
+  await userDataService
+      .setUserData("this is a user custom id", {'testField': 'What the lol'});
+  // await authService.registerUser(
+  //   email: 'osama@gmail.com',
+  //   password: 'password',
+  //   userData: {
+  //     'name': 'Osama Mohammed',
+  //     'age': 16,
+  //     'skills': 'Null',
+  //   },
+  // );
 }

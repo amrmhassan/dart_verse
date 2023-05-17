@@ -1,6 +1,7 @@
 // ignore_for_file: overridden_fields
 
 import 'package:dart_verse/features/auth_db_provider/auth_db_provider.dart';
+import 'package:dart_verse/features/repo/memory_db_repo_provider.dart';
 import 'package:dart_verse/services/auth/controllers/jwt_controller.dart';
 import 'package:dart_verse/services/auth/models/auth_model.dart';
 
@@ -8,7 +9,8 @@ import '../../../constants/model_fields.dart';
 import '../../../services/db_manager/db_service.dart';
 import '../../../settings/app/app.dart';
 
-class MemoryDbAuthProvider extends AuthDbProvider {
+class MemoryDbAuthProvider extends AuthDbProvider
+    implements MemoryDbRepoProvider {
   @override
   final App app;
   @override
@@ -46,7 +48,7 @@ class MemoryDbAuthProvider extends AuthDbProvider {
     try {
       dbService.memoryDbController
           .collection(app.authSettings.collectionName)
-          .insertDoc(authModel.toJson());
+          .insertDoc(authModel.toJsonWith_Id());
 
       return true;
     } catch (e) {

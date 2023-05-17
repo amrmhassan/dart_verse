@@ -1,4 +1,5 @@
 import 'package:dart_verse/errors/models/database_errors.dart';
+import 'package:dart_verse/services/service.dart';
 import 'package:dart_verse/settings/app/app.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
@@ -7,7 +8,7 @@ import '../../features/app_database/controllers/db_connect.dart';
 import 'data/repositories/db_controllers/memory_db_controller.dart';
 import 'data/repositories/db_controllers/mongo_db_controller.dart';
 
-class DbService {
+class DbService implements DVService {
   final App _app;
   DbService(App app) : _app = app;
   bool _dbConnected = false;
