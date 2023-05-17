@@ -16,18 +16,25 @@ class MongoDbUserDataProvider extends UserDataDbProvider
   final DbService dbService;
   MongoDbUserDataProvider(this.app, this.dbService) : super(app, dbService);
   @override
-  Future<Map<String, dynamic>?> deleteUserData(String userId) async {
+  Future<Map<String, dynamic>?> deleteUserData(
+    String userId,
+    bool deleteAuthData,
+    Future<void> Function() deleteAuthDataMethod,
+  ) async {
     var res = await dbService.mongoDbController
         .collection(app.userDataSettings.collectionName)
         .deleteOne(where.eq(DBRKeys.id, userId));
+
+    if (deleteAuthData) {
+      //! here delete the auth data and jwt data
+      await deleteAuthDataMethod();
+    }
     return res.document;
   }
 
   @override
   Future<Map<String, dynamic>> setUserData(
-    String userId,
-    Map<String, dynamic> newDoc,
-  ) async {
+      String userId, Map<String, dynamic> newDoc) async {
     var res = await dbService.mongoDbController
         .collection(app.userDataSettings.collectionName)
         .doc(userId)

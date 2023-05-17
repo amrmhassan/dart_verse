@@ -102,4 +102,16 @@ class MemoryDbAuthProvider extends AuthDbProvider
     }
     return false;
   }
+
+  @override
+  Future<void> deleteAuthData(String id) {
+    // TODO: implement deleteAuthData
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<AuthModel?> getUserById(String id) {
+    // TODO: implement getUserById
+    throw UnimplementedError();
+  }
 }

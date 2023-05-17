@@ -29,8 +29,8 @@ class LoginUserException extends AuthException {
   LoginUserException(this.message) : super(message);
 }
 
-class NoUserRegistered extends LoginUserException {
-  NoUserRegistered() : super('no user registered');
+class NoUserRegisteredException extends LoginUserException {
+  NoUserRegisteredException() : super('no user registered');
 }
 
 class InvalidPassword extends LoginUserException {

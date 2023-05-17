@@ -7,7 +7,11 @@ class MemoryDbUserDataProvider extends UserDataDbProvider
   MemoryDbUserDataProvider(super.app, super.dbService);
 
   @override
-  Future<Map<String, dynamic>> deleteUserData(String userId) {
+  Future<Map<String, dynamic>> deleteUserData(
+    String userId,
+    bool deleteAuthData,
+    Future<void> Function() deleteAuthDataMethod,
+  ) {
     // TODO: implement deleteUserData
     throw UnimplementedError();
   }

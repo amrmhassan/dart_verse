@@ -37,8 +37,10 @@ void main(List<String> arguments) async {
   await dbService.connectToDb();
   AuthService authService = AuthService(MongoDbAuthProvider(app, dbService));
   UserDataService userDataService = UserDataService(authService);
-  await userDataService
-      .setUserData("this is a user custom id", {'testField': 'What the lol'});
+  await userDataService.deleteUserData(
+    "this is a user custom id",
+    deleteAuthData: true,
+  );
   // await authService.registerUser(
   //   email: 'osama@gmail.com',
   //   password: 'password',

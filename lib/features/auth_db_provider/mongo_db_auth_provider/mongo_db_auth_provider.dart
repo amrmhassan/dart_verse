@@ -113,4 +113,36 @@ class MongoDbAuthProvider extends AuthDbProvider
     }
     return false;
   }
+
+  @override
+  Future<void> deleteAuthData(String id) async {
+    var res = await dbService.mongoDbController
+        .collection(app.authSettings.activeJWTCollName)
+        .doc(id)
+        .delete();
+    if (res.failure) {
+      throw Exception('cant delete jwt data for the user');
+    }
+    var userAuthRes = await dbService.mongoDbController
+        .collection(app.authSettings.collectionName)
+        .doc(id)
+        .delete();
+    if (userAuthRes.failure) {
+      throw Exception('cant delete user auth data for the user');
+    }
+  }
+
+  @override
+  Future<AuthModel?> getUserById(String id) async {
+    var data = await dbService.mongoDbController
+        .collection(app.authSettings.collectionName)
+        .findOne(where.eq(DBRKeys.id, id));
+
+    if (data == null) return null;
+    try {
+      return AuthModel.fromJson(data);
+    } catch (e) {
+      return null;
+    }
+  }
 }

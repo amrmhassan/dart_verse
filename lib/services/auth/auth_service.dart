@@ -66,7 +66,7 @@ class AuthService implements DVService {
     AuthModel? savedModel = await authDbProvider.getUserByEmail(email);
 
     if (savedModel == null) {
-      throw NoUserRegistered();
+      throw NoUserRegisteredException();
     }
     bool rightPassword =
         SecurePassword(password).checkPassword(savedModel.passwordHash);
@@ -102,5 +102,11 @@ class AuthService implements DVService {
     }
     // then allow the user to continue
     return true;
+  }
+
+  /// delete auth user data with the jwt data
+  Future<void> deleteAuthData(String userId) async {
+    //! here delete the user auth data
+    return authDbProvider.deleteAuthData(userId);
   }
 }
