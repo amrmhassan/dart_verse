@@ -1,7 +1,7 @@
 import 'package:uuid/uuid.dart';
 
 import '../../../../../constants/reserved_keys.dart';
-import '../../../validation/naming_restrictions.dart';
+import '../../../validation/doc_validation.dart';
 import '../../repositories/memory_ref/coll_ref_memory.dart';
 import '../../repositories/memory_ref/doc_ref_memory.dart';
 

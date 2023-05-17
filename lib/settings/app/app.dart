@@ -2,12 +2,14 @@
 // it will require settings for auth, database, realtime database, etc...
 import 'package:dart_verse/features/db_manager/data/repositories/mongo_ref/coll_ref_mongo.dart';
 import 'package:dart_verse/settings/defaults/default_app_settings.dart';
-import 'package:dart_verse/features/database/controllers/db_connect.dart';
+import 'package:dart_verse/features/app_database/controllers/db_connect.dart';
 import 'package:dart_verse/settings/auth_settings/auth_settings.dart';
 import 'package:dart_verse/settings/db_settings/db_settings.dart';
 import 'package:dart_verse/settings/user_data_settings/user_data_settings.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
+import '../../features/db_manager/data/repositories/db_controllers/memory_db_controller.dart';
+import '../../features/db_manager/data/repositories/db_controllers/mongo_db_controller.dart';
 import '../../features/db_manager/data/repositories/memory_ref/coll_ref_memory.dart';
 
 //! i should keep track of collections and sub collections names in a string file or something
@@ -106,27 +108,5 @@ class App {
       throw Exception('please provide DBSettings if you wanna use db');
     }
     return _dbSettings!;
-  }
-}
-
-abstract class DbController {}
-
-class MongoDbController implements DbController {
-  final Db _db;
-  const MongoDbController(this._db);
-
-  CollRefMongo collection(String name) {
-    CollRefMongo collRef = CollRefMongo(name, null, _db);
-    return collRef;
-  }
-}
-
-class MemoryDbController implements DbController {
-  final Map<String, List<Map<String, dynamic>>> _memoryBb;
-  const MemoryDbController(this._memoryBb);
-
-  CollRefMemory collection(String name) {
-    CollRefMemory collRef = CollRefMemory(name, null, _memoryBb);
-    return collRef;
   }
 }
