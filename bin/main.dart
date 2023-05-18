@@ -12,15 +12,19 @@ import 'package:dart_verse/settings/db_settings/db_settings.dart';
 import 'package:dart_verse/settings/user_data_settings/user_data_settings.dart';
 
 import 'constants.dart';
+import 'package:mongo_dart/mongo_dart.dart';
 
 // next step is to create errors types and distribute them over the project
 // create separate files for each class you created (DbControllers in App), (DocRefMemory, CollRefMemory) etc...
 // delete unused class or file, to keep yourself concentrated on what is important
-//! draw a map or use Miro program to draw the work flow for the app and what comes and what goes
+// draw a map or use Miro program to draw the work flow for the app and what comes and what goes
+//! create tests for db and for auth services and for user data service
+//! This is very important
 
 void main(List<String> arguments) async {
   MongoDBProvider mongoDBProvider = MongoDBProvider(localConnLink);
   MemoryDBProvider memoryDBProvider = MemoryDBProvider({});
+
   DBSettings dbSettings = DBSettings(
     mongoDBProvider: mongoDBProvider,
     memoryDBProvider: memoryDBProvider,
@@ -37,17 +41,4 @@ void main(List<String> arguments) async {
   await dbService.connectToDb();
   AuthService authService = AuthService(MongoDbAuthProvider(app, dbService));
   UserDataService userDataService = UserDataService(authService);
-  await userDataService.deleteUserData(
-    "this is a user custom id",
-    deleteAuthData: true,
-  );
-  // await authService.registerUser(
-  //   email: 'osama@gmail.com',
-  //   password: 'password',
-  //   userData: {
-  //     'name': 'Osama Mohammed',
-  //     'age': 16,
-  //     'skills': 'Null',
-  //   },
-  // );
 }
