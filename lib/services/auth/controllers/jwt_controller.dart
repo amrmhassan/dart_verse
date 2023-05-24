@@ -17,6 +17,9 @@ class JWTController {
     JWTPayloadModel jwtPayload = JWTPayloadModel(
       id: id,
       email: email,
+      createdAt: DateTime.now().toIso8601String(),
+      ip: null,
+      other: {},
     );
     var jwt = JWT(jwtPayload.toJson());
     String signedJWT = jwt.sign(

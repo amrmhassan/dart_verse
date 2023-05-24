@@ -1,44 +1,63 @@
-// flutter packages pub run build_runner build --delete-conflicting-outputs
+import 'dart:io';
 
-import 'package:dart_verse/features/auth_db_provider/mongo_db_auth_provider/mongo_db_auth_provider.dart';
-import 'package:dart_verse/services/auth/auth_service.dart';
-import 'package:dart_verse/services/db_manager/db_providers/impl/memory_db/memory_db_provider.dart';
-import 'package:dart_verse/services/db_manager/db_providers/impl/mongo_db/mongo_db_provider.dart';
-import 'package:dart_verse/services/db_manager/db_service.dart';
-import 'package:dart_verse/services/user_data/user_data_service.dart';
-import 'package:dart_verse/settings/app/app.dart';
-import 'package:dart_verse/settings/auth_settings/auth_settings.dart';
-import 'package:dart_verse/settings/db_settings/db_settings.dart';
-import 'package:dart_verse/settings/user_data_settings/user_data_settings.dart';
+import 'package:shelf/shelf.dart';
+import 'package:shelf/shelf_io.dart' as shelf_io;
+import 'package:shelf_router/shelf_router.dart';
 
-import 'constants.dart';
-import 'package:mongo_dart/mongo_dart.dart';
+//! just continue the server service and make it easy to be used
+void main() {
+  var authHandlers = Router()
+    ..get('/login', (Request request) {
+      return Response.ok('logging');
+    });
 
-// next step is to create errors types and distribute them over the project
-// create separate files for each class you created (DbControllers in App), (DocRefMemory, CollRefMemory) etc...
-// delete unused class or file, to keep yourself concentrated on what is important
-// draw a map or use Miro program to draw the work flow for the app and what comes and what goes
+  var userDataHandlers = Router()
+    ..get('/user/<id>', (Request req, String id) {
+      return Response.ok('getting user id $id');
+    });
+
+  var authPipeLine = Pipeline().addMiddleware(
+    (innerHandler) {
+      return (Request req) {
+        print(req.url.path);
+        return Response.ok('hello');
+        // return innerHandler(req);
+      };
+    },
+  ).addHandler(authHandlers);
+
+  var userPipeLine =
+      Pipeline().addMiddleware(logRequests()).addHandler(userDataHandlers);
+  var cascade = Cascade().add(authPipeLine).add(userPipeLine);
+  var port = 8080;
+  shelf_io.serve(cascade.handler, InternetAddress.anyIPv4, port).then((server) {
+    print('Server listening on port $port');
+  });
+}       
+
 //! create tests for db and for auth services and for user data service
-//! This is very important
 
-void main(List<String> arguments) async {
-  MongoDBProvider mongoDBProvider = MongoDBProvider(localConnLink);
-  MemoryDBProvider memoryDBProvider = MemoryDBProvider({});
+// void main(List<String> arguments) async {
+  // MongoDBProvider mongoDBProvider = MongoDBProvider(localConnLink);
+  // MemoryDBProvider memoryDBProvider = MemoryDBProvider({});
 
-  DBSettings dbSettings = DBSettings(
-    mongoDBProvider: mongoDBProvider,
-    memoryDBProvider: memoryDBProvider,
-  );
-  UserDataSettings userDataSettings = UserDataSettings();
-  AuthSettings authSettings = AuthSettings(jwtSecretKey: 'jwtSecretKey');
-  App app = App(
-    dbSettings: dbSettings,
-    authSettings: authSettings,
-    userDataSettings: userDataSettings,
-  );
+  // DBSettings dbSettings = DBSettings(
+  //   mongoDBProvider: mongoDBProvider,
+  //   memoryDBProvider: memoryDBProvider,
+  // );
+  // UserDataSettings userDataSettings = UserDataSettings();
+  // AuthSettings authSettings = AuthSettings(jwtSecretKey: 'jwtSecretKey');
+  // App app = App(
+  //   dbSettings: dbSettings,
+  //   authSettings: authSettings,
+  //   userDataSettings: userDataSettings,
+  // );
 
-  DbService dbService = DbService(app);
-  await dbService.connectToDb();
-  AuthService authService = AuthService(MongoDbAuthProvider(app, dbService));
-  UserDataService userDataService = UserDataService(authService);
-}
+  // DbService dbService = DbService(app);
+  // await dbService.connectToDb();
+  // AuthService authService = AuthService(MongoDbAuthProvider(app, dbService));
+  // UserDataService userDataService = UserDataService(authService);
+// }
+
+//? visit this google oauth playground https://developers.google.com/oauthplayground to get more info about how to access google services for a google account
+//? and this link for google apis assess and manage https://developers.google.com/apis-explorer

@@ -4,7 +4,11 @@ import 'package:dart_verse/errors/models/app_exceptions.dart';
 import 'package:dart_verse/errors/models/user_data_errors.dart';
 import 'package:dart_verse/settings/auth_settings/auth_settings.dart';
 import 'package:dart_verse/settings/db_settings/db_settings.dart';
+import 'package:dart_verse/settings/server_settings/server_settings.dart';
 import 'package:dart_verse/settings/user_data_settings/user_data_settings.dart';
+import 'package:shelf/shelf.dart';
+
+import '../../errors/models/server_errors.dart';
 
 //! i should keep track of collections and sub collections names in a string file or something
 
@@ -12,14 +16,17 @@ class App {
   final AuthSettings? _authSettings;
   final DBSettings? _dbSettings;
   final UserDataSettings? _userDataSettings;
+  final ServerSettings? _serverSettings;
 
   App({
     AuthSettings? authSettings,
     DBSettings? dbSettings,
     UserDataSettings? userDataSettings,
+    ServerSettings? serverSettings,
   })  : _authSettings = authSettings,
         _dbSettings = dbSettings,
-        _userDataSettings = userDataSettings;
+        _userDataSettings = userDataSettings,
+        _serverSettings = serverSettings;
 
   //? the app starting point
   // Future<App> run({
@@ -52,5 +59,12 @@ class App {
       throw NoDbSettingsExceptions();
     }
     return _dbSettings!;
+  }
+
+  ServerSettings get serverSettings {
+    if (_serverSettings == null) {
+      throw NoServerSettingsExceptions();
+    }
+    return _serverSettings!;
   }
 }
