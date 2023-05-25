@@ -26,7 +26,7 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
 
   @override
   login(Request request) async {
-    await _wrapper(
+    return _wrapper(
       () async {
         String body = await request.readAsString();
 
@@ -50,7 +50,7 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
 
   @override
   register(Request request) async {
-    await _wrapper(
+    return _wrapper(
       () async {
         String body = await request.readAsString();
 

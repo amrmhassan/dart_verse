@@ -14,6 +14,9 @@ MongoDbConnLink cloudsConnLink = IpPortWithAuthConnLink(
 MongoDbConnLink atlasConnLink = DNSHostFullLink(
   connLink: env['REMOTECONNLINK'].toString(),
 );
-MongoDbConnLink localConnLink = DNSHostFullLink(
+MongoDbConnLink localConnLinkReplica = DNSHostFullLink(
   connLink: 'mongodb://localhost:27017/?replicaSet=rs0',
+);
+MongoDbConnLink localConnLink = DNSHostFullLink(
+  connLink: 'mongodb://localhost:27017',
 );

@@ -7,61 +7,85 @@ import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_router/shelf_router.dart';
 
 import '../../errors/models/server_errors.dart';
+import '../../settings/server_settings/repo/auth_server_settings.dart';
 
 class ServerService {
   final App _app;
-  ServerService(this._app);
+  final AuthServerSettings? _authServerSettings;
 
-  final Cascade _cascade = Cascade();
+  ServerService(
+    this._app, {
+    AuthServerSettings? authServerSettings,
+  }) : _authServerSettings = authServerSettings {
+    _cascade = Cascade();
+  }
+
+  late Cascade _cascade;
   final List<FutureOr<Response> Function(Request)> pileLines = [];
 
   Future<HttpServer> runServer() async {
     InternetAddress ip = _app.serverSettings.ip;
     int port = _app.serverSettings.port;
     _addAuthEndpoints();
+    //!
+    // var testRouter = Router()
+    //   ..get('/test', (Request request) {
+    //     return Response.ok('hello');
+    //   });
+    // var pipeline = Pipeline().addHandler(testRouter);
+    // var testCascade = _cascade.add(pipeline);
+    //!
+    var handler = cascade.handler;
     var server = await shelf_io.serve(
-      router.handler,
+      handler,
       ip,
       port,
     );
-    print('server listening on ${server.address.address}:${server.port}');
+    print(
+        'server listening on http://${server.address.address}:${server.port}');
     return server;
   }
 
   ServerService addPipeline(FutureOr<Response> Function(Request) handler) {
     pileLines.add(handler);
-    _cascade.add(handler);
+    _cascade = _cascade.add(handler);
     return this;
   }
 
-  Cascade get router {
+  Cascade get cascade {
     if (pileLines.isEmpty) {
       throw NoRouterSetException();
     }
     return _cascade;
   }
 
+  AuthServerSettings get authServerSettings {
+    if (_authServerSettings == null) {
+      throw NoAuthServerSettingsException();
+    }
+    return _authServerSettings!;
+  }
+
   void _addAuthEndpoints() {
-    if (_app.serverSettings.nullableAuthServerSettings != null) return;
-    String loginPath =
-        _app.serverSettings.authServerSettings.authEndpoints.login;
-    String registerPath =
-        _app.serverSettings.authServerSettings.authEndpoints.register;
-    // String jwtLoginPath = _app.serverSettings.authEndpoints.jwtLogin;
+    if (_authServerSettings == null) return;
+    String loginPath = authServerSettings.authEndpoints.login;
+    String registerPath = authServerSettings.authEndpoints.register;
+    // String jwtLoginPath = authEndpoints.jwtLogin;
 
     // adding auth endpoints pipeline
     var authRouter = Router()
           ..post(
             loginPath,
-            _app.serverSettings.authServerSettings.authServerHandlers.login,
+            authServerSettings.authServerHandlers.login,
           )
           ..post(
             registerPath,
-            _app.serverSettings.authServerSettings.authServerHandlers.register,
+            authServerSettings.authServerHandlers.register,
           )
         // ..post(jwtLoginPath, (Request request) {})
         ;
     var authPipeline = Pipeline().addHandler(authRouter);
+    // _cascade.add(authPipeline);
     addPipeline(authPipeline);
   }
 }
