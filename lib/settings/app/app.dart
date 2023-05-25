@@ -6,7 +6,6 @@ import 'package:dart_verse/settings/auth_settings/auth_settings.dart';
 import 'package:dart_verse/settings/db_settings/db_settings.dart';
 import 'package:dart_verse/settings/server_settings/server_settings.dart';
 import 'package:dart_verse/settings/user_data_settings/user_data_settings.dart';
-import 'package:shelf/shelf.dart';
 
 import '../../errors/models/server_errors.dart';
 
