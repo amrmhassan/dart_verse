@@ -1,12 +1,15 @@
 // ignore_for_file: overridden_fields
 
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:dart_verse/constants/model_fields.dart';
 import 'package:dart_verse/constants/reserved_keys.dart';
 import 'package:dart_verse/features/auth_db_provider/auth_db_provider.dart';
 import 'package:dart_verse/features/repo/mongo_db_repo_provider.dart';
 import 'package:dart_verse/services/auth/models/auth_model.dart';
+import 'package:googleapis/binaryauthorization/v1.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
+import '../../../errors/models/auth_errors.dart';
 import '../../../services/auth/controllers/jwt_controller.dart';
 import '../../../services/db_manager/db_service.dart';
 import '../../../settings/app/app.dart';
@@ -79,24 +82,56 @@ class MongoDbAuthProvider extends AuthDbProvider
 
   @override
   Future<void> saveJwt({required String id, required String jwt}) async {
-    // i just want to add the jwt to the user collection
-    var data = await dbService.mongoDbController
-        .collection(app.authSettings.activeJWTCollName)
-        .findOne(where.eq(DBRKeys.id, id));
+    //? first checks for saved jwts
+    var collection = dbService.mongoDbController
+        .collection(app.authSettings.activeJWTCollName);
 
-    List<String> jwts =
-        ((data?[ModelFields.activeTokens] ?? []) as List).cast();
-    // checking if saved jwts list contains the new jwt to skip adding it
-    if (jwts.any((element) => element == jwt)) {
-      return;
+// Check if the active JWTs count has exceeded the limit of 5
+    var countQuery =
+        where.eq(DBRKeys.id, id).fields([ModelFields.activeTokens]);
+    var countResult = await collection.findOne(countQuery);
+
+    var fetchedTokens = (countResult?[ModelFields.activeTokens] as List?) ?? [];
+    int activeTokensLength = 0;
+    for (var token in fetchedTokens) {
+      try {
+        JWT.verify(token, SecretKey(app.authSettings.jwtSecretKey));
+        activeTokensLength++;
+      } catch (e) {
+        continue;
+      }
     }
-    jwts.add(jwt);
+    if (activeTokensLength >= app.authSettings.maximumActiveJwts) {
+      throw LoginExceedException();
+    }
+    // i just want to add the jwt to the user collection
+    // var data = await dbService.mongoDbController
+    //     //! here instead of getting the data from the remote db
+    //     //! just make modification query to the db to add the new jwt to the list
+    //     .collection(app.authSettings.activeJWTCollName)
+    //     .findOne(where.eq(DBRKeys.id, id));
+
+    // List<String> jwts =
+    //     ((data?[ModelFields.activeTokens] ?? []) as List).cast();
+    // // checking if saved jwts list contains the new jwt to skip adding it
+    // if (jwts.any((element) => element == jwt)) {
+    //   return;
+    // }
+
+    var pushQuery = where.eq(DBRKeys.id, id);
+    var pushUpdate = modify.push(ModelFields.activeTokens, jwt);
+
     await dbService.mongoDbController
         .collection(app.authSettings.activeJWTCollName)
-        .doc(id)
-        .set({
-      ModelFields.activeTokens: jwts,
-    });
+        .update(pushQuery, pushUpdate, upsert: true);
+
+    // jwts.add(jwt);
+    // await dbService.mongoDbController
+    //     .collection(app.authSettings.activeJWTCollName)
+    //     .doc(id)
+    //     .set({
+    //   ModelFields.activeTokens: jwts,
+    // });
   }
 
   @override
@@ -144,5 +179,11 @@ class MongoDbAuthProvider extends AuthDbProvider
     } catch (e) {
       return null;
     }
+  }
+
+  @override
+  Future<bool> allowNewJwt(int maximum) {
+    // TODO: implement allowNewJwt
+    throw UnimplementedError();
   }
 }

@@ -36,3 +36,9 @@ class NoUserRegisteredException extends LoginUserException {
 class InvalidPassword extends LoginUserException {
   InvalidPassword() : super('invalid password');
 }
+
+class LoginExceedException extends LoginUserException {
+  LoginExceedException()
+      : super(
+            'logged in too much, too much active sessions, try logging out from all of your devices');
+}

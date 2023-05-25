@@ -17,4 +17,5 @@ abstract class AuthDbProvider {
   Future<void> saveJwt({required String id, required String jwt});
   Future<bool> checkIfJwtIsActive(String jwt, String id);
   Future<void> deleteAuthData(String id);
+  Future<bool> allowNewJwt(int maximum);
 }

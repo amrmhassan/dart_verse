@@ -10,27 +10,32 @@ import 'package:shelf/shelf.dart';
 import '../repo/auth_body_keys.dart';
 
 class DefaultAuthServerHandlers implements AuthServerHandlers {
-  Future _wrapper(Future Function() method) async {
+  Future _wrapper(Request request,
+      Future Function(Map<String, dynamic> body) method) async {
     try {
-      await method();
+      String body = await request.readAsString();
+      if (body.isEmpty) {
+        throw RequestBodyError();
+      }
+      Map<String, dynamic> data = json.decode(body);
+
+      return await method(data);
     } on ServerException catch (e) {
-      _sendBadBodyErrorToUser(e.message);
+      return _sendBadBodyErrorToUser(e.message);
     } on AuthException catch (e) {
-      _sendAuthErrorToUser(e.message);
+      return _sendAuthErrorToUser(e.message);
     } on ServerLessException catch (e) {
-      _sendOtherExceptionErrorToUser(e.message);
+      return _sendOtherExceptionErrorToUser(e.message);
     } catch (e) {
-      _sendOtherExceptionErrorToUser('unknown error occurred');
+      return _sendOtherExceptionErrorToUser('unknown error occurred');
     }
   }
 
   @override
   login(Request request) async {
     return _wrapper(
-      () async {
-        String body = await request.readAsString();
-
-        Map<String, dynamic> data = json.decode(body);
+      request,
+      (data) async {
         String emailKey = defaultAuthBodyKeys.email;
         String passwordKey = defaultAuthBodyKeys.password;
         String? email = data[emailKey];
@@ -51,10 +56,8 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
   @override
   register(Request request) async {
     return _wrapper(
-      () async {
-        String body = await request.readAsString();
-
-        Map<String, dynamic> data = json.decode(body);
+      request,
+      (data) async {
         String emailKey = defaultAuthBodyKeys.email;
         String passwordKey = defaultAuthBodyKeys.password;
         String userDataKey = defaultAuthBodyKeys.userData;
@@ -86,28 +89,30 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
   DefaultAuthServerHandlers(this.authService, this.defaultAuthBodyKeys);
 
   _sendJwtToUser(String jwt) {
-    return Response.ok({
+    return Response.ok(json.encode({
       "msg": 'success',
       'code': 200,
       'jwt': jwt,
-    });
+    }));
   }
 
   _sendBadBodyErrorToUser(String e) {
-    return Response.badRequest(body: {
+    return Response.badRequest(
+        body: json.encode({
       'error': e,
-    });
+    }));
   }
 
   _sendAuthErrorToUser(String e) {
-    return Response.forbidden({
+    return Response.forbidden(json.encode({
       'error': e,
-    });
+    }));
   }
 
   _sendOtherExceptionErrorToUser(String e) {
-    return Response.internalServerError(body: {
+    return Response.internalServerError(
+        body: json.encode({
       'error': e,
-    });
+    }));
   }
 }

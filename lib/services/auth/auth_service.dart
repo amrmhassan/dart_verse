@@ -73,6 +73,9 @@ class AuthService implements DVService {
     if (!rightPassword) {
       throw InvalidPassword();
     }
+    // check maximum number of jwts reached or not
+
+    // create and send the new jwt for the user
     String jwtToken =
         await authDbProvider.createJwtAndSave(savedModel.id, email);
 
@@ -109,4 +112,6 @@ class AuthService implements DVService {
     //! here delete the user auth data
     return authDbProvider.deleteAuthData(userId);
   }
+
+  //! add the logout and make it delete just the jwt of that session
 }

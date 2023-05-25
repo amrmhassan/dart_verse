@@ -61,7 +61,10 @@ void main(List<String> arguments) async {
     memoryDBProvider: memoryDBProvider,
   );
   UserDataSettings userDataSettings = UserDataSettings();
-  AuthSettings authSettings = AuthSettings(jwtSecretKey: 'jwtSecretKey');
+  AuthSettings authSettings = AuthSettings(
+    jwtSecretKey: 'jwtSecretKey',
+    maximumActiveJwts: 8,
+  );
   ServerSettings serverSettings = ServerSettings(InternetAddress.anyIPv4, 3000);
   App app = App(
     dbSettings: dbSettings,

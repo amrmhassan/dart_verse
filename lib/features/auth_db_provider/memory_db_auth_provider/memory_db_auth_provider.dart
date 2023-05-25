@@ -114,4 +114,10 @@ class MemoryDbAuthProvider extends AuthDbProvider
     // TODO: implement getUserById
     throw UnimplementedError();
   }
+
+  @override
+  Future<bool> allowNewJwt(int maximum) {
+    // TODO: implement allowNewJwt
+    throw UnimplementedError();
+  }
 }

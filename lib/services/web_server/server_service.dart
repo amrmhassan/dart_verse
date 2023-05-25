@@ -41,8 +41,10 @@ class ServerService {
       ip,
       port,
     );
-    print(
-        'server listening on http://${server.address.address}:${server.port}');
+    String ipString = server.address.address == InternetAddress.anyIPv4.address
+        ? '127.0.0.1'
+        : server.address.address;
+    print('server listening on http://$ipString:${server.port}');
     return server;
   }
 

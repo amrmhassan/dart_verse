@@ -16,11 +16,16 @@ class AuthSettings {
   /// this is the collection name for the active tokens of the user to keep track of all user sessions
   final String activeJWTCollName;
 
+  /// this will define how many times user can login while there is another active jwt to be used
+  /// to prevent so many creations of jwts
+  final int maximumActiveJwts;
+
   const AuthSettings({
     required this.jwtSecretKey,
     this.collectionName = DefaultAuthSettings.collectionName,
     this.allowDuplicateEmails = DefaultAuthSettings.allowDuplicateEmails,
     this.authExpireAfter = DefaultAuthSettings.authExpireAfter,
     this.activeJWTCollName = DefaultAuthSettings.activeTokensCollName,
+    this.maximumActiveJwts = 5,
   });
 }
