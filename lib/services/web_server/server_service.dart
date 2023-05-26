@@ -48,9 +48,35 @@ class ServerService {
     return server;
   }
 
-  ServerService addPipeline(FutureOr<Response> Function(Request) handler) {
-    pileLines.add(handler);
-    _cascade = _cascade.add(handler);
+  ServerService addPipeline(
+    FutureOr<Response> Function(Request) handler, {
+    bool jwtSecured = false,
+    String? idFieldName,
+    String? idEqualTo,
+    String? roleFieldName,
+    String? roleEqualTo,
+  }) {
+    var securedPipeline = Pipeline();
+    //? adding middlewares here
+    if (jwtSecured) {
+      securedPipeline = securedPipeline.addMiddleware(
+        authServerSettings.authServerMiddlewares.checkJwtInHeaders,
+      );
+      securedPipeline = securedPipeline.addMiddleware(
+        authServerSettings.authServerMiddlewares.checkJwtValid,
+      );
+
+      securedPipeline = securedPipeline.addMiddleware(
+        authServerSettings.authServerMiddlewares.checkJwtForUserId,
+      );
+    }
+
+    //?
+
+    var finalHandler = securedPipeline.addHandler(handler);
+
+    pileLines.add(finalHandler);
+    _cascade = _cascade.add(finalHandler);
     return this;
   }
 

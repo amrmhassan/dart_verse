@@ -8,6 +8,7 @@ import 'package:dart_verse/settings/server_settings/repo/auth_server_handlers.da
 import 'package:shelf/shelf.dart';
 
 import '../repo/auth_body_keys.dart';
+import '../utils/send_response.dart';
 
 class DefaultAuthServerHandlers implements AuthServerHandlers {
   Future _wrapper(Request request,
@@ -21,13 +22,13 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
 
       return await method(data);
     } on ServerException catch (e) {
-      return _sendBadBodyErrorToUser(e.message);
+      return SendResponse.sendBadBodyErrorToUser(e.message);
     } on AuthException catch (e) {
-      return _sendAuthErrorToUser(e.message);
+      return SendResponse.sendAuthErrorToUser(e.message);
     } on ServerLessException catch (e) {
-      return _sendOtherExceptionErrorToUser(e.message);
+      return SendResponse.sendOtherExceptionErrorToUser(e.message);
     } catch (e) {
-      return _sendOtherExceptionErrorToUser('unknown error occurred');
+      return SendResponse.sendUnknownError();
     }
   }
 
@@ -48,7 +49,7 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
           email: email,
           password: password,
         );
-        return _sendJwtToUser(jwt);
+        return SendResponse.sendDataToUser(jwt, dataFieldName: 'jwt');
       },
     );
   }
@@ -75,7 +76,7 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
           password: password,
           userData: userData,
         );
-        return _sendJwtToUser(jwt);
+        return SendResponse.sendDataToUser(jwt, dataFieldName: 'jwt');
       },
     );
   }
@@ -87,32 +88,4 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
   AuthBodyKeys defaultAuthBodyKeys;
 
   DefaultAuthServerHandlers(this.authService, this.defaultAuthBodyKeys);
-
-  _sendJwtToUser(String jwt) {
-    return Response.ok(json.encode({
-      "msg": 'success',
-      'code': 200,
-      'jwt': jwt,
-    }));
-  }
-
-  _sendBadBodyErrorToUser(String e) {
-    return Response.badRequest(
-        body: json.encode({
-      'error': e,
-    }));
-  }
-
-  _sendAuthErrorToUser(String e) {
-    return Response.forbidden(json.encode({
-      'error': e,
-    }));
-  }
-
-  _sendOtherExceptionErrorToUser(String e) {
-    return Response.internalServerError(
-        body: json.encode({
-      'error': e,
-    }));
-  }
 }

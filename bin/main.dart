@@ -5,7 +5,6 @@ import 'package:dart_verse/services/auth/auth_service.dart';
 import 'package:dart_verse/services/db_manager/db_providers/impl/memory_db/memory_db_provider.dart';
 import 'package:dart_verse/services/db_manager/db_providers/impl/mongo_db/mongo_db_provider.dart';
 import 'package:dart_verse/services/db_manager/db_service.dart';
-import 'package:dart_verse/services/user_data/user_data_service.dart';
 import 'package:dart_verse/services/web_server/server_service.dart';
 import 'package:dart_verse/settings/app/app.dart';
 import 'package:dart_verse/settings/auth_settings/auth_settings.dart';
@@ -61,10 +60,7 @@ void main(List<String> arguments) async {
     memoryDBProvider: memoryDBProvider,
   );
   UserDataSettings userDataSettings = UserDataSettings();
-  AuthSettings authSettings = AuthSettings(
-    jwtSecretKey: 'jwtSecretKey',
-    maximumActiveJwts: 8,
-  );
+  AuthSettings authSettings = AuthSettings(jwtSecretKey: 'jwtSecretKey');
   ServerSettings serverSettings = ServerSettings(InternetAddress.anyIPv4, 3000);
   App app = App(
     dbSettings: dbSettings,
@@ -80,6 +76,16 @@ void main(List<String> arguments) async {
   ServerService serverService = ServerService(
     app,
     authServerSettings: DefaultAuthServerSettings(authService),
+  );
+
+  var userDataRouter = Router()
+    ..get('/user/<id>', (Request request, String id) {
+      return Response.ok('user data fetched successfully with id $id');
+    });
+  var userDataHandler = Pipeline().addHandler(userDataRouter);
+  serverService.addPipeline(
+    userDataHandler,
+    jwtSecured: true,
   );
   await serverService.runServer();
 }
