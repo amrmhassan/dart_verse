@@ -16,11 +16,11 @@ class DefaultAuthMiddlewares implements AuthServerMiddlewares {
     try {
       return await method();
     } on JwtAuthException catch (e) {
-      return SendResponse.sendForbidden(e.message);
+      return SendResponse.sendForbidden(e.message, e.code);
     } on ServerLessException catch (e) {
-      return SendResponse.sendBadBodyErrorToUser(e.message);
+      return SendResponse.sendBadBodyErrorToUser(e.message, e.code);
     } catch (e) {
-      return SendResponse.sendUnknownError();
+      return SendResponse.sendUnknownError(null);
     }
   }
 

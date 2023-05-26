@@ -22,13 +22,13 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
 
       return await method(data);
     } on ServerException catch (e) {
-      return SendResponse.sendBadBodyErrorToUser(e.message);
+      return SendResponse.sendBadBodyErrorToUser(e.message, e.code);
     } on AuthException catch (e) {
-      return SendResponse.sendAuthErrorToUser(e.message);
+      return SendResponse.sendAuthErrorToUser(e.message, e.code);
     } on ServerLessException catch (e) {
-      return SendResponse.sendOtherExceptionErrorToUser(e.message);
+      return SendResponse.sendOtherExceptionErrorToUser(e.message, e.code);
     } catch (e) {
-      return SendResponse.sendUnknownError();
+      return SendResponse.sendUnknownError(null);
     }
   }
 
