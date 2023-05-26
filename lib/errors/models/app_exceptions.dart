@@ -66,3 +66,11 @@ class NoUserDataSettingsException extends AppExceptions {
           ErrorCodes.noUserDataSettings,
         );
 }
+
+class NoEmailSettingsException extends AppExceptions {
+  NoEmailSettingsException()
+      : super(
+          'no email settings provided, please add EmailSettings to the app',
+          ErrorCodes.noUserDataSettings,
+        );
+}

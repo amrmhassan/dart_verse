@@ -5,6 +5,6 @@ abstract class ServerLessException implements Exception {
 
   @override
   String toString() {
-    return '$runtimeType: $message';
+    return '$runtimeType: $message \ncode: $code';
   }
 }

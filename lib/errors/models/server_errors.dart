@@ -1,4 +1,4 @@
-// ignore_for_file: overridden_fields, annotate_overrides
+// ignore_for_file: overridden_fields
 
 import 'package:dart_verse/errors/serverless_exception.dart';
 
@@ -7,6 +7,7 @@ import '../../services/web_server/repo/error_codes.dart';
 class ServerException extends ServerLessException {
   @override
   String message;
+  @override
   final String code;
 
   ServerException(this.message, this.code) : super(code);

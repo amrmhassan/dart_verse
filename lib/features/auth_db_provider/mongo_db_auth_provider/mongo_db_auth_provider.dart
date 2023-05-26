@@ -6,7 +6,6 @@ import 'package:dart_verse/constants/reserved_keys.dart';
 import 'package:dart_verse/features/auth_db_provider/auth_db_provider.dart';
 import 'package:dart_verse/features/repo/mongo_db_repo_provider.dart';
 import 'package:dart_verse/services/auth/models/auth_model.dart';
-import 'package:googleapis/binaryauthorization/v1.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
 import '../../../errors/models/auth_errors.dart';

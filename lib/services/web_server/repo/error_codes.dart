@@ -6,6 +6,7 @@ class ErrorCodes {
   static const String noAuthSettings = 'no-auth-settings-provided';
   static const String noServerSettings = 'no-server-settings-provided';
   static const String noUserDataSettings = 'no-user-data-settings-provided';
+  static const String noEmailSettings = 'no-email-settings-provided';
   //? server error codes
   static const String noRouterSet = 'no-router-set';
   static const String requestBoyError = 'no-body-provided';
@@ -29,4 +30,8 @@ class ErrorCodes {
   static const String authHeaderNotValid = 'auth-header-not-valid';
   static const String jwtNotValid = 'jwt-not-valid';
   static const String jwtAccessNotAllowed = 'jwt-access-not-allowed';
+
+  //? email errors
+  static const String emailTemplateFileNotFound =
+      'email-template-file-not-found';
 }
