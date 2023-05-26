@@ -2,21 +2,21 @@
 
 import 'package:dart_verse/errors/serverless_exception.dart';
 
+import '../../services/web_server/repo/error_codes.dart';
+
 abstract class UserDataExceptions extends ServerLessException {
   @override
   String message;
 
-  UserDataExceptions(this.message);
-}
-
-class NoUserDataSettingsException extends UserDataExceptions {
-  NoUserDataSettingsException()
-      : super(
-            'no user data settings provided, please add UserDataSettings to the app');
+  @override
+  String code;
+  UserDataExceptions(this.message, this.code) : super(code);
 }
 
 class UserDataServiceDependOnAuthServiceException extends UserDataExceptions {
   UserDataServiceDependOnAuthServiceException()
       : super(
-            'the _authService.authDbProvider in userDataService does\'nt match any of the userDataServiceDbProviders, please check your userDataDbProviders');
+          'the _authService.authDbProvider in userDataService does\'nt match any of the userDataServiceDbProviders, please check your userDataDbProviders',
+          ErrorCodes.userDataAuthService,
+        );
 }
