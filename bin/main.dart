@@ -75,7 +75,7 @@ void main(List<String> arguments) async {
   // UserDataService userDataService = UserDataService(authService);
   ServerService serverService = ServerService(
     app,
-    authServerSettings: DefaultAuthServerSettings(authService),
+    authServerSettings: DefaultAuthServerSettings(app, authService),
   );
 
   var userDataRouter = Router()

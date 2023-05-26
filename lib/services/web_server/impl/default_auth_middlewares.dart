@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dart_verse/errors/serverless_exception.dart';
 import 'package:dart_verse/services/auth/auth_service.dart';
 import 'package:dart_verse/services/web_server/repo/auth_middlewares.dart';
+import 'package:dart_verse/settings/app/app.dart';
 import 'package:shelf/shelf.dart';
 
 import '../../../constants/context_fileds.dart';
@@ -14,6 +15,8 @@ class DefaultAuthMiddlewares implements AuthServerMiddlewares {
   Future<Response> _wrapper(Future Function() method) async {
     try {
       return await method();
+    } on JwtAuthException catch (e) {
+      return SendResponse.sendForbidden(e.message);
     } on ServerLessException catch (e) {
       return SendResponse.sendBadBodyErrorToUser(e.message);
     } catch (e) {
@@ -24,7 +27,21 @@ class DefaultAuthMiddlewares implements AuthServerMiddlewares {
   @override
   FutureOr<Response> Function(Request request) checkJwtForUserId(
       FutureOr<Response> Function(Request request) innerHandler) {
-    return innerHandler;
+    return (request) async {
+      return _wrapper(() async {
+        var context = request.context;
+        var jwtString = context[ContextFields.jwt];
+        if (jwtString is! String) {
+          throw ProvidedJwtNotValid(4);
+        }
+
+        var res = await authService.loginWithJWT(jwtString);
+        if (!res) {
+          throw AuthNotAllowedException();
+        }
+        return innerHandler(request);
+      });
+    };
   }
 
   @override
@@ -48,7 +65,7 @@ class DefaultAuthMiddlewares implements AuthServerMiddlewares {
           throw AuthHeaderNotValidException();
         }
         if (jwtString.isEmpty) {
-          throw ProvidedJwtNotValid();
+          throw ProvidedJwtNotValid(1);
         }
 
         var changedRequest = request.change(context: {
@@ -59,22 +76,38 @@ class DefaultAuthMiddlewares implements AuthServerMiddlewares {
     };
   }
 
-  @override
-  FutureOr<Response> Function(Request request) checkJwtValid(
-      FutureOr<Response> Function(Request request) innerHandler) {
-    return (request) {
-      var context = request.context;
-      var jwtString = context[ContextFields.jwt];
-      if (jwtString is! String) {
-        throw ProvidedJwtNotValid();
-      }
+  // @override
+  // FutureOr<Response> Function(Request request) checkJwtValid(
+  //     FutureOr<Response> Function(Request request) innerHandler) {
+  //   return (request) {
+  //     return _wrapper(() async {
+  //       var context = request.context;
+  //       var jwtString = context[ContextFields.jwt];
+  //       if (jwtString is! String) {
+  //         throw ProvidedJwtNotValid(2);
+  //       }
 
-      print(jwtString);
-      return innerHandler(request);
-    };
-  }
+  //       var res =
+  //           JWT.tryVerify(jwtString, SecretKey(app.authSettings.jwtSecretKey));
+  //       if (res == null) {
+  //         throw ProvidedJwtNotValid(3);
+  //       }
+  //       var payload = res.payload;
+  //       if (payload is! Map) {
+  //         throw UserDataException();
+  //       }
+  //       var changedRequest = request.change(context: {
+  //         ContextFields.jwtPayload: payload,
+  //       });
+
+  //       return innerHandler(changedRequest);
+  //     });
+  //   };
+  // }
 
   @override
   late AuthService authService;
-  DefaultAuthMiddlewares(this.authService);
+  @override
+  late App app;
+  DefaultAuthMiddlewares(this.authService, this.app);
 }

@@ -37,4 +37,10 @@ class SendResponse {
   static Response sendUnknownError() {
     return sendOtherExceptionErrorToUser('unknown error occurred');
   }
+
+  static Response sendForbidden(String message) {
+    return Response.forbidden(json.encode({
+      'msg': message,
+    }));
+  }
 }

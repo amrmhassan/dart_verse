@@ -62,9 +62,9 @@ class ServerService {
       securedPipeline = securedPipeline.addMiddleware(
         authServerSettings.authServerMiddlewares.checkJwtInHeaders,
       );
-      securedPipeline = securedPipeline.addMiddleware(
-        authServerSettings.authServerMiddlewares.checkJwtValid,
-      );
+      // securedPipeline = securedPipeline.addMiddleware(
+      //   authServerSettings.authServerMiddlewares.checkJwtValid,
+      // );
 
       securedPipeline = securedPipeline.addMiddleware(
         authServerSettings.authServerMiddlewares.checkJwtForUserId,

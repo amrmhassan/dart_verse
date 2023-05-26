@@ -63,5 +63,14 @@ class AuthHeaderNotValidException extends JwtAuthException {
 }
 
 class ProvidedJwtNotValid extends JwtAuthException {
-  ProvidedJwtNotValid() : super('provided jwt is not valid');
+  ProvidedJwtNotValid(int code)
+      : super('provided jwt is not valid with code: $code');
+}
+
+class UserDataException extends JwtAuthException {
+  UserDataException() : super('can\'t access this user data');
+}
+
+class AuthNotAllowedException extends JwtAuthException {
+  AuthNotAllowedException() : super('auth operation not allowed');
 }
