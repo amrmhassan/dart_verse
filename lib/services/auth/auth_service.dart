@@ -85,8 +85,7 @@ class AuthService implements DVService {
   /// if the jwt is valid and allowed then it will return true else false
   Future<bool> loginWithJWT(String jwt) async {
     // verify the jwt isn't manipulated
-    var res = JWT.tryVerify(
-        jwt, SecretKey(authDbProvider.app.authSettings.jwtSecretKey));
+    var res = JWT.tryVerify(jwt, authDbProvider.app.authSettings.jwtSecretKey);
     if (res == null) {
       return false;
     }
@@ -114,4 +113,24 @@ class AuthService implements DVService {
   }
 
   //! add the logout and make it delete just the jwt of that session
+  Future<void> logout(String jwt) async {
+    throw UnimplementedError();
+  }
+
+  //! add the ability to update the user auth model
+  Future<void> verifyUser(String jwt, String id) {
+    return authDbProvider.verifyUser(jwt, id);
+  }
+
+  Future<String> createVerifyEmailToken(
+    String userId, {
+    required Duration? allowNewJwtAfter,
+    required Duration? verifyLinkExpiresAfter,
+  }) async {
+    return authDbProvider.createVerifyEmailToken(
+      userId,
+      allowNewJwtAfter: allowNewJwtAfter,
+      verifyLinkExpiresAfter: verifyLinkExpiresAfter,
+    );
+  }
 }

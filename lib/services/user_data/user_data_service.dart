@@ -1,6 +1,6 @@
 import 'package:dart_verse/errors/models/auth_errors.dart';
-import 'package:dart_verse/features/auth_db_provider/memory_db_auth_provider/memory_db_auth_provider.dart';
-import 'package:dart_verse/features/auth_db_provider/mongo_db_auth_provider/mongo_db_auth_provider.dart';
+import 'package:dart_verse/features/auth_db_provider/impl/memory_db_auth_provider/memory_db_auth_provider.dart';
+import 'package:dart_verse/features/auth_db_provider/impl/mongo_db_auth_provider/mongo_db_auth_provider.dart';
 import 'package:dart_verse/features/user_data_db_provider/memory_db_user_data_provider/memory_db_user_data_provider.dart';
 import 'package:dart_verse/features/user_data_db_provider/mongo_db_user_data_provider/mongo_db_user_data_provider.dart';
 import 'package:dart_verse/features/user_data_db_provider/user_data_db_provider.dart';

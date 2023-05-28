@@ -3,15 +3,16 @@
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:dart_verse/constants/model_fields.dart';
 import 'package:dart_verse/constants/reserved_keys.dart';
+import 'package:dart_verse/errors/models/email_verification_error.dart';
 import 'package:dart_verse/features/auth_db_provider/auth_db_provider.dart';
-import 'package:dart_verse/features/repo/mongo_db_repo_provider.dart';
+import 'package:dart_verse/features/auth_db_provider/repo/mongo_db_repo_provider.dart';
 import 'package:dart_verse/services/auth/models/auth_model.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
-import '../../../errors/models/auth_errors.dart';
-import '../../../services/auth/controllers/jwt_controller.dart';
-import '../../../services/db_manager/db_service.dart';
-import '../../../settings/app/app.dart';
+import '../../../../errors/models/auth_errors.dart';
+import '../../../../services/auth/controllers/jwt_controller.dart';
+import '../../../../services/db_manager/db_service.dart';
+import '../../../../settings/app/app.dart';
 
 class MongoDbAuthProvider extends AuthDbProvider
     implements MongoDbRepoProvider {
@@ -85,7 +86,7 @@ class MongoDbAuthProvider extends AuthDbProvider
     var collection = dbService.mongoDbController
         .collection(app.authSettings.activeJWTCollName);
 
-// Check if the active JWTs count has exceeded the limit of 5
+    // Check if the active JWTs count has exceeded the limit of 5
     var countQuery =
         where.eq(DBRKeys.id, id).fields([ModelFields.activeTokens]);
     var countResult = await collection.findOne(countQuery);
@@ -94,7 +95,7 @@ class MongoDbAuthProvider extends AuthDbProvider
     int activeTokensLength = 0;
     for (var token in fetchedTokens) {
       try {
-        JWT.verify(token, SecretKey(app.authSettings.jwtSecretKey));
+        JWT.verify(token, app.authSettings.jwtSecretKey);
         activeTokensLength++;
       } catch (e) {
         continue;
@@ -184,5 +185,95 @@ class MongoDbAuthProvider extends AuthDbProvider
   Future<bool> allowNewJwt(int maximum) {
     // TODO: implement allowNewJwt
     throw UnimplementedError();
+  }
+
+  @override
+  Future<void> verifyUser(String jwt, String id) async {
+    //! here check if the verification jwt is saved on the db or not
+    //! make a temp collection for users auth data like jwt verification
+    //! or just save in the auth data collection
+
+    var collection =
+        dbService.mongoDbController.collection(app.authSettings.collectionName);
+    //? first make sure that the saved jwt for the user is write
+    var authData = await collection.doc(id).getData();
+    if (authData == null) {
+      throw FailedToVerifyException(1);
+    }
+    var savedJWT = authData[DbFields.verificationJWT];
+    if (savedJWT == null) {
+      throw FailedToVerifyException(4);
+    }
+    if (jwt != savedJWT) {
+      throw FailedToVerifyException(5);
+    }
+
+    //? then delete the verification jwt form the auth data for the user
+    var delete = modify.unset(DbFields.verificationJWT);
+    var selector = where.eq(DBRKeys.id, id);
+    var edit = await collection.updateOne(selector, delete);
+    if (edit.failure) {
+      throw FailedToVerifyException(2);
+    }
+    //? then mark the user as verified
+    var writeRes = await collection.doc(id).update({DbFields.verified: true});
+    if (writeRes.failure) {
+      throw FailedToVerifyException(3);
+    }
+  }
+
+  @override
+  Future<String> createVerifyEmailToken(
+    String userId, {
+    required Duration? allowNewJwtAfter,
+    required Duration? verifyLinkExpiresAfter,
+  }) async {
+    var collection =
+        dbService.mongoDbController.collection(app.authSettings.collectionName);
+    //? get the saved email verification and check if it exceeded the amount of a new verification
+    if (allowNewJwtAfter != null) {
+      var doc = await collection.doc(userId).getData();
+      if (doc == null) {
+        throw FailedToStartVerificationException('no user found');
+      }
+      var savedJwt = doc[DbFields.verificationJWT];
+      if (savedJwt != null) {
+        // here check that the saved jwt is old enough to exceed the allowable amount of time
+        var jwt = JWT.tryVerify(savedJwt, app.authSettings.jwtSecretKey);
+        if (jwt != null) {
+          DateTime createdAt =
+              DateTime.fromMillisecondsSinceEpoch(jwt.payload['iat'] * 1000);
+          DateTime now = DateTime.now();
+          Duration diff = now.difference(createdAt);
+          if (diff.inMicroseconds < allowNewJwtAfter.inMicroseconds) {
+            // here the user is asking for a new token before the time has ended
+            throw EarlyVerificationAskingException(
+                allowNewJwtAfter.inSeconds - diff.inMicroseconds);
+          }
+
+          print(jwt);
+        }
+        //
+      }
+    }
+    //? check if the user isn't already verified
+    //? if exceed or no jwt saved just create the new one
+
+    var payload = {ModelFields.id: userId};
+    var jwt = JWT(payload);
+    String jwtString = jwt.sign(
+      app.authSettings.jwtSecretKey,
+      algorithm: app.authSettings.jwtAlgorithm,
+      expiresIn: verifyLinkExpiresAfter,
+    );
+    //! just save it to the db auth model before returning
+    var res = await collection
+        .doc(userId)
+        .update({DbFields.verificationJWT: jwtString});
+    if (res.failure) {
+      throw FailedToStartVerificationException('unknown db write failure');
+    }
+
+    return jwtString;
   }
 }

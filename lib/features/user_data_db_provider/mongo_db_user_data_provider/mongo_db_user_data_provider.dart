@@ -1,7 +1,7 @@
 // ignore_for_file: overridden_fields
 
 import 'package:dart_verse/constants/reserved_keys.dart';
-import 'package:dart_verse/features/repo/mongo_db_repo_provider.dart';
+import 'package:dart_verse/features/auth_db_provider/repo/mongo_db_repo_provider.dart';
 import 'package:dart_verse/features/user_data_db_provider/user_data_db_provider.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 

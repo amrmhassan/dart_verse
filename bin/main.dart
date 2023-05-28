@@ -1,6 +1,7 @@
 import 'dart:io';
 
-import 'package:dart_verse/features/auth_db_provider/mongo_db_auth_provider/mongo_db_auth_provider.dart';
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+import 'package:dart_verse/features/auth_db_provider/impl/mongo_db_auth_provider/mongo_db_auth_provider.dart';
 import 'package:dart_verse/services/auth/auth_service.dart';
 import 'package:dart_verse/services/db_manager/db_providers/impl/memory_db/memory_db_provider.dart';
 import 'package:dart_verse/services/db_manager/db_providers/impl/mongo_db/mongo_db_provider.dart';
@@ -14,7 +15,6 @@ import 'package:dart_verse/settings/email_settings/email_settings.dart';
 import 'package:dart_verse/settings/server_settings/impl/default_auth_server_settings.dart';
 import 'package:dart_verse/settings/server_settings/server_settings.dart';
 import 'package:dart_verse/settings/user_data_settings/user_data_settings.dart';
-import 'package:mailer/mailer.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
@@ -32,7 +32,8 @@ void main(List<String> arguments) async {
     memoryDBProvider: memoryDBProvider,
   );
   UserDataSettings userDataSettings = UserDataSettings();
-  AuthSettings authSettings = AuthSettings(jwtSecretKey: 'jwtSecretKey');
+  AuthSettings authSettings =
+      AuthSettings(jwtSecretKey: SecretKey('jwtSecretKey'));
   ServerSettings serverSettings = ServerSettings(InternetAddress.anyIPv4, 3000);
   EmailSettings emailSettings = EmailSettings(testSmtpServer);
   App app = App(
@@ -65,6 +66,11 @@ void main(List<String> arguments) async {
   EmailService emailService = EmailService(app);
   await emailService.sendFromTemplateFile(testMessage, './templates/email.html',
       {'name': 'Amr Hassan', 'email': 'amrhassanmarsafa@gmail.com'});
+  var user =
+      await authService.authDbProvider.getUserByEmail('amoori@gmail.com');
+  String jwt = await serverService.authServerSettings.emailVerificationProvider
+      .createToken(user!.id);
+  print(jwt);
 }
 
 //? visit this google oauth playground https://developers.google.com/oauthplayground to get more info about how to access google services for a google account

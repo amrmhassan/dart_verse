@@ -1,13 +1,13 @@
 // ignore_for_file: overridden_fields
 
 import 'package:dart_verse/features/auth_db_provider/auth_db_provider.dart';
-import 'package:dart_verse/features/repo/memory_db_repo_provider.dart';
+import 'package:dart_verse/features/auth_db_provider/repo/memory_db_repo_provider.dart';
 import 'package:dart_verse/services/auth/controllers/jwt_controller.dart';
 import 'package:dart_verse/services/auth/models/auth_model.dart';
 
-import '../../../constants/model_fields.dart';
-import '../../../services/db_manager/db_service.dart';
-import '../../../settings/app/app.dart';
+import '../../../../constants/model_fields.dart';
+import '../../../../services/db_manager/db_service.dart';
+import '../../../../settings/app/app.dart';
 
 class MemoryDbAuthProvider extends AuthDbProvider
     implements MemoryDbRepoProvider {
@@ -118,6 +118,20 @@ class MemoryDbAuthProvider extends AuthDbProvider
   @override
   Future<bool> allowNewJwt(int maximum) {
     // TODO: implement allowNewJwt
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> verifyUser(String jwt, String id) {
+    // TODO: implement verifyUser
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> createVerifyEmailToken(String userId,
+      {required Duration? allowNewJwtAfter,
+      required Duration? verifyLinkExpiresAfter}) {
+    // TODO: implement createVerifyEmailToken
     throw UnimplementedError();
   }
 }

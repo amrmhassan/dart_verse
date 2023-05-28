@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dart_verse/settings/app/app.dart';
-import 'package:http/retry.dart';
 import 'package:mailer/mailer.dart';
 
 import '../../errors/models/email_exceptions.dart';
@@ -73,7 +72,7 @@ class EmailService {
   }
 
   String keyFormat(String key) {
-    return '</$key/>';
+    return '[/$key/]';
   }
 
   String _parseHtmlString(String htmlString) {

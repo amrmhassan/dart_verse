@@ -30,8 +30,13 @@ class ErrorCodes {
   static const String authHeaderNotValid = 'auth-header-not-valid';
   static const String jwtNotValid = 'jwt-not-valid';
   static const String jwtAccessNotAllowed = 'jwt-access-not-allowed';
+  static const String jwtEmailVerifyExpired = 'jwt-email-verify-expired';
+  static const String userNotFoundToVerify = 'user-not-found-to-verify';
 
   //? email errors
   static const String emailTemplateFileNotFound =
       'email-template-file-not-found';
+  //? email verification errors
+  static const String failedToVerify = 'failed-to-verify';
+  static const String earlyEmailVerification = 'early-email-verification';
 }

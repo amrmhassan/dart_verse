@@ -5,4 +5,11 @@ class ModelFields {
   static const String password = 'password';
   static const String passwordHash = 'passwordHash';
   static const String activeTokens = 'activeTokens';
+
+  //? db fields name
+}
+
+class DbFields {
+  static const String verified = 'verified';
+  static const String verificationJWT = 'verificationJWT';
 }

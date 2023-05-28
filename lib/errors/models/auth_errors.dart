@@ -111,3 +111,19 @@ class AuthNotAllowedException extends JwtAuthException {
           ErrorCodes.jwtAccessNotAllowed,
         );
 }
+
+class JwtEmailVerificationExpired extends JwtAuthException {
+  JwtEmailVerificationExpired()
+      : super(
+          'the token is expired, try get a new one',
+          ErrorCodes.jwtEmailVerifyExpired,
+        );
+}
+
+class UserNotFoundToVerify extends JwtAuthException {
+  UserNotFoundToVerify()
+      : super(
+          'can\'t find the user to verify',
+          ErrorCodes.userNotFoundToVerify,
+        );
+}

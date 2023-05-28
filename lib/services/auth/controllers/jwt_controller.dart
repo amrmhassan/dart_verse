@@ -13,7 +13,7 @@ class JWTController {
     required String email,
     required Function({required String id, required String jwt}) saveJwt,
   }) async {
-    String key = _app.authSettings.jwtSecretKey;
+    var key = _app.authSettings.jwtSecretKey;
     JWTPayloadModel jwtPayload = JWTPayloadModel(
       id: id,
       email: email,
@@ -23,10 +23,9 @@ class JWTController {
     );
     var jwt = JWT(jwtPayload.toJson());
     String signedJWT = jwt.sign(
-      // RSAPrivateKey(key),
-      SecretKey(key),
+      key,
       expiresIn: _app.authSettings.authExpireAfter,
-      // algorithm: JWTAlgorithm.RS256,
+      algorithm: _app.authSettings.jwtAlgorithm,
     );
     await saveJwt(id: id, jwt: signedJWT);
     return signedJWT;

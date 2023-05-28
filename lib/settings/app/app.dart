@@ -1,14 +1,12 @@
 // this app is the starting point of the server
 // it will require settings for auth, database, realtime database, etc...
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:dart_verse/errors/models/app_exceptions.dart';
-import 'package:dart_verse/errors/models/user_data_errors.dart';
 import 'package:dart_verse/settings/auth_settings/auth_settings.dart';
 import 'package:dart_verse/settings/db_settings/db_settings.dart';
 import 'package:dart_verse/settings/email_settings/email_settings.dart';
 import 'package:dart_verse/settings/server_settings/server_settings.dart';
 import 'package:dart_verse/settings/user_data_settings/user_data_settings.dart';
-
-import '../../errors/models/server_errors.dart';
 
 //! i should keep track of collections and sub collections names in a string file or something
 

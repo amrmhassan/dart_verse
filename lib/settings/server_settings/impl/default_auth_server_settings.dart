@@ -1,3 +1,5 @@
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+import 'package:dart_verse/features/email_verification/impl/default_email_verification_provider.dart';
 import 'package:dart_verse/services/auth/auth_service.dart';
 import 'package:dart_verse/services/web_server/repo/auth_middlewares.dart';
 import 'package:dart_verse/settings/app/app.dart';
@@ -9,6 +11,7 @@ import 'package:dart_verse/settings/server_settings/repo/auth_server_handlers.da
 import 'package:dart_verse/settings/server_settings/repo/auth_endpoints.dart';
 import 'package:dart_verse/settings/server_settings/repo/auth_server_settings.dart';
 
+import '../../../features/email_verification/repo/email_verification_provider.dart';
 import '../../../services/web_server/impl/default_auth_middlewares.dart';
 
 class DefaultAuthServerSettings implements AuthServerSettings {
@@ -28,6 +31,9 @@ class DefaultAuthServerSettings implements AuthServerSettings {
   @override
   late AuthServerMiddlewares authServerMiddlewares;
 
+  @override
+  late EmailVerificationProvider emailVerificationProvider;
+
   DefaultAuthServerSettings(
     this.app,
     this.authService, {
@@ -35,6 +41,7 @@ class DefaultAuthServerSettings implements AuthServerSettings {
     AuthServerHandlers? cAuthServerHandlers,
     AuthEndpoints? cAuthEndpoints,
     AuthServerMiddlewares? cAuthServerMiddlewares,
+    EmailVerificationProvider? cEmailVerificationProvider,
   }) {
     authBodyKeys = cAuthBodyKeys ?? DefaultAuthBodyKeys();
     authServerHandlers = cAuthServerHandlers ??
@@ -43,5 +50,11 @@ class DefaultAuthServerSettings implements AuthServerSettings {
 
     authServerMiddlewares =
         cAuthServerMiddlewares ?? DefaultAuthMiddlewares(authService, app);
+    emailVerificationProvider = cEmailVerificationProvider ??
+        DefaultEmailVerificationProvider(
+          jwtKey: app.authSettings.jwtSecretKey,
+          algorithm: app.authSettings.jwtAlgorithm,
+          authService: authService,
+        );
   }
 }

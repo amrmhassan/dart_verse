@@ -1,3 +1,4 @@
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:dart_verse/settings/defaults/default_auth_settings.dart';
 
 class AuthSettings {
@@ -11,7 +12,10 @@ class AuthSettings {
   final Duration authExpireAfter;
 
   /// this is the jwt secret key  `[Must be stored in a safe place]`
-  final String jwtSecretKey;
+  final JWTKey jwtSecretKey;
+
+  /// this is the algorithm used to deal with the jwt
+  final JWTAlgorithm jwtAlgorithm;
 
   /// this is the collection name for the active tokens of the user to keep track of all user sessions
   final String activeJWTCollName;
@@ -27,5 +31,6 @@ class AuthSettings {
     this.authExpireAfter = DefaultAuthSettings.authExpireAfter,
     this.activeJWTCollName = DefaultAuthSettings.activeTokensCollName,
     this.maximumActiveJwts = 5,
+    this.jwtAlgorithm = JWTAlgorithm.HS256,
   });
 }
