@@ -31,7 +31,15 @@ class FailedToStartVerificationException extends EmailVerificationException {
 class EarlyVerificationAskingException extends EmailVerificationException {
   EarlyVerificationAskingException(int seconds)
       : super(
-          'please wait $seconds before asking for another email verification',
+          'please wait $seconds seconds before asking for another email verification',
           ErrorCodes.earlyEmailVerification,
+        );
+}
+
+class UserIsAlreadyVerifiedException extends EmailVerificationException {
+  UserIsAlreadyVerifiedException()
+      : super(
+          'user is already verified',
+          ErrorCodes.userAlreadyVerified,
         );
 }

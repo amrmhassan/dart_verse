@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:dart_verse/features/auth_db_provider/impl/mongo_db_auth_provider/mongo_db_auth_provider.dart';
+import 'package:dart_verse/features/email_verification/impl/default_email_verification_provider.dart';
 import 'package:dart_verse/services/auth/auth_service.dart';
 import 'package:dart_verse/services/db_manager/db_providers/impl/memory_db/memory_db_provider.dart';
 import 'package:dart_verse/services/db_manager/db_providers/impl/mongo_db/mongo_db_provider.dart';
@@ -50,7 +51,15 @@ void main(List<String> arguments) async {
   // UserDataService userDataService = UserDataService(authService);
   ServerService serverService = ServerService(
     app,
-    authServerSettings: DefaultAuthServerSettings(app, authService),
+    authServerSettings: DefaultAuthServerSettings(
+      app,
+      authService,
+      cEmailVerificationProvider: DefaultEmailVerificationProvider(
+        authService: authService,
+        allowNewJwtAfter: Duration(minutes: 1),
+        verifyLinkExpiresAfter: Duration(minutes: 5),
+      ),
+    ),
   );
 
   var userDataRouter = Router()
@@ -63,14 +72,18 @@ void main(List<String> arguments) async {
     jwtSecured: true,
   );
   await serverService.runServer();
-  EmailService emailService = EmailService(app);
-  await emailService.sendFromTemplateFile(testMessage, './templates/email.html',
-      {'name': 'Amr Hassan', 'email': 'amrhassanmarsafa@gmail.com'});
+  // EmailService emailService = EmailService(app);
+  // await emailService.sendFromTemplateFile(testMessage, './templates/email.html',
+  //     {'name': 'Amr Hassan', 'email': 'amrhassanmarsafa@gmail.com'});
   var user =
       await authService.authDbProvider.getUserByEmail('amoori@gmail.com');
+  // String savedJWT =
+  //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NmZiYzFjODYzNjk4NTg3MGYzOGMyMiIsImlhdCI6MTY4NTI4NTY4OSwiZXhwIjoxNjg1Mjg1OTg5fQ.BMiSqLhz5Ae1FbfFA1cTJ7HXSkkcF6-NWw5vxMSQ26Q';
   String jwt = await serverService.authServerSettings.emailVerificationProvider
       .createToken(user!.id);
   print(jwt);
+  // await serverService.authServerSettings.emailVerificationProvider
+  //     .verifyUser(savedJWT);
 }
 
 //? visit this google oauth playground https://developers.google.com/oauthplayground to get more info about how to access google services for a google account

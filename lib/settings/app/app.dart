@@ -1,6 +1,5 @@
 // this app is the starting point of the server
 // it will require settings for auth, database, realtime database, etc...
-import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:dart_verse/errors/models/app_exceptions.dart';
 import 'package:dart_verse/settings/auth_settings/auth_settings.dart';
 import 'package:dart_verse/settings/db_settings/db_settings.dart';

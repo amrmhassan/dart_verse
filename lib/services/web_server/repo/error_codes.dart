@@ -39,4 +39,5 @@ class ErrorCodes {
   //? email verification errors
   static const String failedToVerify = 'failed-to-verify';
   static const String earlyEmailVerification = 'early-email-verification';
+  static const String userAlreadyVerified = 'user-already-verified';
 }

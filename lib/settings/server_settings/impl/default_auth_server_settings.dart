@@ -1,4 +1,3 @@
-import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:dart_verse/features/email_verification/impl/default_email_verification_provider.dart';
 import 'package:dart_verse/services/auth/auth_service.dart';
 import 'package:dart_verse/services/web_server/repo/auth_middlewares.dart';
@@ -52,8 +51,6 @@ class DefaultAuthServerSettings implements AuthServerSettings {
         cAuthServerMiddlewares ?? DefaultAuthMiddlewares(authService, app);
     emailVerificationProvider = cEmailVerificationProvider ??
         DefaultEmailVerificationProvider(
-          jwtKey: app.authSettings.jwtSecretKey,
-          algorithm: app.authSettings.jwtAlgorithm,
           authService: authService,
         );
   }

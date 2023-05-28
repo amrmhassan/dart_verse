@@ -122,7 +122,7 @@ class MemoryDbAuthProvider extends AuthDbProvider
   }
 
   @override
-  Future<void> verifyUser(String jwt, String id) {
+  Future<void> verifyUser(String jwt) {
     // TODO: implement verifyUser
     throw UnimplementedError();
   }

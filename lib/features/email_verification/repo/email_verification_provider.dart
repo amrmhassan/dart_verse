@@ -2,7 +2,6 @@
 //! i will use jwt to create the token for email verification and add the
 //! expiry date to the json web token
 
-import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:dart_verse/services/auth/auth_service.dart';
 
 abstract class EmailVerificationProvider {
@@ -12,17 +11,13 @@ abstract class EmailVerificationProvider {
   /// this will restrict user to allow for a new jwt after a specific amount of time
   //! just add the code for this
   final Duration? allowNewJwtAfter;
-  final JWTKey jwtKey;
-  final JWTAlgorithm algorithm;
   final AuthService authService;
 
   EmailVerificationProvider({
-    this.template,
-    this.verifyLinkExpiresAfter,
-    required this.jwtKey,
-    required this.algorithm,
+    required this.template,
+    required this.verifyLinkExpiresAfter,
     required this.authService,
-    this.allowNewJwtAfter,
+    required this.allowNewJwtAfter,
   });
 
   Future<String> createToken(String userId);

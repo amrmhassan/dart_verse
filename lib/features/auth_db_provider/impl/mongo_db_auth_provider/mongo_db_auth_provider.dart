@@ -188,10 +188,22 @@ class MongoDbAuthProvider extends AuthDbProvider
   }
 
   @override
-  Future<void> verifyUser(String jwt, String id) async {
+  Future<void> verifyUser(String jwt) async {
     //! here check if the verification jwt is saved on the db or not
     //! make a temp collection for users auth data like jwt verification
     //! or just save in the auth data collection
+
+    // in here i should update the user from the database and make him verified
+    var secretKey = app.authSettings.jwtSecretKey;
+    var res = JWT.tryVerify(jwt, secretKey);
+    if (res == null) {
+      throw JwtEmailVerificationExpired();
+    }
+    var payload = res.payload;
+    var id = payload[ModelFields.id];
+    if (id is! String) {
+      throw UserNotFoundToVerify();
+    }
 
     var collection =
         dbService.mongoDbController.collection(app.authSettings.collectionName);
@@ -236,6 +248,11 @@ class MongoDbAuthProvider extends AuthDbProvider
       if (doc == null) {
         throw FailedToStartVerificationException('no user found');
       }
+      //! check if the user is already verified
+      bool? verified = doc[DbFields.verified];
+      if (verified == true) {
+        throw UserIsAlreadyVerifiedException();
+      }
       var savedJwt = doc[DbFields.verificationJWT];
       if (savedJwt != null) {
         // here check that the saved jwt is old enough to exceed the allowable amount of time
@@ -248,12 +265,9 @@ class MongoDbAuthProvider extends AuthDbProvider
           if (diff.inMicroseconds < allowNewJwtAfter.inMicroseconds) {
             // here the user is asking for a new token before the time has ended
             throw EarlyVerificationAskingException(
-                allowNewJwtAfter.inSeconds - diff.inMicroseconds);
+                (allowNewJwtAfter.inSeconds - diff.inSeconds));
           }
-
-          print(jwt);
         }
-        //
       }
     }
     //? check if the user isn't already verified

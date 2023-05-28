@@ -9,34 +9,25 @@ import '../../../errors/models/auth_errors.dart';
 
 class DefaultEmailVerificationProvider extends EmailVerificationProvider {
   @override
-  String? template;
+  String? emailTemplate;
   @override
   Duration? verifyLinkExpiresAfter;
   @override
   final Duration? allowNewJwtAfter;
 
   @override
-  JWTKey jwtKey;
-
-  @override
-  JWTAlgorithm algorithm;
-
-  @override
   AuthService authService;
 
   DefaultEmailVerificationProvider({
-    this.template,
+    this.emailTemplate,
     this.verifyLinkExpiresAfter,
     this.allowNewJwtAfter,
-    required this.jwtKey,
-    required this.algorithm,
     required this.authService,
   }) : super(
-          template: template,
+          template: emailTemplate,
           verifyLinkExpiresAfter: verifyLinkExpiresAfter,
-          jwtKey: jwtKey,
-          algorithm: algorithm,
           authService: authService,
+          allowNewJwtAfter: allowNewJwtAfter,
         );
 
   @override
@@ -50,17 +41,6 @@ class DefaultEmailVerificationProvider extends EmailVerificationProvider {
 
   @override
   Future<void> verifyUser(String jwt) {
-    // in here i should update the user from the database and make him verified
-    var res = JWT.tryVerify(jwt, jwtKey);
-    if (res == null) {
-      throw JwtEmailVerificationExpired();
-    }
-    var payload = res.payload;
-    var id = payload[ModelFields.id];
-    if (id is! String) {
-      throw UserNotFoundToVerify();
-    }
-
-    return authService.verifyUser(jwt, id);
+    return authService.markUserAsVerified(jwt);
   }
 }

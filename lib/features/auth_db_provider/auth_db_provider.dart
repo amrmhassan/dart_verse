@@ -20,7 +20,7 @@ abstract class AuthDbProvider {
   Future<bool> allowNewJwt(int maximum);
 
   // new
-  Future<void> verifyUser(String jwt, String id);
+  Future<void> verifyUser(String jwt);
   Future<String> createVerifyEmailToken(
     String userId, {
     required Duration? allowNewJwtAfter,
