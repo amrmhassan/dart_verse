@@ -243,17 +243,18 @@ class MongoDbAuthProvider extends AuthDbProvider
     var collection =
         dbService.mongoDbController.collection(app.authSettings.collectionName);
     //? get the saved email verification and check if it exceeded the amount of a new verification
+    var authModel = await collection.doc(userId).getData();
+    if (authModel == null) {
+      throw FailedToStartVerificationException('no user found');
+    }
+
     if (allowNewJwtAfter != null) {
-      var doc = await collection.doc(userId).getData();
-      if (doc == null) {
-        throw FailedToStartVerificationException('no user found');
-      }
       //! check if the user is already verified
-      bool? verified = doc[DbFields.verified];
+      bool? verified = authModel[DbFields.verified];
       if (verified == true) {
         throw UserIsAlreadyVerifiedException();
       }
-      var savedJwt = doc[DbFields.verificationJWT];
+      var savedJwt = authModel[DbFields.verificationJWT];
       if (savedJwt != null) {
         // here check that the saved jwt is old enough to exceed the allowable amount of time
         var jwt = JWT.tryVerify(savedJwt, app.authSettings.jwtSecretKey);
@@ -272,8 +273,12 @@ class MongoDbAuthProvider extends AuthDbProvider
     }
     //? check if the user isn't already verified
     //? if exceed or no jwt saved just create the new one
+    // here just get the auth model for the user to make sure that the user exists
 
-    var payload = {ModelFields.id: userId};
+    var payload = {
+      ModelFields.id: userId,
+      ModelFields.email: authModel[ModelFields.email],
+    };
     var jwt = JWT(payload);
     String jwtString = jwt.sign(
       app.authSettings.jwtSecretKey,

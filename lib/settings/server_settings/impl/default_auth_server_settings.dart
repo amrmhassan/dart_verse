@@ -43,8 +43,6 @@ class DefaultAuthServerSettings implements AuthServerSettings {
     EmailVerificationProvider? cEmailVerificationProvider,
   }) {
     authBodyKeys = cAuthBodyKeys ?? DefaultAuthBodyKeys();
-    authServerHandlers = cAuthServerHandlers ??
-        DefaultAuthServerHandlers(authService, authBodyKeys);
     authEndpoints = cAuthEndpoints ?? DefaultAuthEndpoints();
 
     authServerMiddlewares =
@@ -52,6 +50,13 @@ class DefaultAuthServerSettings implements AuthServerSettings {
     emailVerificationProvider = cEmailVerificationProvider ??
         DefaultEmailVerificationProvider(
           authService: authService,
+        );
+
+    authServerHandlers = cAuthServerHandlers ??
+        DefaultAuthServerHandlers(
+          authService,
+          authBodyKeys,
+          emailVerificationProvider,
         );
   }
 }

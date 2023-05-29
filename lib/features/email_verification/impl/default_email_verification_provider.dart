@@ -24,23 +24,9 @@ class DefaultEmailVerificationProvider extends EmailVerificationProvider {
     this.allowNewJwtAfter,
     required this.authService,
   }) : super(
-          template: emailTemplate,
+          emailTemplate: emailTemplate,
           verifyLinkExpiresAfter: verifyLinkExpiresAfter,
           authService: authService,
           allowNewJwtAfter: allowNewJwtAfter,
         );
-
-  @override
-  Future<String> createToken(String userId) async {
-    return await authService.createVerifyEmailToken(
-      userId,
-      allowNewJwtAfter: allowNewJwtAfter,
-      verifyLinkExpiresAfter: verifyLinkExpiresAfter,
-    );
-  }
-
-  @override
-  Future<void> verifyUser(String jwt) {
-    return authService.markUserAsVerified(jwt);
-  }
 }

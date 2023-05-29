@@ -5,7 +5,7 @@
 import 'package:dart_verse/services/auth/auth_service.dart';
 
 abstract class EmailVerificationProvider {
-  final String? template;
+  final String? emailTemplate;
   final Duration? verifyLinkExpiresAfter;
 
   /// this will restrict user to allow for a new jwt after a specific amount of time
@@ -14,12 +14,9 @@ abstract class EmailVerificationProvider {
   final AuthService authService;
 
   EmailVerificationProvider({
-    required this.template,
+    required this.emailTemplate,
     required this.verifyLinkExpiresAfter,
     required this.authService,
     required this.allowNewJwtAfter,
   });
-
-  Future<String> createToken(String userId);
-  Future<void> verifyUser(String jwt);
 }

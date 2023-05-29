@@ -8,4 +8,8 @@ class DefaultAuthEndpoints implements AuthEndpoints {
 
   @override
   String register = Endpoints.register;
+  @override
+  String verifyEmail = Endpoints.verifyEmail;
+  @override
+  String getVerificationEmail = Endpoints.getVerificationEmail;
 }

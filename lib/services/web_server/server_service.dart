@@ -62,9 +62,6 @@ class ServerService {
       securedPipeline = securedPipeline.addMiddleware(
         authServerSettings.authServerMiddlewares.checkJwtInHeaders,
       );
-      // securedPipeline = securedPipeline.addMiddleware(
-      //   authServerSettings.authServerMiddlewares.checkJwtValid,
-      // );
 
       securedPipeline = securedPipeline.addMiddleware(
         authServerSettings.authServerMiddlewares.checkJwtForUserId,
@@ -76,7 +73,7 @@ class ServerService {
     var finalHandler = securedPipeline.addHandler(handler);
 
     pileLines.add(finalHandler);
-    _cascade = _cascade.add(finalHandler);
+    _cascade.add(finalHandler);
     return this;
   }
 
@@ -98,22 +95,26 @@ class ServerService {
     if (_authServerSettings == null) return;
     String loginPath = authServerSettings.authEndpoints.login;
     String registerPath = authServerSettings.authEndpoints.register;
+    String getVerificationEmail =
+        authServerSettings.authEndpoints.getVerificationEmail;
     // String jwtLoginPath = authEndpoints.jwtLogin;
 
     // adding auth endpoints pipeline
     var authRouter = Router()
-          ..post(
-            loginPath,
-            authServerSettings.authServerHandlers.login,
-          )
-          ..post(
-            registerPath,
-            authServerSettings.authServerHandlers.register,
-          )
-        // ..post(jwtLoginPath, (Request request) {})
-        ;
-    var authPipeline = Pipeline().addHandler(authRouter);
+      ..post(
+        loginPath,
+        authServerSettings.authServerHandlers.login,
+      )
+      ..post(
+        registerPath,
+        authServerSettings.authServerHandlers.register,
+      )
+      ..post(
+        getVerificationEmail,
+        authServerSettings.authServerHandlers.getVerificationEmail,
+      );
+
     // _cascade.add(authPipeline);
-    addPipeline(authPipeline);
+    addPipeline(authRouter);
   }
 }
