@@ -1,10 +1,11 @@
 import 'dart:async';
 
+import 'package:dart_express/dart_express.dart';
+import 'package:dart_express/dart_express/server/repo/passed_http_entity.dart';
 import 'package:dart_verse/errors/serverless_exception.dart';
 import 'package:dart_verse/services/auth/auth_service.dart';
 import 'package:dart_verse/services/web_server/repo/auth_middlewares.dart';
 import 'package:dart_verse/settings/app/app.dart';
-import 'package:shelf/shelf.dart';
 
 import '../../../constants/context_fileds.dart';
 import '../../../constants/header_fields.dart';
@@ -12,69 +13,117 @@ import '../../../errors/models/auth_errors.dart';
 import '../../../settings/server_settings/utils/send_response.dart';
 
 class DefaultAuthMiddlewares implements AuthServerMiddlewares {
-  Future<Response> _wrapper(Future Function() method) async {
+  Future<PassedHttpEntity> _wrapper(
+    Future Function() method,
+    RequestHolder request,
+    ResponseHolder response,
+  ) async {
     try {
       return await method();
     } on JwtAuthException catch (e) {
-      return SendResponse.sendForbidden(e.message, e.code);
+      return SendResponse.sendForbidden(response, e.message, e.code);
     } on ServerLessException catch (e) {
-      return SendResponse.sendBadBodyErrorToUser(e.message, e.code);
+      return SendResponse.sendBadBodyErrorToUser(response, e.message, e.code);
     } catch (e) {
-      return SendResponse.sendUnknownError(null);
+      return SendResponse.sendUnknownError(response, null);
     }
   }
 
   @override
-  FutureOr<Response> Function(Request request) checkJwtForUserId(
-      FutureOr<Response> Function(Request request) innerHandler) {
-    return (request) async {
-      return _wrapper(() async {
-        var context = request.context;
-        var jwtString = context[ContextFields.jwt];
-        if (jwtString is! String) {
-          throw ProvidedJwtNotValid(4);
-        }
+  Middleware checkJwtForUserId() =>
+      Middleware(null, HttpMethods.all, (request, response, pathArgs) async {
+        return _wrapper(() async {
+          var context = request.context;
+          var jwtString = context[ContextFields.jwt];
+          if (jwtString is! String) {
+            throw ProvidedJwtNotValid(4);
+          }
 
-        var res = await authService.loginWithJWT(jwtString);
-        if (!res) {
-          throw AuthNotAllowedException();
-        }
-        return innerHandler(request);
+          var res = await authService.loginWithJWT(jwtString);
+          if (!res) {
+            throw AuthNotAllowedException();
+          }
+        }, request, response);
       });
-    };
-  }
+
+  // {
+  //   return (request) async {
+  //     return _wrapper(() async {
+  //       var context = request.context;
+  //       var jwtString = context[ContextFields.jwt];
+  //       if (jwtString is! String) {
+  //         throw ProvidedJwtNotValid(4);
+  //       }
+
+  //       var res = await authService.loginWithJWT(jwtString);
+  //       if (!res) {
+  //         throw AuthNotAllowedException();
+  //       }
+  //       return innerHandler(request);
+  //     });
+  //   };
+  // }
 
   @override
-  FutureOr<Response> Function(Request request) checkJwtInHeaders(
-      FutureOr<Response> Function(Request request) innerHandler) {
-    return (request) {
-      return _wrapper(() async {
-        var headers = request.headers;
-        final jwt = headers[HeaderFields.authorization];
-        if (jwt == null) {
-          throw NoAuthHeaderException();
-        }
-        var parts = jwt.split(' ');
-        int length = parts.length;
-        String bearer = parts.first;
-        String jwtString = parts.last;
-        if (length != 2) {
-          throw AuthHeaderNotValidException();
-        }
-        if (bearer != HeaderFields.bearer) {
-          throw AuthHeaderNotValidException();
-        }
-        if (jwtString.isEmpty) {
-          throw ProvidedJwtNotValid(1);
-        }
+  Middleware checkJwtInHeaders() =>
+      Middleware(null, HttpMethods.all, (request, response, pathArgs) {
+        return _wrapper(() async {
+          var headers = request.headers;
+          var jwt = headers.value(HeaderFields.authorization);
+          if (jwt == null) {
+            throw NoAuthHeaderException();
+          }
+          jwt = jwt.toString();
+          var parts = jwt.split(' ');
+          int length = parts.length;
+          String bearer = parts.first;
+          String jwtString = parts.last;
+          if (length != 2) {
+            throw AuthHeaderNotValidException();
+          }
+          if (bearer != HeaderFields.bearer) {
+            throw AuthHeaderNotValidException();
+          }
+          if (jwtString.isEmpty) {
+            throw ProvidedJwtNotValid(1);
+          }
+          request.context[ContextFields.jwt] = jwtString;
 
-        var changedRequest = request.change(context: {
-          ContextFields.jwt: jwtString,
-        });
-        return innerHandler(changedRequest);
+          // var changedRequest = request.change(context: {
+          //   ContextFields.jwt: jwtString,
+          // });
+        }, request, response);
       });
-    };
-  }
+
+  // {
+  //   return (request) {
+  //     return _wrapper(() async {
+  //       var headers = request.headers;
+  //       final jwt = headers[HeaderFields.authorization];
+  //       if (jwt == null) {
+  //         throw NoAuthHeaderException();
+  //       }
+  //       var parts = jwt.split(' ');
+  //       int length = parts.length;
+  //       String bearer = parts.first;
+  //       String jwtString = parts.last;
+  //       if (length != 2) {
+  //         throw AuthHeaderNotValidException();
+  //       }
+  //       if (bearer != HeaderFields.bearer) {
+  //         throw AuthHeaderNotValidException();
+  //       }
+  //       if (jwtString.isEmpty) {
+  //         throw ProvidedJwtNotValid(1);
+  //       }
+
+  //       var changedRequest = request.change(context: {
+  //         ContextFields.jwt: jwtString,
+  //       });
+  //       return innerHandler(changedRequest);
+  //     });
+  //   };
+  // }
 
   // @override
   // FutureOr<Response> Function(Request request) checkJwtValid(

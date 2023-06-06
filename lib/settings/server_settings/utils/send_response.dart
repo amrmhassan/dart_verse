@@ -1,53 +1,70 @@
 import 'dart:convert';
+import 'dart:io';
 
-import 'package:shelf/shelf.dart';
+import 'package:dart_express/dart_express.dart';
 
 class SendResponse {
-  static Response sendDataToUser(
+  static ResponseHolder sendDataToUser(
+    ResponseHolder response,
     String msg, {
     String? dataFieldName,
   }) {
-    return Response.ok(json.encode({
+    return response.writeJson({
       "msg": 'success',
       'code': 200,
       dataFieldName ?? 'data': msg,
-    }));
+    });
   }
 
-  static Response sendBadBodyErrorToUser(String e, String? code) {
-    return Response.badRequest(
-        body: json.encode({
-      'error': e,
-      'code': code,
-    }));
-  }
-
-  static Response sendAuthErrorToUser(
+  static ResponseHolder sendBadBodyErrorToUser(
+    ResponseHolder response,
     String e,
     String? code,
   ) {
-    return Response.forbidden(json.encode({
+    return response.writeJson({
       'error': e,
       'code': code,
-    }));
+    });
   }
 
-  static Response sendOtherExceptionErrorToUser(String e, String? code) {
-    return Response.internalServerError(
-        body: json.encode({
+  static ResponseHolder sendAuthErrorToUser(
+    ResponseHolder response,
+    String e,
+    String? code,
+  ) {
+    return response.writeJson({
       'error': e,
       'code': code,
-    }));
+    });
   }
 
-  static Response sendUnknownError(String? code) {
-    return sendOtherExceptionErrorToUser('unknown error occurred', code);
+  static ResponseHolder sendOtherExceptionErrorToUser(
+    ResponseHolder response,
+    String e,
+    String? code,
+  ) {
+    return response.writeJson({
+      'error': e,
+      'code': code,
+    });
   }
 
-  static Response sendForbidden(String message, String? code) {
-    return Response.forbidden(json.encode({
+  static ResponseHolder sendUnknownError(
+    ResponseHolder response,
+    String? code,
+  ) {
+    return sendOtherExceptionErrorToUser(
+        response, 'unknown error occurred', code);
+  }
+
+  static ResponseHolder sendForbidden(
+    ResponseHolder response,
+    String message,
+    String? code,
+  ) {
+    return response.writeJson({
       'msg': message,
       'code': code,
-    }));
+    });
   }
 }

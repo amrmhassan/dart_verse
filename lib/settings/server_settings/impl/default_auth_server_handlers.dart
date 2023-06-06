@@ -10,7 +10,6 @@ import 'package:dart_verse/services/auth/auth_service.dart';
 import 'package:dart_verse/services/email_service/email_service.dart';
 import 'package:dart_verse/settings/server_settings/repo/auth_server_handlers.dart';
 import 'package:mailer/mailer.dart';
-import 'package:shelf/shelf.dart';
 
 import '../repo/auth_body_keys.dart';
 import '../utils/send_response.dart';

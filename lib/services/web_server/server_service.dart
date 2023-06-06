@@ -55,11 +55,11 @@ class ServerService {
     //? adding middlewares here
     if (jwtSecured) {
       securedPipeline = securedPipeline.addRawProcessor(
-        authServerSettings.authServerMiddlewares.checkJwtInHeaders,
+        authServerSettings.authServerMiddlewares.checkJwtInHeaders(),
       );
 
       securedPipeline = securedPipeline.addRawProcessor(
-        authServerSettings.authServerMiddlewares.checkJwtForUserId,
+        authServerSettings.authServerMiddlewares.checkJwtForUserId(),
       );
     }
 

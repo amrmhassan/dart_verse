@@ -6,7 +6,7 @@ abstract class AuthServerMiddlewares {
   late AuthService authService;
   late App app;
 
-  late Middleware checkJwtInHeaders;
+  Middleware checkJwtInHeaders();
 
-  late Middleware checkJwtForUserId;
+  Middleware checkJwtForUserId();
 }
