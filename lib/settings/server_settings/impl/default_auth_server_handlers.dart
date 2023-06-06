@@ -1,5 +1,7 @@
-import 'dart:convert';
+import 'dart:async';
 
+import 'package:dart_express/dart_express.dart';
+import 'package:dart_express/dart_express/server/repo/passed_http_entity.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:dart_verse/constants/model_fields.dart';
 import 'package:dart_verse/errors/models/auth_errors.dart';
@@ -15,32 +17,38 @@ import '../repo/auth_body_keys.dart';
 import '../utils/send_response.dart';
 
 class DefaultAuthServerHandlers implements AuthServerHandlers {
-  Future _wrapper(Request request,
-      Future Function(Map<String, dynamic> body) method) async {
+  FutureOr<PassedHttpEntity> _wrapper(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+    Future Function() method,
+  ) async {
     try {
-      String body = await request.readAsString();
-      if (body.isEmpty) {
-        throw RequestBodyError();
-      }
-      Map<String, dynamic> data = json.decode(body);
-
-      return await method(data);
+      return await method();
     } on ServerException catch (e) {
-      return SendResponse.sendBadBodyErrorToUser(e.message, e.code);
+      return SendResponse.sendBadBodyErrorToUser(response, e.message, e.code);
     } on AuthException catch (e) {
-      return SendResponse.sendAuthErrorToUser(e.message, e.code);
+      return SendResponse.sendAuthErrorToUser(response, e.message, e.code);
     } on ServerLessException catch (e) {
-      return SendResponse.sendOtherExceptionErrorToUser(e.message, e.code);
+      return SendResponse.sendOtherExceptionErrorToUser(
+          response, e.message, e.code);
     } catch (e) {
-      return SendResponse.sendUnknownError(null);
+      return SendResponse.sendUnknownError(response, null);
     }
   }
 
   @override
-  login(Request request) async {
+  FutureOr<PassedHttpEntity> login(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  ) {
     return _wrapper(
       request,
-      (data) async {
+      response,
+      pathArgs,
+      () async {
+        var data = await request.readAsJson();
         String emailKey = defaultAuthBodyKeys.email;
         String passwordKey = defaultAuthBodyKeys.password;
         String? email = data[emailKey];
@@ -53,16 +61,23 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
           email: email,
           password: password,
         );
-        return SendResponse.sendDataToUser(jwt, dataFieldName: 'jwt');
+        return SendResponse.sendDataToUser(response, jwt, dataFieldName: 'jwt');
       },
     );
   }
 
   @override
-  register(Request request) async {
+  FutureOr<PassedHttpEntity> register(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  ) async {
     return _wrapper(
       request,
-      (data) async {
+      response,
+      pathArgs,
+      () async {
+        var data = await request.readAsJson();
         String emailKey = defaultAuthBodyKeys.email;
         String passwordKey = defaultAuthBodyKeys.password;
         String userDataKey = defaultAuthBodyKeys.userData;
@@ -80,7 +95,7 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
           password: password,
           userData: userData,
         );
-        return SendResponse.sendDataToUser(jwt, dataFieldName: 'jwt');
+        return SendResponse.sendDataToUser(response, jwt, dataFieldName: 'jwt');
       },
     );
   }
@@ -101,8 +116,13 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
   );
 
   @override
-  getVerificationEmail(Request request) async {
-    return _wrapper(request, (body) async {
+  FutureOr<PassedHttpEntity> getVerificationEmail(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  ) async {
+    return _wrapper(request, response, pathArgs, () async {
+      var body = await request.readAsJson();
       var userId = body[ModelFields.id];
 
       if (userId is! String) {
@@ -137,6 +157,7 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
       );
 
       return SendResponse.sendDataToUser(
+        response,
         'Email sent successfully',
         dataFieldName: 'msg',
       );
