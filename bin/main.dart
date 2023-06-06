@@ -1,5 +1,8 @@
 // import 'dart:io';
 
+//!
+//@ add the storage management, static files serving with the ability to run html, js css, files, sending messages to a socket server
+//!
 // import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 // import 'package:dart_verse/features/auth_db_provider/impl/mongo_db_auth_provider/mongo_db_auth_provider.dart';
 // import 'package:dart_verse/features/email_verification/impl/default_email_verification_provider.dart';
@@ -79,32 +82,26 @@
 
 import 'dart:io';
 
-import 'package:shelf/shelf.dart';
-import 'package:shelf/shelf_io.dart' as shelf_io;
-import 'package:shelf_router/shelf_router.dart';
+import 'package:dart_express/dart_express.dart';
 
 void main(List<String> args) async {
   var cascade = Cascade();
   var router1 = Router()
-    ..get('/hello', (req) {
-      return Response.ok('hello endpoint done');
+    ..get('/hello', (req, res, pathArgs) {
+      return res.write('hello endpoint done');
     });
-  var pipeline1 = Pipeline().addHandler(router1);
+  var pipeline1 = Pipeline().addRouter(router1);
   var router2 = Router()
     ..get(
       '/good',
-      (req) {
-        return Response.ok('good endpoint done');
+      (req, res, pathArgs) {
+        return res.write('good endpoint done');
       },
     );
 
   //! the problem here is that if you added a middle ware to a specific pipeline this middle ware runs on every other handler
-  var pipeLine2 = Pipeline().addMiddleware(logRequests()).addHandler(router2);
+  var pipeLine2 = Pipeline().addRouter(router2);
   cascade = cascade.add(pipeline1).add(pipeLine2);
-  await shelf_io.serve(
-    cascade.handler,
-    InternetAddress.anyIPv4,
-    3000,
-  );
-  print('listening');
+  ServerHolder serverHolder = ServerHolder(pipeLine2);
+  await serverHolder.bind(InternetAddress.anyIPv4, 3000);
 }

@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:dart_express/dart_express.dart';
 import 'package:dart_verse/settings/app/app.dart';
-import 'package:shelf/shelf.dart';
-import 'package:shelf/shelf_io.dart' as shelf_io;
-import 'package:shelf_router/shelf_router.dart';
 
 import '../../errors/models/server_errors.dart';
 import '../../settings/server_settings/repo/auth_server_settings.dart';
@@ -21,7 +19,7 @@ class ServerService {
   }
 
   late Cascade _cascade;
-  final List<FutureOr<Response> Function(Request)> pileLines = [];
+  final List<Pipeline> pileLines = [];
 
   Future<HttpServer> runServer() async {
     InternetAddress ip = _app.serverSettings.ip;
@@ -35,12 +33,9 @@ class ServerService {
     // var pipeline = Pipeline().addHandler(testRouter);
     // var testCascade = _cascade.add(pipeline);
     //!
-    var handler = cascade.handler;
-    var server = await shelf_io.serve(
-      handler,
-      ip,
-      port,
-    );
+    var handler = cascade;
+    ServerHolder serverHolder = ServerHolder(handler);
+    var server = await serverHolder.bind(InternetAddress.anyIPv4, port);
     String ipString = server.address.address == InternetAddress.anyIPv4.address
         ? '127.0.0.1'
         : server.address.address;
@@ -49,7 +44,7 @@ class ServerService {
   }
 
   ServerService addPipeline(
-    FutureOr<Response> Function(Request) handler, {
+    RequestProcessor handler, {
     bool jwtSecured = false,
     String? idFieldName,
     String? idEqualTo,
@@ -59,18 +54,18 @@ class ServerService {
     var securedPipeline = Pipeline();
     //? adding middlewares here
     if (jwtSecured) {
-      securedPipeline = securedPipeline.addMiddleware(
+      securedPipeline = securedPipeline.addRawProcessor(
         authServerSettings.authServerMiddlewares.checkJwtInHeaders,
       );
 
-      securedPipeline = securedPipeline.addMiddleware(
+      securedPipeline = securedPipeline.addRawProcessor(
         authServerSettings.authServerMiddlewares.checkJwtForUserId,
       );
     }
 
     //?
 
-    var finalHandler = securedPipeline.addHandler(handler);
+    var finalHandler = securedPipeline.addRawProcessor(handler);
 
     pileLines.add(finalHandler);
     _cascade.add(finalHandler);
