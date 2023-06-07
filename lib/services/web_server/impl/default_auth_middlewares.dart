@@ -7,7 +7,7 @@ import 'package:dart_verse/services/auth/auth_service.dart';
 import 'package:dart_verse/services/web_server/repo/auth_middlewares.dart';
 import 'package:dart_verse/settings/app/app.dart';
 
-import '../../../constants/context_fileds.dart';
+import '../../../constants/context_fields.dart';
 import '../../../constants/header_fields.dart';
 import '../../../errors/models/auth_errors.dart';
 import '../../../settings/server_settings/utils/send_response.dart';
@@ -17,7 +17,7 @@ class DefaultAuthMiddlewares implements AuthServerMiddlewares {
     RequestHolder request,
     ResponseHolder response,
     Map<String, dynamic> pathArgs,
-    Future Function() method,
+    Future<PassedHttpEntity> Function() method,
   ) async {
     try {
       return await method();
@@ -47,6 +47,7 @@ class DefaultAuthMiddlewares implements AuthServerMiddlewares {
       if (!res) {
         throw AuthNotAllowedException();
       }
+      return request;
     });
   }
 
@@ -99,6 +100,7 @@ class DefaultAuthMiddlewares implements AuthServerMiddlewares {
       // var changedRequest = request.change(context: {
       //   ContextFields.jwt: jwtString,
       // });
+      return request;
     });
   }
 
