@@ -127,3 +127,19 @@ class UserNotFoundToVerify extends JwtAuthException {
           ErrorCodes.userNotFoundToVerify,
         );
 }
+
+class NoAppIdException extends JwtAuthException {
+  NoAppIdException()
+      : super(
+          'please provide your app id in the headers as appid:<put_your_app_id_here>',
+          ErrorCodes.noAppIdProvided,
+        );
+}
+
+class NonAuthorizedAppId extends JwtAuthException {
+  NonAuthorizedAppId()
+      : super(
+          'the provided app id isn\'t authorized',
+          ErrorCodes.notAuthorizedAppId,
+        );
+}

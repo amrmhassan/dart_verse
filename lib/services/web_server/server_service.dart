@@ -19,63 +19,69 @@ class ServerService {
   }
 
   late Cascade _cascade;
-  final List<Pipeline> pileLines = [];
 
   Future<HttpServer> runServer() async {
     InternetAddress ip = _app.serverSettings.ip;
     int port = _app.serverSettings.port;
     _addAuthEndpoints();
-    //!
-    // var testRouter = Router()
-    //   ..get('/test', (Request request) {
-    //     return Response.ok('hello');
-    //   });
-    // var pipeline = Pipeline().addHandler(testRouter);
-    // var testCascade = _cascade.add(pipeline);
-    //!
-    var handler = cascade;
-    ServerHolder serverHolder = ServerHolder(handler);
-    var server = await serverHolder.bind(InternetAddress.anyIPv4, port);
-    String ipString = server.address.address == InternetAddress.anyIPv4.address
-        ? '127.0.0.1'
-        : server.address.address;
-    print('server listening on http://$ipString:${server.port}');
+    ServerHolder serverHolder = ServerHolder(_cascade).addGlobalRawMiddleWare(
+        authServerSettings.authServerMiddlewares.checkAppId());
+    var server = await serverHolder.bind(ip, port);
     return server;
   }
 
   ServerService addPipeline(
-    RequestProcessor handler, {
+    Pipeline pipeline, {
     bool jwtSecured = false,
     String? idFieldName,
     String? idEqualTo,
     String? roleFieldName,
     String? roleEqualTo,
   }) {
-    var securedPipeline = Pipeline();
     //? adding middlewares here
     if (jwtSecured) {
-      securedPipeline = securedPipeline.addRawProcessor(
-        authServerSettings.authServerMiddlewares.checkJwtInHeaders(),
-      );
-
-      securedPipeline = securedPipeline.addRawProcessor(
-        authServerSettings.authServerMiddlewares.checkJwtForUserId(),
-      );
+      pipeline
+          .addRawProcessor(
+            authServerSettings.authServerMiddlewares.checkJwtInHeaders(),
+          )
+          .addRawProcessor(
+            authServerSettings.authServerMiddlewares.checkJwtForUserId(),
+          );
     }
 
     //?
 
-    var finalHandler = securedPipeline.addRawProcessor(handler);
+    _cascade = _cascade.add(pipeline);
+    return this;
+  }
 
-    pileLines.add(finalHandler);
-    _cascade.add(finalHandler);
+  ServerService addRouter(
+    Router router, {
+    bool jwtSecured = false,
+    String? idFieldName,
+    String? idEqualTo,
+    String? roleFieldName,
+    String? roleEqualTo,
+  }) {
+    //? adding middlewares here
+    if (jwtSecured) {
+      router
+          .addRawMiddleware(
+            authServerSettings.authServerMiddlewares.checkJwtInHeaders(),
+          )
+          .addRawMiddleware(
+            authServerSettings.authServerMiddlewares.checkJwtForUserId(),
+          );
+    }
+    Pipeline pipeline = Pipeline().addRouter(router);
+
+    //?
+
+    _cascade = _cascade.add(pipeline);
     return this;
   }
 
   Cascade get cascade {
-    if (pileLines.isEmpty) {
-      throw NoRouterSetException();
-    }
     return _cascade;
   }
 
@@ -109,7 +115,6 @@ class ServerService {
         authServerSettings.authServerHandlers.getVerificationEmail,
       );
 
-    // _cascade.add(authPipeline);
-    addPipeline(authRouter);
+    addRouter(authRouter);
   }
 }

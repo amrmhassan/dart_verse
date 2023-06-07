@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:dart_express/dart_express.dart';
 
 class SendResponse {
@@ -9,11 +6,14 @@ class SendResponse {
     String msg, {
     String? dataFieldName,
   }) {
-    return response.writeJson({
-      "msg": 'success',
-      'code': 200,
-      dataFieldName ?? 'data': msg,
-    });
+    return response.writeJson(
+      {
+        "msg": 'success',
+        'code': 200,
+        dataFieldName ?? 'data': msg,
+      },
+      code: 200,
+    );
   }
 
   static ResponseHolder sendBadBodyErrorToUser(
@@ -21,10 +21,13 @@ class SendResponse {
     String e,
     String? code,
   ) {
-    return response.writeJson({
-      'error': e,
-      'code': code,
-    });
+    return response.writeJson(
+      {
+        'error': e,
+        'code': code,
+      },
+      code: 400,
+    );
   }
 
   static ResponseHolder sendAuthErrorToUser(
@@ -32,10 +35,13 @@ class SendResponse {
     String e,
     String? code,
   ) {
-    return response.writeJson({
-      'error': e,
-      'code': code,
-    });
+    return response.writeJson(
+      {
+        'error': e,
+        'code': code,
+      },
+      code: 401,
+    );
   }
 
   static ResponseHolder sendOtherExceptionErrorToUser(
@@ -43,10 +49,13 @@ class SendResponse {
     String e,
     String? code,
   ) {
-    return response.writeJson({
-      'error': e,
-      'code': code,
-    });
+    return response.writeJson(
+      {
+        'error': e,
+        'code': code,
+      },
+      code: 500,
+    );
   }
 
   static ResponseHolder sendUnknownError(
@@ -62,9 +71,12 @@ class SendResponse {
     String message,
     String? code,
   ) {
-    return response.writeJson({
-      'msg': message,
-      'code': code,
-    });
+    return response.writeJson(
+      {
+        'msg': message,
+        'code': code,
+      },
+      code: 403,
+    );
   }
 }

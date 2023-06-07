@@ -24,6 +24,11 @@ class AuthSettings {
   /// to prevent so many creations of jwts
   final int maximumActiveJwts;
 
+  /// this will restrict the usage of your endpoints on some apps
+  /// that will provide app id in all request headers
+  /// on the format headerKey = appid, and with value of the app id
+  final List<String>? allowedAppsIds;
+
   const AuthSettings({
     required this.jwtSecretKey,
     this.collectionName = DefaultAuthSettings.collectionName,
@@ -32,5 +37,6 @@ class AuthSettings {
     this.activeJWTCollName = DefaultAuthSettings.activeTokensCollName,
     this.maximumActiveJwts = 5,
     this.jwtAlgorithm = JWTAlgorithm.HS256,
+    this.allowedAppsIds,
   });
 }

@@ -48,7 +48,12 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
       response,
       pathArgs,
       () async {
-        var data = await request.readAsJson();
+        dynamic data;
+        try {
+          data = await request.readAsJson();
+        } catch (e) {
+          throw RequestBodyError();
+        }
         String emailKey = defaultAuthBodyKeys.email;
         String passwordKey = defaultAuthBodyKeys.password;
         String? email = data[emailKey];

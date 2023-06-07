@@ -9,4 +9,5 @@ abstract class AuthServerMiddlewares {
   Middleware checkJwtInHeaders();
 
   Middleware checkJwtForUserId();
+  Middleware checkAppId();
 }

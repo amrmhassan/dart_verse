@@ -9,7 +9,7 @@ class ErrorCodes {
   static const String noEmailSettings = 'no-email-settings-provided';
   //? server error codes
   static const String noRouterSet = 'no-router-set';
-  static const String requestBoyError = 'no-body-provided';
+  static const String requestBoyError = 'bad-body-provided';
   static const String noAuthServerSettings = 'no-auth-server-settings';
   //? user data error codes
   static const String userDataAuthService =
@@ -32,6 +32,8 @@ class ErrorCodes {
   static const String jwtAccessNotAllowed = 'jwt-access-not-allowed';
   static const String jwtEmailVerifyExpired = 'jwt-email-verify-expired';
   static const String userNotFoundToVerify = 'user-not-found-to-verify';
+  static const String noAppIdProvided = 'no-app-id-provided';
+  static const String notAuthorizedAppId = 'not-authorized-appid';
 
   //? email errors
   static const String emailTemplateFileNotFound =
