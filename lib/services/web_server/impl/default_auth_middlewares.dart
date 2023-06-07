@@ -13,10 +13,11 @@ import '../../../errors/models/auth_errors.dart';
 import '../../../settings/server_settings/utils/send_response.dart';
 
 class DefaultAuthMiddlewares implements AuthServerMiddlewares {
-  Future<PassedHttpEntity> _wrapper(
-    Future Function() method,
+  FutureOr<PassedHttpEntity> _wrapper(
     RequestHolder request,
     ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+    Future Function() method,
   ) async {
     try {
       return await method();
@@ -30,21 +31,24 @@ class DefaultAuthMiddlewares implements AuthServerMiddlewares {
   }
 
   @override
-  Middleware checkJwtForUserId() =>
-      Middleware(null, HttpMethods.all, (request, response, pathArgs) async {
-        return _wrapper(() async {
-          var context = request.context;
-          var jwtString = context[ContextFields.jwt];
-          if (jwtString is! String) {
-            throw ProvidedJwtNotValid(4);
-          }
+  FutureOr<PassedHttpEntity> checkJwtForUserId(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  ) {
+    return _wrapper(request, response, pathArgs, () async {
+      var context = request.context;
+      var jwtString = context[ContextFields.jwt];
+      if (jwtString is! String) {
+        throw ProvidedJwtNotValid(4);
+      }
 
-          var res = await authService.loginWithJWT(jwtString);
-          if (!res) {
-            throw AuthNotAllowedException();
-          }
-        }, request, response);
-      });
+      var res = await authService.loginWithJWT(jwtString);
+      if (!res) {
+        throw AuthNotAllowedException();
+      }
+    });
+  }
 
   // {
   //   return (request) async {
@@ -65,35 +69,38 @@ class DefaultAuthMiddlewares implements AuthServerMiddlewares {
   // }
 
   @override
-  Middleware checkJwtInHeaders() =>
-      Middleware(null, HttpMethods.all, (request, response, pathArgs) {
-        return _wrapper(() async {
-          var headers = request.headers;
-          var jwt = headers.value(HeaderFields.authorization);
-          if (jwt == null) {
-            throw NoAuthHeaderException();
-          }
-          jwt = jwt.toString();
-          var parts = jwt.split(' ');
-          int length = parts.length;
-          String bearer = parts.first;
-          String jwtString = parts.last;
-          if (length != 2) {
-            throw AuthHeaderNotValidException();
-          }
-          if (bearer != HeaderFields.bearer) {
-            throw AuthHeaderNotValidException();
-          }
-          if (jwtString.isEmpty) {
-            throw ProvidedJwtNotValid(1);
-          }
-          request.context[ContextFields.jwt] = jwtString;
+  FutureOr<PassedHttpEntity> checkJwtInHeaders(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  ) {
+    return _wrapper(request, response, pathArgs, () async {
+      var headers = request.headers;
+      var jwt = headers.value(HeaderFields.authorization);
+      if (jwt == null) {
+        throw NoAuthHeaderException();
+      }
+      jwt = jwt.toString();
+      var parts = jwt.split(' ');
+      int length = parts.length;
+      String bearer = parts.first;
+      String jwtString = parts.last;
+      if (length != 2) {
+        throw AuthHeaderNotValidException();
+      }
+      if (bearer != HeaderFields.bearer) {
+        throw AuthHeaderNotValidException();
+      }
+      if (jwtString.isEmpty) {
+        throw ProvidedJwtNotValid(1);
+      }
+      request.context[ContextFields.jwt] = jwtString;
 
-          // var changedRequest = request.change(context: {
-          //   ContextFields.jwt: jwtString,
-          // });
-        }, request, response);
-      });
+      // var changedRequest = request.change(context: {
+      //   ContextFields.jwt: jwtString,
+      // });
+    });
+  }
 
   // {
   //   return (request) {
@@ -161,22 +168,25 @@ class DefaultAuthMiddlewares implements AuthServerMiddlewares {
   DefaultAuthMiddlewares(this.authService, this.app);
 
   @override
-  Middleware checkAppId() =>
-      Middleware(null, HttpMethods.all, (request, response, pathArgs) {
-        return _wrapper(() async {
-          var allowedAppIds =
-              authService.authDbProvider.app.authSettings.allowedAppsIds;
-          // to skip checking app ids if null
-          if (allowedAppIds == null) return request;
-          String? appId = request.headers.value(HeaderFields.appId);
+  FutureOr<PassedHttpEntity> checkAppId(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  ) {
+    return _wrapper(request, response, pathArgs, () async {
+      var allowedAppIds =
+          authService.authDbProvider.app.authSettings.allowedAppsIds;
+      // to skip checking app ids if null
+      if (allowedAppIds == null) return request;
+      String? appId = request.headers.value(HeaderFields.appId);
 
-          if (appId == null) {
-            throw NoAppIdException();
-          }
-          if (!allowedAppIds.any((element) => element == appId)) {
-            throw NonAuthorizedAppId();
-          }
-          return request;
-        }, request, response);
-      });
+      if (appId == null) {
+        throw NoAppIdException();
+      }
+      if (!allowedAppIds.any((element) => element == appId)) {
+        throw NonAuthorizedAppId();
+      }
+      return request;
+    });
+  }
 }

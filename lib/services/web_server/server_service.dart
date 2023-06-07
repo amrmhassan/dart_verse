@@ -24,8 +24,9 @@ class ServerService {
     InternetAddress ip = _app.serverSettings.ip;
     int port = _app.serverSettings.port;
     _addAuthEndpoints();
-    ServerHolder serverHolder = ServerHolder(_cascade).addGlobalRawMiddleWare(
-        authServerSettings.authServerMiddlewares.checkAppId());
+    ServerHolder serverHolder = ServerHolder(_cascade).addGlobalMiddleware(
+      authServerSettings.authServerMiddlewares.checkAppId,
+    );
     var server = await serverHolder.bind(ip, port);
     return server;
   }
@@ -41,11 +42,15 @@ class ServerService {
     //? adding middlewares here
     if (jwtSecured) {
       pipeline
-          .addRawProcessor(
-            authServerSettings.authServerMiddlewares.checkJwtInHeaders(),
+          .addUpperMiddleware(
+            null,
+            HttpMethods.all,
+            authServerSettings.authServerMiddlewares.checkJwtInHeaders,
           )
-          .addRawProcessor(
-            authServerSettings.authServerMiddlewares.checkJwtForUserId(),
+          .addUpperMiddleware(
+            null,
+            HttpMethods.all,
+            authServerSettings.authServerMiddlewares.checkJwtForUserId,
           );
     }
 
@@ -66,11 +71,17 @@ class ServerService {
     //? adding middlewares here
     if (jwtSecured) {
       router
-          .addRawMiddleware(
-            authServerSettings.authServerMiddlewares.checkJwtInHeaders(),
+          .addUpperMiddleware(
+            null,
+            HttpMethods.all,
+            authServerSettings.authServerMiddlewares.checkJwtInHeaders,
+            signature: 'checkJwtInHeaders',
           )
-          .addRawMiddleware(
-            authServerSettings.authServerMiddlewares.checkJwtForUserId(),
+          .addUpperMiddleware(
+            null,
+            HttpMethods.all,
+            authServerSettings.authServerMiddlewares.checkJwtForUserId,
+            signature: 'checkJwtForUserId',
           );
     }
     Pipeline pipeline = Pipeline().addRouter(router);
