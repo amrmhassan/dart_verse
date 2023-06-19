@@ -42,9 +42,19 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
     try {
       return await method();
     } on ServerException catch (e) {
-      return SendResponse.sendBadBodyErrorToUser(response, e.message, e.code);
+      return SendResponse.sendBadBodyErrorToUser(
+        response,
+        e.message,
+        e.code,
+        errorCode: e.errorCode,
+      );
     } on AuthException catch (e) {
-      return SendResponse.sendAuthErrorToUser(response, e.message, e.code);
+      return SendResponse.sendAuthErrorToUser(
+        response,
+        e.message,
+        e.code,
+        errorCode: e.errorCode,
+      );
     } on ServerLessException catch (e) {
       return SendResponse.sendOtherExceptionErrorToUser(
         response,

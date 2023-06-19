@@ -49,7 +49,9 @@ void main(List<String> arguments) async {
   );
 
   DbService dbService = DbService(app);
-  AuthService authService = AuthService(MongoDbAuthProvider(app, dbService));
+  AuthService authService = AuthService(
+    MongoDbAuthProvider(app, dbService),
+  );
   await dbService.connectToDb();
   // UserDataService userDataService = UserDataService(authService);
   ServerService serverService = ServerService(

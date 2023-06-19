@@ -34,14 +34,15 @@ class SendResponse {
   static ResponseHolder sendAuthErrorToUser(
     ResponseHolder response,
     String e,
-    String? code,
-  ) {
+    String? code, {
+    int errorCode = 401,
+  }) {
     return response.writeJson(
       {
         'error': e,
         'code': code,
       },
-      code: 401,
+      code: errorCode,
     );
   }
 
@@ -71,14 +72,15 @@ class SendResponse {
   static ResponseHolder sendForbidden(
     ResponseHolder response,
     String message,
-    String? code,
-  ) {
+    String? code, {
+    int errorCode = 403,
+  }) {
     return response.writeJson(
       {
         'msg': message,
         'code': code,
       },
-      code: 403,
+      code: errorCode,
     );
   }
 }

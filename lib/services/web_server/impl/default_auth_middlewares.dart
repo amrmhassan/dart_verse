@@ -14,6 +14,12 @@ import '../../../errors/models/auth_errors.dart';
 import '../../../settings/server_settings/utils/send_response.dart';
 
 class DefaultAuthMiddlewares implements AuthServerMiddlewares {
+  @override
+  late AuthService authService;
+  @override
+  late App app;
+  DefaultAuthMiddlewares(this.authService, this.app);
+
   FutureOr<PassedHttpEntity> _wrapper(
     RequestHolder request,
     ResponseHolder response,
@@ -23,7 +29,12 @@ class DefaultAuthMiddlewares implements AuthServerMiddlewares {
     try {
       return await method();
     } on JwtAuthException catch (e) {
-      return SendResponse.sendForbidden(response, e.message, e.code);
+      return SendResponse.sendForbidden(
+        response,
+        e.message,
+        e.code,
+        errorCode: e.errorCode,
+      );
     } on ServerLessException catch (e) {
       return SendResponse.sendBadBodyErrorToUser(
         response,
@@ -60,24 +71,6 @@ class DefaultAuthMiddlewares implements AuthServerMiddlewares {
     });
   }
 
-  // {
-  //   return (request) async {
-  //     return _wrapper(() async {
-  //       var context = request.context;
-  //       var jwtString = context[ContextFields.jwt];
-  //       if (jwtString is! String) {
-  //         throw ProvidedJwtNotValid(4);
-  //       }
-
-  //       var res = await authService.loginWithJWT(jwtString);
-  //       if (!res) {
-  //         throw AuthNotAllowedException();
-  //       }
-  //       return innerHandler(request);
-  //     });
-  //   };
-  // }
-
   @override
   FutureOr<PassedHttpEntity> checkJwtInHeaders(
     RequestHolder request,
@@ -106,77 +99,9 @@ class DefaultAuthMiddlewares implements AuthServerMiddlewares {
       }
       request.context[ContextFields.jwt] = jwtString;
 
-      // var changedRequest = request.change(context: {
-      //   ContextFields.jwt: jwtString,
-      // });
       return request;
     });
   }
-
-  // {
-  //   return (request) {
-  //     return _wrapper(() async {
-  //       var headers = request.headers;
-  //       final jwt = headers[HeaderFields.authorization];
-  //       if (jwt == null) {
-  //         throw NoAuthHeaderException();
-  //       }
-  //       var parts = jwt.split(' ');
-  //       int length = parts.length;
-  //       String bearer = parts.first;
-  //       String jwtString = parts.last;
-  //       if (length != 2) {
-  //         throw AuthHeaderNotValidException();
-  //       }
-  //       if (bearer != HeaderFields.bearer) {
-  //         throw AuthHeaderNotValidException();
-  //       }
-  //       if (jwtString.isEmpty) {
-  //         throw ProvidedJwtNotValid(1);
-  //       }
-
-  //       var changedRequest = request.change(context: {
-  //         ContextFields.jwt: jwtString,
-  //       });
-  //       return innerHandler(changedRequest);
-  //     });
-  //   };
-  // }
-
-  // @override
-  // FutureOr<Response> Function(Request request) checkJwtValid(
-  //     FutureOr<Response> Function(Request request) innerHandler) {
-  //   return (request) {
-  //     return _wrapper(() async {
-  //       var context = request.context;
-  //       var jwtString = context[ContextFields.jwt];
-  //       if (jwtString is! String) {
-  //         throw ProvidedJwtNotValid(2);
-  //       }
-
-  //       var res =
-  //           JWT.tryVerify(jwtString, SecretKey(app.authSettings.jwtSecretKey));
-  //       if (res == null) {
-  //         throw ProvidedJwtNotValid(3);
-  //       }
-  //       var payload = res.payload;
-  //       if (payload is! Map) {
-  //         throw UserDataException();
-  //       }
-  //       var changedRequest = request.change(context: {
-  //         ContextFields.jwtPayload: payload,
-  //       });
-
-  //       return innerHandler(changedRequest);
-  //     });
-  //   };
-  // }
-
-  @override
-  late AuthService authService;
-  @override
-  late App app;
-  DefaultAuthMiddlewares(this.authService, this.app);
 
   @override
   FutureOr<PassedHttpEntity> checkAppId(
