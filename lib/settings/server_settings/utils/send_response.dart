@@ -19,14 +19,15 @@ class SendResponse {
   static ResponseHolder sendBadBodyErrorToUser(
     ResponseHolder response,
     String e,
-    String? code,
-  ) {
+    String? code, {
+    int errorCode = 400,
+  }) {
     return response.writeJson(
       {
         'error': e,
         'code': code,
       },
-      code: 400,
+      code: errorCode,
     );
   }
 
@@ -47,14 +48,15 @@ class SendResponse {
   static ResponseHolder sendOtherExceptionErrorToUser(
     ResponseHolder response,
     String e,
-    String? code,
-  ) {
+    String? code, {
+    int errorCode = 500,
+  }) {
     return response.writeJson(
       {
         'error': e,
         'code': code,
       },
-      code: 500,
+      code: errorCode,
     );
   }
 

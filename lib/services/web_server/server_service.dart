@@ -79,7 +79,7 @@ class ServerService {
   ServerService addRouter(
     Router router, {
     bool jwtSecured = false,
-    bool userMustBeVerified = false,
+    bool emailMustBeVerified = false,
   }) {
     //? adding middlewares here
     if (jwtSecured) {
@@ -103,11 +103,11 @@ class ServerService {
           );
     }
 
-    if (userMustBeVerified) {
+    if (emailMustBeVerified) {
       router.addUpperMiddleware(
         null,
         HttpMethods.all,
-        authServerSettings.authServerMiddlewares.checkUserVerified,
+        authServerSettings.authServerMiddlewares.checkUserEmailVerified,
       );
     }
     Pipeline pipeline = Pipeline().addRouter(router);

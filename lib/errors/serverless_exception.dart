@@ -1,7 +1,11 @@
 abstract class ServerLessException implements Exception {
   late String message;
   final String code;
-  ServerLessException(this.code);
+  final int errorCode;
+  ServerLessException(
+    this.code, {
+    this.errorCode = 500,
+  });
 
   @override
   String toString() {

@@ -47,7 +47,11 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
       return SendResponse.sendAuthErrorToUser(response, e.message, e.code);
     } on ServerLessException catch (e) {
       return SendResponse.sendOtherExceptionErrorToUser(
-          response, e.message, e.code);
+        response,
+        e.message,
+        e.code,
+        errorCode: e.errorCode,
+      );
     } catch (e) {
       return SendResponse.sendUnknownError(response, null);
     }

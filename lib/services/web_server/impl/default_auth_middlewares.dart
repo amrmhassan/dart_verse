@@ -25,7 +25,12 @@ class DefaultAuthMiddlewares implements AuthServerMiddlewares {
     } on JwtAuthException catch (e) {
       return SendResponse.sendForbidden(response, e.message, e.code);
     } on ServerLessException catch (e) {
-      return SendResponse.sendBadBodyErrorToUser(response, e.message, e.code);
+      return SendResponse.sendBadBodyErrorToUser(
+        response,
+        e.message,
+        e.code,
+        errorCode: e.errorCode,
+      );
     } catch (e) {
       return SendResponse.sendUnknownError(response, null);
     }
@@ -197,7 +202,7 @@ class DefaultAuthMiddlewares implements AuthServerMiddlewares {
   }
 
   @override
-  FutureOr<PassedHttpEntity> checkUserVerified(
+  FutureOr<PassedHttpEntity> checkUserEmailVerified(
     RequestHolder request,
     ResponseHolder response,
     Map<String, dynamic> pathArgs,

@@ -8,7 +8,17 @@ class EmailVerificationException extends ServerLessException {
   String message;
   @override
   String code;
-  EmailVerificationException(this.message, this.code) : super(code);
+
+  @override
+  int errorCode;
+  EmailVerificationException(
+    this.message,
+    this.code, {
+    this.errorCode = 400,
+  }) : super(
+          code,
+          errorCode: errorCode,
+        );
 }
 
 //? email verification errors
@@ -41,5 +51,6 @@ class UserIsAlreadyVerifiedException extends EmailVerificationException {
       : super(
           'user is already verified',
           ErrorCodes.userAlreadyVerified,
+          errorCode: 409,
         );
 }

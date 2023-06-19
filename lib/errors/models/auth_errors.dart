@@ -1,5 +1,7 @@
 // ignore_for_file: overridden_fields
 
+import 'dart:io';
+
 import 'package:dart_verse/errors/serverless_exception.dart';
 
 import '../../services/web_server/repo/error_codes.dart';
@@ -10,7 +12,26 @@ class AuthException extends ServerLessException {
   String message;
   @override
   String code;
-  AuthException(this.message, this.code) : super(code);
+
+  @override
+  int errorCode;
+  AuthException(
+    this.message,
+    this.code, {
+    this.errorCode = 401,
+  }) : super(
+          code,
+          errorCode: errorCode,
+        );
+}
+
+//? app auth exceptions
+class NoAppIdException extends AuthException {
+  NoAppIdException()
+      : super(
+          'please provide your app id in the headers as appid:<put_your_app_id_here>',
+          ErrorCodes.noAppIdProvided,
+        );
 }
 
 //? register exceptions
@@ -19,8 +40,18 @@ class RegisterUserException extends AuthException {
   String message;
   @override
   String code;
+  @override
+  int errorCode;
 
-  RegisterUserException(this.message, this.code) : super(message, code);
+  RegisterUserException(
+    this.message,
+    this.code, {
+    this.errorCode = 401,
+  }) : super(
+          message,
+          code,
+          errorCode: errorCode,
+        );
 }
 
 //? jwt auth errors
@@ -29,8 +60,18 @@ class JwtAuthException extends AuthException {
   String message;
   @override
   String code;
+  @override
+  int errorCode;
 
-  JwtAuthException(this.message, this.code) : super(message, code);
+  JwtAuthException(
+    this.message,
+    this.code, {
+    this.errorCode = 401,
+  }) : super(
+          message,
+          code,
+          errorCode: errorCode,
+        );
 }
 
 class DuplicateEmailException extends RegisterUserException {
@@ -38,6 +79,7 @@ class DuplicateEmailException extends RegisterUserException {
       : super(
           'email already exists',
           ErrorCodes.duplicateEmail,
+          errorCode: HttpStatus.conflict,
         );
 }
 
@@ -47,11 +89,17 @@ class LoginUserException extends AuthException {
   String message;
   @override
   String code;
+  @override
+  int errorCode;
 
-  LoginUserException(this.message, this.code)
-      : super(
+  LoginUserException(
+    this.message,
+    this.code, {
+    this.errorCode = 401,
+  }) : super(
           message,
           code,
+          errorCode: errorCode,
         );
 }
 
@@ -76,6 +124,7 @@ class LoginExceedException extends LoginUserException {
       : super(
           'logged in too much, too much active sessions, try logging out from all of your devices',
           ErrorCodes.activeJwtExceed,
+          errorCode: HttpStatus.tooManyRequests,
         );
 }
 
@@ -85,6 +134,7 @@ class NoAuthHeaderException extends JwtAuthException {
       : super(
           'please provide the `authorization` in headers',
           ErrorCodes.noAuthHeaderProvided,
+          errorCode: HttpStatus.badRequest,
         );
 }
 
@@ -93,6 +143,7 @@ class AuthHeaderNotValidException extends JwtAuthException {
       : super(
           'authorization header is not valid',
           ErrorCodes.authHeaderNotValid,
+          errorCode: HttpStatus.badRequest,
         );
 }
 
@@ -101,6 +152,7 @@ class ProvidedJwtNotValid extends JwtAuthException {
       : super(
           'provided jwt is not valid with type: $code',
           ErrorCodes.jwtNotValid,
+          errorCode: HttpStatus.badRequest,
         );
 }
 
@@ -125,14 +177,7 @@ class UserNotFoundToVerify extends JwtAuthException {
       : super(
           'can\'t find the user to verify',
           ErrorCodes.userNotFoundToVerify,
-        );
-}
-
-class NoAppIdException extends JwtAuthException {
-  NoAppIdException()
-      : super(
-          'please provide your app id in the headers as appid:<put_your_app_id_here>',
-          ErrorCodes.noAppIdProvided,
+          errorCode: HttpStatus.notFound,
         );
 }
 

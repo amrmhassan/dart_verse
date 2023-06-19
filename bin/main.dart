@@ -59,7 +59,7 @@ void main(List<String> arguments) async {
       authService,
       cEmailVerificationProvider: DefaultEmailVerificationProvider(
         authService: authService,
-        allowNewVerificationEmailAfter: Duration(seconds: 1),
+        allowNewVerificationEmailAfter: Duration(minutes: 1),
         verifyLinkExpiresAfter: Duration(minutes: 5),
       ),
     ),
@@ -73,7 +73,7 @@ void main(List<String> arguments) async {
   serverService.addRouter(
     userDataRouter,
     jwtSecured: true,
-    userMustBeVerified: true,
+    emailMustBeVerified: true,
   );
   await serverService.runServer();
 }
