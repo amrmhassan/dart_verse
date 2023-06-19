@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dart_express/dart_express.dart';
 import 'package:dart_verse/settings/app/app.dart';
+import 'package:dart_webcore/dart_webcore.dart';
+import 'package:dart_webcore/dart_webcore/routing/impl/cascade.dart';
+import 'package:dart_webcore/dart_webcore/routing/repo/processor.dart';
 
 import '../../errors/models/server_errors.dart';
 import '../../settings/server_settings/repo/auth_server_settings.dart';
@@ -25,48 +27,61 @@ class ServerService {
     int port = _app.serverSettings.port;
     _addAuthEndpoints();
     ServerHolder serverHolder = ServerHolder(_cascade).addGlobalMiddleware(
-      authServerSettings.authServerMiddlewares.checkAppId,
+      authServerSettings.authServerMiddlewares.checkAppId as Processor,
     );
     var server = await serverHolder.bind(ip, port);
     return server;
   }
 
-  ServerService addPipeline(
-    Pipeline pipeline, {
-    bool jwtSecured = false,
-    String? idFieldName,
-    String? idEqualTo,
-    String? roleFieldName,
-    String? roleEqualTo,
-  }) {
-    //? adding middlewares here
-    if (jwtSecured) {
-      pipeline
-          .addUpperMiddleware(
-            null,
-            HttpMethods.all,
-            authServerSettings.authServerMiddlewares.checkJwtInHeaders,
-          )
-          .addUpperMiddleware(
-            null,
-            HttpMethods.all,
-            authServerSettings.authServerMiddlewares.checkJwtForUserId,
-          );
-    }
+  //! data in this like idFieldName and role and their values will be checked from the jwt payload
+  //! try to combine the addRouter and addPipeline
+  // ServerService addPipeline(
+  //   Pipeline pipeline, {
+  //   bool jwtSecured = false,
+  //   String? idFieldName,
+  //   String? idEqualTo,
+  //   String? roleFieldName,
+  //   String? roleEqualTo,
+  // }) {
+  //   //? adding middlewares here
+  //   if (jwtSecured) {
+  //     pipeline
+  //         .addUpperMiddleware(
+  //           null,
+  //           HttpMethods.all,
+  //           authServerSettings.authServerMiddlewares.checkJwtInHeaders,
+  //         )
+  //         .addUpperMiddleware(
+  //           null,
+  //           HttpMethods.all,
+  //           authServerSettings.authServerMiddlewares.checkJwtForUserId,
+  //         );
+  //   }
 
-    //?
+  //   //?
 
-    _cascade = _cascade.add(pipeline);
-    return this;
-  }
+  //   _cascade = _cascade.add(pipeline);
+  //   return this;
+  // }
 
+  //! data in this like idFieldName and role and their values will be checked from the jwt payload
+  //! try to combine the addRouter and addPipeline
+  //! i want to create use it like this
+  /*
+  the addRouter method should be provided with the place of the provided user id
+  whether it should be in body or as authorization in headers bearer
+  and the user id key name where it will be '_id' or 'id' or whatever
+  addRouter(put parameters here).secure(bool userAuth = true, bool userData = false,(map allUserDataWillBeHere(Auth And User Data)){
+    if userAuth is true the map allUserDataWillBeHere will contain userAuth, and the same for userData
+    return bool;
+  })
+
+  and the add Router method should return a secure object or SecureHandler Object
+  this secure handler class i don't know yet what to add in it but 
+  */
   ServerService addRouter(
     Router router, {
     bool jwtSecured = false,
-    String? idFieldName,
-    String? idEqualTo,
-    String? roleFieldName,
-    String? roleEqualTo,
   }) {
     //? adding middlewares here
     if (jwtSecured) {
@@ -74,13 +89,15 @@ class ServerService {
           .addUpperMiddleware(
             null,
             HttpMethods.all,
-            authServerSettings.authServerMiddlewares.checkJwtInHeaders,
+            authServerSettings.authServerMiddlewares.checkJwtInHeaders
+                as Processor,
             signature: 'checkJwtInHeaders',
           )
           .addUpperMiddleware(
             null,
             HttpMethods.all,
-            authServerSettings.authServerMiddlewares.checkJwtForUserId,
+            authServerSettings.authServerMiddlewares.checkJwtForUserId
+                as Processor,
             signature: 'checkJwtForUserId',
           );
     }

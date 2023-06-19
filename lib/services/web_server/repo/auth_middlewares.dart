@@ -1,9 +1,10 @@
 import 'dart:async';
 
-import 'package:dart_express/dart_express.dart';
-import 'package:dart_express/dart_express/server/repo/passed_http_entity.dart';
 import 'package:dart_verse/services/auth/auth_service.dart';
 import 'package:dart_verse/settings/app/app.dart';
+import 'package:dart_webcore/dart_webcore/server/impl/request_holder.dart';
+import 'package:dart_webcore/dart_webcore/server/impl/response_holder.dart';
+import 'package:dart_webcore/dart_webcore/server/repo/passed_http_entity.dart';
 
 abstract class AuthServerMiddlewares {
   late AuthService authService;

@@ -16,10 +16,10 @@ dev_dependencies:
   lints: ^2.0.0
   test: ^1.21.0
 dependencies:
-  dart_express:
-    path: D:/Study And Work/Work/projects/flutter/Packages/dart_express/
+
   crypto: ^3.0.3
   dart_jsonwebtoken: ^2.7.1
+  dart_webcore: ^0.0.3
   dotenv: ^4.1.0
   google_sign_in: ^6.1.0
   html: ^0.15.3

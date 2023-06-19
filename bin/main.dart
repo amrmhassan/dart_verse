@@ -3,7 +3,6 @@ import 'dart:io';
 // !
 // @ add the storage management, static files serving with the ability to run html, js css, files, sending messages to a socket server
 // !
-import 'package:dart_express/dart_express.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:dart_verse/features/auth_db_provider/impl/mongo_db_auth_provider/mongo_db_auth_provider.dart';
 import 'package:dart_verse/features/email_verification/impl/default_email_verification_provider.dart';
@@ -19,6 +18,7 @@ import 'package:dart_verse/settings/email_settings/email_settings.dart';
 import 'package:dart_verse/settings/server_settings/impl/default_auth_server_settings.dart';
 import 'package:dart_verse/settings/server_settings/server_settings.dart';
 import 'package:dart_verse/settings/user_data_settings/user_data_settings.dart';
+import 'package:dart_webcore/dart_webcore.dart';
 
 import 'constants.dart';
 import 'shelf_usage_example.dart';
