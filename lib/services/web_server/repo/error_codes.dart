@@ -34,6 +34,7 @@ class ErrorCodes {
   static const String userNotFoundToVerify = 'user-not-found-to-verify';
   static const String noAppIdProvided = 'no-app-id-provided';
   static const String notAuthorizedAppId = 'not-authorized-appid';
+  static const String userEmailNotVerified = 'user-email-not-verified';
 
   //? email errors
   static const String emailTemplateFileNotFound =

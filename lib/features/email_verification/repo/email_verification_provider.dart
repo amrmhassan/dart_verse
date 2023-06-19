@@ -10,13 +10,13 @@ abstract class EmailVerificationProvider {
 
   /// this will restrict user to allow for a new jwt after a specific amount of time
   //! just add the code for this
-  final Duration? allowNewJwtAfter;
+  final Duration? allowNewVerificationEmailAfter;
   final AuthService authService;
 
   EmailVerificationProvider({
     required this.emailTemplate,
     required this.verifyLinkExpiresAfter,
     required this.authService,
-    required this.allowNewJwtAfter,
+    required this.allowNewVerificationEmailAfter,
   });
 }

@@ -82,12 +82,12 @@ class AuthService implements DVService {
     return jwtToken;
   }
 
-  /// if the jwt is valid and allowed then it will return true else false
-  Future<bool> loginWithJWT(String jwt) async {
+  /// if the jwt is valid and allowed then it will return user id else null
+  Future<String?> loginWithJWT(String jwt) async {
     // verify the jwt isn't manipulated
     var res = JWT.tryVerify(jwt, authDbProvider.app.authSettings.jwtSecretKey);
     if (res == null) {
-      return false;
+      return null;
     }
     // get the data from the jwt
     JWTPayloadModel model = JWTPayloadModel.fromJson(res.payload);
@@ -95,15 +95,15 @@ class AuthService implements DVService {
     // check for the jwt in the allowed jwt tokens and active
     bool jwtIsActive = await authDbProvider.checkIfJwtIsActive(jwt, model.id);
     if (!jwtIsActive) {
-      return jwtIsActive;
+      return model.id;
     }
     // check for the user id if it is a valid user
     AuthModel? authModel = await authDbProvider.getUserByEmail(model.email);
     if (authModel == null) {
-      return false;
+      return null;
     }
     // then allow the user to continue
-    return true;
+    return authModel.id;
   }
 
   /// delete auth user data with the jwt data
@@ -132,5 +132,9 @@ class AuthService implements DVService {
       allowNewJwtAfter: allowNewJwtAfter,
       verifyLinkExpiresAfter: verifyLinkExpiresAfter,
     );
+  }
+
+  Future<bool?> checkUserVerified(String userId) {
+    return authDbProvider.checkUserVerified(userId);
   }
 }

@@ -26,4 +26,6 @@ abstract class AuthDbProvider {
     required Duration? allowNewJwtAfter,
     required Duration? verifyLinkExpiresAfter,
   });
+
+  Future<bool?> checkUserVerified(String userId);
 }

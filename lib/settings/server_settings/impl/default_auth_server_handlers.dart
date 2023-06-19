@@ -137,7 +137,8 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
       }
       String token = await authService.createVerifyEmailToken(
         email,
-        allowNewJwtAfter: emailVerificationProvider.allowNewJwtAfter,
+        allowNewJwtAfter:
+            emailVerificationProvider.allowNewVerificationEmailAfter,
         verifyLinkExpiresAfter:
             emailVerificationProvider.verifyLinkExpiresAfter,
       );

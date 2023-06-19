@@ -134,4 +134,10 @@ class MemoryDbAuthProvider extends AuthDbProvider
     // TODO: implement createVerifyEmailToken
     throw UnimplementedError();
   }
+
+  @override
+  Future<bool?> checkUserVerified(String userId) {
+    // TODO: implement checkUserVerified
+    throw UnimplementedError();
+  }
 }

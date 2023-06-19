@@ -40,14 +40,17 @@ class DefaultAuthMiddlewares implements AuthServerMiddlewares {
     return _wrapper(request, response, pathArgs, () async {
       var context = request.context;
       var jwtString = context[ContextFields.jwt];
+
       if (jwtString is! String) {
         throw ProvidedJwtNotValid(4);
       }
 
-      var res = await authService.loginWithJWT(jwtString);
-      if (!res) {
+      var userId = await authService.loginWithJWT(jwtString);
+      if (userId == null) {
         throw AuthNotAllowedException();
       }
+      request.context[ContextFields.userId] = userId;
+
       return request;
     });
   }
@@ -189,6 +192,31 @@ class DefaultAuthMiddlewares implements AuthServerMiddlewares {
       if (!allowedAppIds.any((element) => element == appId)) {
         throw NonAuthorizedAppId();
       }
+      return request;
+    });
+  }
+
+  @override
+  FutureOr<PassedHttpEntity> checkUserVerified(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  ) {
+    return _wrapper(request, response, pathArgs, () async {
+      // this userId will be provided only if the user is allowed to sign in with the provided jwt from the checkJwtForUserId middleware
+      String? userId = request.context[ContextFields.userId];
+      if (userId == null) {
+        throw AuthNotAllowedException();
+      }
+
+      var verified = await authService.checkUserVerified(userId);
+      if (verified == null) {
+        throw NoUserRegisteredException();
+      }
+      if (verified != true) {
+        throw UserEmailNotVerified();
+      }
+
       return request;
     });
   }

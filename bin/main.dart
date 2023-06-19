@@ -70,7 +70,11 @@ void main(List<String> arguments) async {
       return response
           .write('user data fetched successfully with id: ${pathArgs["id"]}');
     });
-  serverService.addRouter(userDataRouter, jwtSecured: true);
+  serverService.addRouter(
+    userDataRouter,
+    jwtSecured: true,
+    userMustBeVerified: true,
+  );
   await serverService.runServer();
 }
 

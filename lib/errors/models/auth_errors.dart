@@ -143,3 +143,11 @@ class NonAuthorizedAppId extends JwtAuthException {
           ErrorCodes.notAuthorizedAppId,
         );
 }
+
+class UserEmailNotVerified extends JwtAuthException {
+  UserEmailNotVerified()
+      : super(
+          'user email not verified, please verify first',
+          ErrorCodes.userEmailNotVerified,
+        );
+}

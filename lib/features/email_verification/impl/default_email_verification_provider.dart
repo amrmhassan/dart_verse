@@ -23,6 +23,6 @@ class DefaultEmailVerificationProvider extends EmailVerificationProvider {
           emailTemplate: emailTemplate,
           verifyLinkExpiresAfter: verifyLinkExpiresAfter,
           authService: authService,
-          allowNewJwtAfter: allowNewVerificationEmailAfter,
+          allowNewVerificationEmailAfter: allowNewVerificationEmailAfter,
         );
 }

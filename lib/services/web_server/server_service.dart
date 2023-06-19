@@ -79,6 +79,7 @@ class ServerService {
   ServerService addRouter(
     Router router, {
     bool jwtSecured = false,
+    bool userMustBeVerified = false,
   }) {
     //? adding middlewares here
     if (jwtSecured) {
@@ -100,6 +101,14 @@ class ServerService {
             authServerSettings.authServerMiddlewares.checkJwtForUserId,
             signature: 'checkJwtForUserId',
           );
+    }
+
+    if (userMustBeVerified) {
+      router.addUpperMiddleware(
+        null,
+        HttpMethods.all,
+        authServerSettings.authServerMiddlewares.checkUserVerified,
+      );
     }
     Pipeline pipeline = Pipeline().addRouter(router);
 
@@ -131,10 +140,12 @@ class ServerService {
 
     // adding auth endpoints pipeline
     var authRouter = Router()
+      //? won't check for app id here (can be used from a browser)
       ..get(
         '$verifyEmail/<${PathFields.jwt}>',
         authServerSettings.authServerHandlers.verifyEmail,
       )
+      //? will check for app id from here
       ..addRouterMiddleware(
         authServerSettings.authServerMiddlewares.checkAppId,
       )
@@ -146,6 +157,15 @@ class ServerService {
         registerPath,
         authServerSettings.authServerHandlers.register,
       )
+      //? will check for jwt from here
+      ..addRouterMiddleware(
+        authServerSettings.authServerMiddlewares.checkJwtInHeaders,
+        signature: 'checkJwtInHeaders',
+      )
+      ..addRouterMiddleware(
+        authServerSettings.authServerMiddlewares.checkJwtForUserId,
+        signature: 'checkJwtForUserId',
+      )
       ..post(
         getVerificationEmail,
         (request, response, pathArgs) =>
@@ -153,6 +173,7 @@ class ServerService {
           request,
           response,
           pathArgs,
+          // i need the host here and the port
           'http://localhost:3000$verifyEmail/',
         ),
       );

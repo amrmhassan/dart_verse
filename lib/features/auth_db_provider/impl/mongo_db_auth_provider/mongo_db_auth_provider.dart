@@ -298,4 +298,16 @@ class MongoDbAuthProvider extends AuthDbProvider
 
     return jwtString;
   }
+
+  @override
+  Future<bool?> checkUserVerified(String userId) async {
+    var collection =
+        dbService.mongoDbController.collection(app.authSettings.collectionName);
+    var doc = await collection.doc(userId).getData();
+    if (doc == null) {
+      return null;
+    }
+    var res = doc[DbFields.verified] == true;
+    return res;
+  }
 }
