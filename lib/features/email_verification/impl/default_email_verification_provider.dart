@@ -9,7 +9,7 @@ class DefaultEmailVerificationProvider extends EmailVerificationProvider {
   @override
   Duration? verifyLinkExpiresAfter;
   @override
-  final Duration? allowNewJwtAfter;
+  final Duration? allowNewVerificationEmailAfter;
 
   @override
   AuthService authService;
@@ -17,12 +17,12 @@ class DefaultEmailVerificationProvider extends EmailVerificationProvider {
   DefaultEmailVerificationProvider({
     this.emailTemplate,
     this.verifyLinkExpiresAfter,
-    this.allowNewJwtAfter,
+    this.allowNewVerificationEmailAfter,
     required this.authService,
   }) : super(
           emailTemplate: emailTemplate,
           verifyLinkExpiresAfter: verifyLinkExpiresAfter,
           authService: authService,
-          allowNewJwtAfter: allowNewJwtAfter,
+          allowNewJwtAfter: allowNewVerificationEmailAfter,
         );
 }

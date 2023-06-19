@@ -22,7 +22,7 @@ abstract class AuthDbProvider {
   // new
   Future<void> verifyUser(String jwt);
   Future<String> createVerifyEmailToken(
-    String userId, {
+    String email, {
     required Duration? allowNewJwtAfter,
     required Duration? verifyLinkExpiresAfter,
   });

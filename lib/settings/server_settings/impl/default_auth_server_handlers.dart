@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:dart_verse/constants/model_fields.dart';
+import 'package:dart_verse/constants/path_fields.dart';
 import 'package:dart_verse/errors/models/auth_errors.dart';
 import 'package:dart_verse/errors/models/server_errors.dart';
 import 'package:dart_verse/errors/serverless_exception.dart';
@@ -18,6 +19,20 @@ import '../repo/auth_body_keys.dart';
 import '../utils/send_response.dart';
 
 class DefaultAuthServerHandlers implements AuthServerHandlers {
+  @override
+  AuthService authService;
+
+  @override
+  AuthBodyKeys defaultAuthBodyKeys;
+
+  @override
+  EmailVerificationProvider emailVerificationProvider;
+
+  DefaultAuthServerHandlers(
+    this.authService,
+    this.defaultAuthBodyKeys,
+    this.emailVerificationProvider,
+  );
   FutureOr<PassedHttpEntity> _wrapper(
     RequestHolder request,
     ResponseHolder response,
@@ -107,44 +122,30 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
   }
 
   @override
-  AuthService authService;
-
-  @override
-  AuthBodyKeys defaultAuthBodyKeys;
-
-  @override
-  EmailVerificationProvider emailVerificationProvider;
-
-  DefaultAuthServerHandlers(
-    this.authService,
-    this.defaultAuthBodyKeys,
-    this.emailVerificationProvider,
-  );
-
-  @override
   FutureOr<PassedHttpEntity> getVerificationEmail(
     RequestHolder request,
     ResponseHolder response,
     Map<String, dynamic> pathArgs,
+    String verifyEmailEndpoint,
   ) async {
     return _wrapper(request, response, pathArgs, () async {
       var body = await request.readAsJson();
-      var userId = body[ModelFields.id];
+      var email = body[ModelFields.email];
 
-      if (userId is! String) {
+      if (email is! String) {
         throw RequestBodyError();
       }
       String token = await authService.createVerifyEmailToken(
-        userId,
+        email,
         allowNewJwtAfter: emailVerificationProvider.allowNewJwtAfter,
         verifyLinkExpiresAfter:
             emailVerificationProvider.verifyLinkExpiresAfter,
       );
-      var payload = JWT
+
+      JWT
           .verify(
               token, authService.authDbProvider.app.authSettings.jwtSecretKey)
           .payload;
-      String email = payload[ModelFields.email];
       // here i need to send that email to the user
       EmailService emailService = EmailService(authService.authDbProvider.app);
       Message message = getEmailVerificationMessage(
@@ -152,12 +153,17 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
         from: 'Dart Verse',
         subject: 'Test Email Verification',
       );
+      String verificationLink = (verifyEmailEndpoint.endsWith('/')
+              ? verifyEmailEndpoint
+              : '$verifyEmailEndpoint/') +
+          token;
+
       await emailService.sendFromTemplateFile(
         message,
         'D:/Study And Work/Work/projects/flutter/Dart Mastery/dart_verse/templates/verification.html',
         {
           'name': email,
-          'verify_link': token,
+          'verify_link': verificationLink,
           'sender_name': 'Dart Verse',
         },
       );
@@ -166,6 +172,24 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
         response,
         'Email sent successfully',
         dataFieldName: 'msg',
+      );
+    });
+  }
+
+  @override
+  FutureOr<PassedHttpEntity> verifyEmail(RequestHolder request,
+      ResponseHolder response, Map<String, dynamic> pathArgs) {
+    return _wrapper(request, response, pathArgs, () async {
+      //! here just start verifying the email
+      String? jwt = pathArgs[PathFields.jwt];
+      if (jwt == null) {
+        throw RequestBodyError();
+      }
+
+      await authService.markUserAsVerified(jwt);
+      return SendResponse.sendDataToUser(
+        response,
+        'Email verified successfully',
       );
     });
   }

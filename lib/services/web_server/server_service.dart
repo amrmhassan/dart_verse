@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:dart_verse/constants/path_fields.dart';
 import 'package:dart_verse/settings/app/app.dart';
 import 'package:dart_webcore/dart_webcore.dart';
-import 'package:dart_webcore/dart_webcore/routing/impl/cascade.dart';
-import 'package:dart_webcore/dart_webcore/routing/repo/processor.dart';
 
 import '../../errors/models/server_errors.dart';
 import '../../settings/server_settings/repo/auth_server_settings.dart';
@@ -26,9 +25,7 @@ class ServerService {
     InternetAddress ip = _app.serverSettings.ip;
     int port = _app.serverSettings.port;
     _addAuthEndpoints();
-    ServerHolder serverHolder = ServerHolder(_cascade).addGlobalMiddleware(
-      authServerSettings.authServerMiddlewares.checkAppId as Processor,
-    );
+    ServerHolder serverHolder = ServerHolder(_cascade);
     var server = await serverHolder.bind(ip, port);
     return server;
   }
@@ -89,15 +86,18 @@ class ServerService {
           .addUpperMiddleware(
             null,
             HttpMethods.all,
-            authServerSettings.authServerMiddlewares.checkJwtInHeaders
-                as Processor,
+            authServerSettings.authServerMiddlewares.checkAppId,
+          )
+          .addUpperMiddleware(
+            null,
+            HttpMethods.all,
+            authServerSettings.authServerMiddlewares.checkJwtInHeaders,
             signature: 'checkJwtInHeaders',
           )
           .addUpperMiddleware(
             null,
             HttpMethods.all,
-            authServerSettings.authServerMiddlewares.checkJwtForUserId
-                as Processor,
+            authServerSettings.authServerMiddlewares.checkJwtForUserId,
             signature: 'checkJwtForUserId',
           );
     }
@@ -126,10 +126,18 @@ class ServerService {
     String registerPath = authServerSettings.authEndpoints.register;
     String getVerificationEmail =
         authServerSettings.authEndpoints.getVerificationEmail;
+    String verifyEmail = authServerSettings.authEndpoints.verifyEmail;
     // String jwtLoginPath = authEndpoints.jwtLogin;
 
     // adding auth endpoints pipeline
     var authRouter = Router()
+      ..get(
+        '$verifyEmail/<${PathFields.jwt}>',
+        authServerSettings.authServerHandlers.verifyEmail,
+      )
+      ..addRouterMiddleware(
+        authServerSettings.authServerMiddlewares.checkAppId,
+      )
       ..post(
         loginPath,
         authServerSettings.authServerHandlers.login,
@@ -140,7 +148,13 @@ class ServerService {
       )
       ..post(
         getVerificationEmail,
-        authServerSettings.authServerHandlers.getVerificationEmail,
+        (request, response, pathArgs) =>
+            authServerSettings.authServerHandlers.getVerificationEmail(
+          request,
+          response,
+          pathArgs,
+          'http://localhost:3000$verifyEmail/',
+        ),
       );
 
     addRouter(authRouter);

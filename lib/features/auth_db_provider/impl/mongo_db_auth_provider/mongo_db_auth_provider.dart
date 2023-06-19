@@ -236,14 +236,16 @@ class MongoDbAuthProvider extends AuthDbProvider
 
   @override
   Future<String> createVerifyEmailToken(
-    String userId, {
+    String email, {
     required Duration? allowNewJwtAfter,
     required Duration? verifyLinkExpiresAfter,
   }) async {
     var collection =
         dbService.mongoDbController.collection(app.authSettings.collectionName);
     //? get the saved email verification and check if it exceeded the amount of a new verification
-    var authModel = await collection.doc(userId).getData();
+    var authModel =
+        await collection.findOne(where.eq(ModelFields.email, email));
+    // var authModel = await collection.doc(userId).getData();
     if (authModel == null) {
       throw FailedToStartVerificationException('no user found');
     }
@@ -274,6 +276,7 @@ class MongoDbAuthProvider extends AuthDbProvider
     //? check if the user isn't already verified
     //? if exceed or no jwt saved just create the new one
     // here just get the auth model for the user to make sure that the user exists
+    String userId = authModel[ModelFields.id];
 
     var payload = {
       ModelFields.id: userId,

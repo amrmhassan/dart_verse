@@ -27,5 +27,11 @@ abstract class AuthServerHandlers {
     RequestHolder request,
     ResponseHolder response,
     Map<String, dynamic> pathArgs,
+    String verifyEmailEndpoint,
+  );
+  FutureOr<PassedHttpEntity> verifyEmail(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
   );
 }

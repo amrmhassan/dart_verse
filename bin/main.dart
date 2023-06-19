@@ -59,7 +59,7 @@ void main(List<String> arguments) async {
       authService,
       cEmailVerificationProvider: DefaultEmailVerificationProvider(
         authService: authService,
-        allowNewJwtAfter: Duration(minutes: 1),
+        allowNewVerificationEmailAfter: Duration(seconds: 1),
         verifyLinkExpiresAfter: Duration(minutes: 5),
       ),
     ),

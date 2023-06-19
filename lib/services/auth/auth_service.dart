@@ -123,12 +123,12 @@ class AuthService implements DVService {
   }
 
   Future<String> createVerifyEmailToken(
-    String userId, {
+    String email, {
     required Duration? allowNewJwtAfter,
     required Duration? verifyLinkExpiresAfter,
   }) async {
     return authDbProvider.createVerifyEmailToken(
-      userId,
+      email,
       allowNewJwtAfter: allowNewJwtAfter,
       verifyLinkExpiresAfter: verifyLinkExpiresAfter,
     );
