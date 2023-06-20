@@ -32,4 +32,16 @@ abstract class AuthDbProvider {
     required String oldPassword,
     required String newPassword,
   });
+
+  // this must run with user email not user id
+  Future<void> forgetPassword(String email);
+  // can run with user id
+  Future<void> deleteUserData(String id);
+  // can run with user id
+  Future<void> fullyDeleteUser(String id);
+  Future<void> logout(String jwt);
+  // can run with user id
+  Future<void> logoutFromAllDevices(String id);
+  // can run with user id
+  Future<void> updateUserData(String id, Map<String, dynamic> updateDoc);
 }

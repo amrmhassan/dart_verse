@@ -141,4 +141,40 @@ class MemoryDbAuthProvider extends AuthDbProvider
     // TODO: implement changePassword
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> deleteUserData(String id) {
+    // TODO: implement deleteUserData
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> forgetPassword(String email) {
+    // TODO: implement forgetPassword
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> fullyDeleteUser(String id) {
+    // TODO: implement fullyDeleteUser
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> logout(String jwt) {
+    // TODO: implement logout
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> logoutFromAllDevices(String email) {
+    // TODO: implement logoutFromAllDevices
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateUserData(String id, Map<String, dynamic> updateDoc) {
+    // TODO: implement updateUserData
+    throw UnimplementedError();
+  }
 }

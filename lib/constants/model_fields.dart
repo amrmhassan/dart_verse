@@ -1,3 +1,5 @@
+import 'package:dart_verse/constants/reserved_keys.dart';
+
 class ModelFields {
   static const String name = 'name';
   static const String email = 'email';
@@ -12,4 +14,5 @@ class ModelFields {
 class DbFields {
   static const String verified = 'verified';
   static const String verificationJWT = 'verificationJWT';
+  static const String id = DBRKeys.id;
 }

@@ -17,4 +17,19 @@ class DefaultAuthEndpoints implements AuthEndpoints {
 
   @override
   String forgetPassword = EndpointsConstants.forgetPassword;
+
+  @override
+  String deleteUserData = EndpointsConstants.deleteUserData;
+
+  @override
+  String fullyDeleteUser = EndpointsConstants.fullyDeleteUser;
+
+  @override
+  String logout = EndpointsConstants.logout;
+
+  @override
+  String logoutFromAllDevices = EndpointsConstants.logoutFromAllDevices;
+
+  @override
+  String updateUserData = EndpointsConstants.updateUserData;
 }

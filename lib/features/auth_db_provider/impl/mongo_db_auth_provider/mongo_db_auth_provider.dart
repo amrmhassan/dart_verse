@@ -354,4 +354,75 @@ class MongoDbAuthProvider extends AuthDbProvider
       throw Exception('can\'t edit the password');
     }
   }
+
+  @override
+  Future<void> deleteUserData(String id) async {
+    var userDataCollection = dbService.mongoDbController
+        .collection(app.userDataSettings.collectionName);
+    var res = await userDataCollection.doc(id).delete();
+    if (res.failure) {
+      throw Exception('can\'t delete user data');
+    }
+  }
+
+  @override
+  Future<void> forgetPassword(String email) {
+    // TODO: implement forgetPassword
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> fullyDeleteUser(String id) async {
+    var authCollection =
+        dbService.mongoDbController.collection(app.authSettings.collectionName);
+    var authData = await authCollection.doc(id).getData();
+    String? email = authData?[ModelFields.email];
+    if (email == null) {
+      throw Exception('can\'t find the user auth info to delete');
+    }
+    // delete user data
+    await deleteUserData(id);
+    // logout from all devices
+    await logoutFromAllDevices(email);
+    // delete user auth data
+    var res = await authCollection.doc(id).delete();
+    if (res.failure) {
+      throw Exception('can\'t delete user auth info');
+    }
+  }
+
+  @override
+  Future<void> logout(String jwt) async {
+    var res = JWT.tryVerify(jwt, app.authSettings.jwtSecretKey);
+    if (res == null) {
+      throw ProvidedJwtNotValid(2);
+    }
+    // String id = res.payload[ModelFields.id];
+    // var activeJWTs = dbService.mongoDbController
+    //     .collection(app.authSettings.activeJWTCollName);
+    // var selector = where.eq(DbFields.id, id);
+    // var update = modify;
+    //! here search how to delete a value from a list in the mongo db(to delete the current jwt only from the activeJWTs)
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> logoutFromAllDevices(String id) async {
+    var activeJwts = dbService.mongoDbController
+        .collection(app.authSettings.activeJWTCollName);
+    var res = await activeJwts.doc(id).delete();
+    if (res.failure) {
+      throw Exception('can\'t logout from all devices');
+    }
+  }
+
+  @override
+  Future<void> updateUserData(String id, Map<String, dynamic> updateDoc) async {
+    var userData = dbService.mongoDbController
+        .collection(app.userDataSettings.collectionName);
+    var res = await userData.doc(id).update(updateDoc);
+    if (res.failure) {
+      throw Exception('can\'t update user data');
+    }
+  }
 }
