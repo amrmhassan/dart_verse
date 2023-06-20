@@ -8,5 +8,6 @@ class EndpointsSettings {
   });
 }
 
-EndpointsSettings defaultEndpoints =
-    EndpointsSettings(authEndpoints: DefaultAuthEndpoints());
+EndpointsSettings defaultEndpoints = EndpointsSettings(
+  authEndpoints: DefaultAuthEndpoints(),
+);

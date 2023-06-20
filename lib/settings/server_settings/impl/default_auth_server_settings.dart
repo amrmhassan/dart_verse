@@ -37,10 +37,9 @@ class DefaultAuthServerSettings implements AuthServerSettings {
     AuthEndpoints? cAuthEndpoints,
     AuthServerMiddlewares? cAuthServerMiddlewares,
     EmailVerificationProvider? cEmailVerificationProvider,
+    String? cBackendHost,
   }) {
     authBodyKeys = cAuthBodyKeys ?? DefaultAuthBodyKeys();
-    // authEndpoints = cAuthEndpoints ?? DefaultAuthEndpoints();
-
     authServerMiddlewares =
         cAuthServerMiddlewares ?? DefaultAuthMiddlewares(authService);
     emailVerificationProvider = cEmailVerificationProvider ??
@@ -54,5 +53,9 @@ class DefaultAuthServerSettings implements AuthServerSettings {
           authBodyKeys,
           emailVerificationProvider,
         );
+    backendHost = cBackendHost ?? 'http://localhost';
   }
+
+  @override
+  late String backendHost;
 }

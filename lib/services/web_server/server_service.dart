@@ -32,63 +32,43 @@ class ServerService {
 
   //! data in this like idFieldName and role and their values will be checked from the jwt payload
   //! try to combine the addRouter and addPipeline
-  // ServerService addPipeline(
-  //   Pipeline pipeline, {
-  //   bool jwtSecured = false,
-  //   String? idFieldName,
-  //   String? idEqualTo,
-  //   String? roleFieldName,
-  //   String? roleEqualTo,
-  // }) {
-  //   //? adding middlewares here
-  //   if (jwtSecured) {
-  //     pipeline
-  //         .addUpperMiddleware(
-  //           null,
-  //           HttpMethods.all,
-  //           authServerSettings.authServerMiddlewares.checkJwtInHeaders,
-  //         )
-  //         .addUpperMiddleware(
-  //           null,
-  //           HttpMethods.all,
-  //           authServerSettings.authServerMiddlewares.checkJwtForUserId,
-  //         );
-  //   }
-
-  //   //?
-
-  //   _cascade = _cascade.add(pipeline);
-  //   return this;
-  // }
-
-  //! data in this like idFieldName and role and their values will be checked from the jwt payload
-  //! try to combine the addRouter and addPipeline
   //! i want to create use it like this
   /*
-  the addRouter method should be provided with the place of the provided user id
-  whether it should be in body or as authorization in headers bearer
-  and the user id key name where it will be '_id' or 'id' or whatever
-  addRouter(put parameters here).secure(bool userAuth = true, bool userData = false,(map allUserDataWillBeHere(Auth And User Data)){
-    if userAuth is true the map allUserDataWillBeHere will contain userAuth, and the same for userData
-    return bool;
-  })
+        the addRouter method should be provided with the place of the provided user id
+        whether it should be in body or as authorization in headers bearer
+        and the user id key name where it will be '_id' or 'id' or whatever
+        addRouter(put parameters here).secure(bool userAuth = true, bool userData = false,(map allUserDataWillBeHere(Auth And User Data)){
+          if userAuth is true the map allUserDataWillBeHere will contain userAuth, and the same for userData
+          return bool;
+        })
 
-  and the add Router method should return a secure object or SecureHandler Object
-  this secure handler class i don't know yet what to add in it but 
-  */
+        and the add Router method should return a secure object or SecureHandler Object
+        this secure handler class i don't know yet what to add in it but 
+        */
   ServerService addRouter(
     Router router, {
     bool jwtSecured = false,
     bool emailMustBeVerified = false,
+    bool appIdSecured = true,
   }) {
+    //? run checks here
+    if (!jwtSecured && emailMustBeVerified) {
+      throw Exception(
+          'emailMustBeVerified && !jwtSecured, to check if email must be verified user must be logged in first');
+    }
+
     //? adding middlewares here
+    // checking for app id for every
+    if (appIdSecured) {
+      router.addUpperMiddleware(
+        null,
+        HttpMethods.all,
+        authServerSettings.authServerMiddlewares.checkAppId,
+      );
+    }
+    // checking if jwt is added and user logged in
     if (jwtSecured) {
       router
-          .addUpperMiddleware(
-            null,
-            HttpMethods.all,
-            authServerSettings.authServerMiddlewares.checkAppId,
-          )
           .addUpperMiddleware(
             null,
             HttpMethods.all,
@@ -102,7 +82,7 @@ class ServerService {
             signature: 'checkJwtForUserId',
           );
     }
-
+    // checking if email is verified
     if (emailMustBeVerified) {
       router.addUpperMiddleware(
         null,
@@ -136,6 +116,8 @@ class ServerService {
     String getVerificationEmail =
         _app.endpoints.authEndpoints.getVerificationEmail;
     String verifyEmail = _app.endpoints.authEndpoints.verifyEmail;
+    int port = _app.serverSettings.port;
+    String host = authServerSettings.backendHost;
     // String jwtLoginPath = authEndpoints.jwtLogin;
 
     // adding auth endpoints pipeline
@@ -174,7 +156,7 @@ class ServerService {
           response,
           pathArgs,
           // i need the host here and the port
-          'http://localhost:3000$verifyEmail/',
+          '$host:$port$verifyEmail/',
         ),
       );
 
