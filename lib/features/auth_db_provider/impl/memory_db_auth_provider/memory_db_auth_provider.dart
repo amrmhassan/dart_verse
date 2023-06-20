@@ -116,12 +116,6 @@ class MemoryDbAuthProvider extends AuthDbProvider
   }
 
   @override
-  Future<bool> allowNewJwt(int maximum) {
-    // TODO: implement allowNewJwt
-    throw UnimplementedError();
-  }
-
-  @override
   Future<void> verifyUser(String jwt) {
     // TODO: implement verifyUser
     throw UnimplementedError();

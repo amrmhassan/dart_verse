@@ -21,11 +21,14 @@ class ServerService {
 
   late Cascade _cascade;
 
-  Future<HttpServer> runServer() async {
+  Future<HttpServer> runServer({
+    bool log = false,
+  }) async {
     InternetAddress ip = _app.serverSettings.ip;
     int port = _app.serverSettings.port;
     _addAuthEndpoints();
     ServerHolder serverHolder = ServerHolder(_cascade);
+    serverHolder.addGlobalMiddleware(logRequest);
     var server = await serverHolder.bind(ip, port);
     return server;
   }

@@ -183,12 +183,6 @@ class MongoDbAuthProvider extends AuthDbProvider
   }
 
   @override
-  Future<bool> allowNewJwt(int maximum) {
-    // TODO: implement allowNewJwt
-    throw UnimplementedError();
-  }
-
-  @override
   Future<void> verifyUser(String jwt) async {
     //! here check if the verification jwt is saved on the db or not
     //! make a temp collection for users auth data like jwt verification
@@ -317,7 +311,15 @@ class MongoDbAuthProvider extends AuthDbProvider
     String email, {
     required String oldPassword,
     required String newPassword,
+
+    /// this will prevent others from using the same jwt to log in after the password gets changed
+    bool logoutFromAllDevices = true,
   }) async {
+    //? if old password is the same as new password
+    if (oldPassword == newPassword) {
+      throw Exception('oldPassword must be different from newPassword');
+    }
+    //? checking for the user password if it's right
     AuthModel? authModel = await getUserByEmail(email);
     if (authModel == null) {
       throw NoUserRegisteredException();
@@ -329,6 +331,18 @@ class MongoDbAuthProvider extends AuthDbProvider
     }
     // if reached here this means that the user email and password are right
     // the user doesn't need to be logged in to do this
+
+    //? checking if i need to log out from all other devices
+    if (logoutFromAllDevices) {
+      var activeJWTS = dbService.mongoDbController
+          .collection(app.authSettings.activeJWTCollName);
+      var res = await activeJWTS.doc(authModel.id).delete();
+      if (res.failure) {
+        throw Exception(
+            'can\'t log out from other devices, password didn\'t change');
+      }
+    }
+    //? changing the password
     String passwordHash = SecurePassword(newPassword).getPasswordHash();
     var collection =
         dbService.mongoDbController.collection(app.authSettings.collectionName);
@@ -337,7 +351,7 @@ class MongoDbAuthProvider extends AuthDbProvider
     var updateQuery = modify.set(ModelFields.passwordHash, passwordHash);
     var res = await collection.updateOne(selector, updateQuery);
     if (res.failure) {
-      throw Exception('cant edit the password');
+      throw Exception('can\'t edit the password');
     }
   }
 }

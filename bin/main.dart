@@ -68,8 +68,8 @@ void main(List<String> arguments) async {
 
   var userDataRouter = Router()
     ..get('/user/<id>', (request, response, pathArgs) {
-      return response
-          .write('user data fetched successfully with id: ${pathArgs["id"]}');
+      return response.writeJson(
+          'user data fetched successfully with id: ${pathArgs["id"]}');
     });
   serverService.addRouter(
     userDataRouter,
