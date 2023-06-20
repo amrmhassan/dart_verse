@@ -131,11 +131,11 @@ class ServerService {
 
   void _addAuthEndpoints() {
     if (_authServerSettings == null) return;
-    String loginPath = authServerSettings.authEndpoints.login;
-    String registerPath = authServerSettings.authEndpoints.register;
+    String loginPath = _app.endpoints.authEndpoints.login;
+    String registerPath = _app.endpoints.authEndpoints.register;
     String getVerificationEmail =
-        authServerSettings.authEndpoints.getVerificationEmail;
-    String verifyEmail = authServerSettings.authEndpoints.verifyEmail;
+        _app.endpoints.authEndpoints.getVerificationEmail;
+    String verifyEmail = _app.endpoints.authEndpoints.verifyEmail;
     // String jwtLoginPath = authEndpoints.jwtLogin;
 
     // adding auth endpoints pipeline

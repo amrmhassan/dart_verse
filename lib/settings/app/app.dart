@@ -4,6 +4,7 @@ import 'package:dart_verse/errors/models/app_exceptions.dart';
 import 'package:dart_verse/settings/auth_settings/auth_settings.dart';
 import 'package:dart_verse/settings/db_settings/db_settings.dart';
 import 'package:dart_verse/settings/email_settings/email_settings.dart';
+import 'package:dart_verse/settings/endpoints/endpoints.dart';
 import 'package:dart_verse/settings/server_settings/server_settings.dart';
 import 'package:dart_verse/settings/user_data_settings/user_data_settings.dart';
 
@@ -15,6 +16,7 @@ class App {
   final UserDataSettings? _userDataSettings;
   final ServerSettings? _serverSettings;
   final EmailSettings? _emailSettings;
+  late EndpointsSettings _endpoints;
 
   App({
     AuthSettings? authSettings,
@@ -22,11 +24,14 @@ class App {
     UserDataSettings? userDataSettings,
     ServerSettings? serverSettings,
     EmailSettings? emailSettings,
+    EndpointsSettings? endpoints,
   })  : _authSettings = authSettings,
         _dbSettings = dbSettings,
         _userDataSettings = userDataSettings,
         _serverSettings = serverSettings,
-        _emailSettings = emailSettings;
+        _emailSettings = emailSettings {
+    _endpoints = defaultEndpoints;
+  }
 
   //? the app starting point
   // Future<App> run({
@@ -73,5 +78,12 @@ class App {
       throw NoEmailSettingsException();
     }
     return _emailSettings!;
+  }
+
+  EndpointsSettings get endpoints {
+    if (_emailSettings == null) {
+      throw NoEmailSettingsException();
+    }
+    return _endpoints;
   }
 }
