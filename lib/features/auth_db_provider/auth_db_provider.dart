@@ -28,4 +28,9 @@ abstract class AuthDbProvider {
   });
 
   Future<bool?> checkUserVerified(String userId);
+  Future<void> changePassword(
+    String email, {
+    required String oldPassword,
+    required String newPassword,
+  });
 }

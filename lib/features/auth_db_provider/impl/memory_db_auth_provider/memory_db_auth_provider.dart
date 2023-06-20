@@ -140,4 +140,11 @@ class MemoryDbAuthProvider extends AuthDbProvider
     // TODO: implement checkUserVerified
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> changePassword(String email,
+      {required String oldPassword, required String newPassword}) {
+    // TODO: implement changePassword
+    throw UnimplementedError();
+  }
 }

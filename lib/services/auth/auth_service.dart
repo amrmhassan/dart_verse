@@ -137,4 +137,13 @@ class AuthService implements DVService {
   Future<bool?> checkUserVerified(String userId) {
     return authDbProvider.checkUserVerified(userId);
   }
+
+  Future<void> changePassword(
+    String email, {
+    required String oldPassword,
+    required String newPassword,
+  }) {
+    return authDbProvider.changePassword(email,
+        oldPassword: oldPassword, newPassword: newPassword);
+  }
 }

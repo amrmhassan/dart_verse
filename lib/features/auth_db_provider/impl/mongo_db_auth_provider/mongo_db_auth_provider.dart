@@ -11,6 +11,7 @@ import 'package:mongo_dart/mongo_dart.dart';
 
 import '../../../../errors/models/auth_errors.dart';
 import '../../../../services/auth/controllers/jwt_controller.dart';
+import '../../../../services/auth/controllers/secure_password.dart';
 import '../../../../services/db_manager/db_service.dart';
 import '../../../../settings/app/app.dart';
 
@@ -309,5 +310,34 @@ class MongoDbAuthProvider extends AuthDbProvider
     }
     var res = doc[DbFields.verified] == true;
     return res;
+  }
+
+  @override
+  Future<void> changePassword(
+    String email, {
+    required String oldPassword,
+    required String newPassword,
+  }) async {
+    AuthModel? authModel = await getUserByEmail(email);
+    if (authModel == null) {
+      throw NoUserRegisteredException();
+    }
+    bool rightPassword =
+        SecurePassword(oldPassword).checkPassword(authModel.passwordHash);
+    if (!rightPassword) {
+      throw InvalidPassword();
+    }
+    // if reached here this means that the user email and password are right
+    // the user doesn't need to be logged in to do this
+    String passwordHash = SecurePassword(newPassword).getPasswordHash();
+    var collection =
+        dbService.mongoDbController.collection(app.authSettings.collectionName);
+    var selector = where.eq(ModelFields.email, email);
+
+    var updateQuery = modify.set(ModelFields.passwordHash, passwordHash);
+    var res = await collection.updateOne(selector, updateQuery);
+    if (res.failure) {
+      throw Exception('cant edit the password');
+    }
   }
 }

@@ -34,17 +34,17 @@ class ServerService {
   //! try to combine the addRouter and addPipeline
   //! i want to create use it like this
   /*
-        the addRouter method should be provided with the place of the provided user id
-        whether it should be in body or as authorization in headers bearer
-        and the user id key name where it will be '_id' or 'id' or whatever
-        addRouter(put parameters here).secure(bool userAuth = true, bool userData = false,(map allUserDataWillBeHere(Auth And User Data)){
-          if userAuth is true the map allUserDataWillBeHere will contain userAuth, and the same for userData
-          return bool;
-        })
+              the addRouter method should be provided with the place of the provided user id
+              whether it should be in body or as authorization in headers bearer
+              and the user id key name where it will be '_id' or 'id' or whatever
+              addRouter(put parameters here).secure(bool userAuth = true, bool userData = false,(map allUserDataWillBeHere(Auth And User Data)){
+                if userAuth is true the map allUserDataWillBeHere will contain userAuth, and the same for userData
+                return bool;
+              })
 
-        and the add Router method should return a secure object or SecureHandler Object
-        this secure handler class i don't know yet what to add in it but 
-        */
+              and the add Router method should return a secure object or SecureHandler Object
+              this secure handler class i don't know yet what to add in it but 
+              */
   ServerService addRouter(
     Router router, {
     bool jwtSecured = false,
@@ -111,14 +111,18 @@ class ServerService {
 
   void _addAuthEndpoints() {
     if (_authServerSettings == null) return;
+    // endpoints
     String loginPath = _app.endpoints.authEndpoints.login;
     String registerPath = _app.endpoints.authEndpoints.register;
     String getVerificationEmail =
         _app.endpoints.authEndpoints.getVerificationEmail;
     String verifyEmail = _app.endpoints.authEndpoints.verifyEmail;
+    String changePassword = _app.endpoints.authEndpoints.changePassword;
+    // String forgetPassword = _app.endpoints.authEndpoints.forgetPassword;
+
+    // other needed data
     int port = _app.serverSettings.port;
     String host = authServerSettings.backendHost;
-    // String jwtLoginPath = authEndpoints.jwtLogin;
 
     // adding auth endpoints pipeline
     var authRouter = Router()
@@ -138,6 +142,10 @@ class ServerService {
       ..post(
         registerPath,
         authServerSettings.authServerHandlers.register,
+      )
+      ..post(
+        changePassword,
+        authServerSettings.authServerHandlers.changePassword,
       )
       //? will check for jwt from here
       ..addRouterMiddleware(

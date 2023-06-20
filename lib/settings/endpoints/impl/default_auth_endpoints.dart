@@ -11,4 +11,10 @@ class DefaultAuthEndpoints implements AuthEndpoints {
   String verifyEmail = EndpointsConstants.verifyEmail;
   @override
   String getVerificationEmail = EndpointsConstants.getVerificationEmail;
+
+  @override
+  String changePassword = EndpointsConstants.changePassword;
+
+  @override
+  String forgetPassword = EndpointsConstants.forgetPassword;
 }

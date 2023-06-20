@@ -34,4 +34,9 @@ abstract class AuthServerHandlers {
     ResponseHolder response,
     Map<String, dynamic> pathArgs,
   );
+  FutureOr<PassedHttpEntity> changePassword(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  );
 }

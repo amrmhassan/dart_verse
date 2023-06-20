@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dart_verse/constants/body_fields.dart';
 import 'package:dart_verse/constants/model_fields.dart';
 import 'package:dart_verse/constants/path_fields.dart';
 import 'package:dart_verse/errors/models/auth_errors.dart';
@@ -205,6 +206,27 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
         response,
         'Email verified successfully',
       );
+    });
+  }
+
+  @override
+  FutureOr<PassedHttpEntity> changePassword(RequestHolder request,
+      ResponseHolder response, Map<String, dynamic> pathArgs) {
+    return _wrapper(request, response, pathArgs, () async {
+      var body = await request.readAsJson();
+      String? email = body[ModelFields.email];
+      String? oldPassword = body[BodyFields.oldPassword];
+      String? newPassword = body[BodyFields.newPassword];
+      if (email == null || oldPassword == null || newPassword == null) {
+        throw RequestBodyError();
+      }
+
+      await authService.changePassword(
+        email,
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+      );
+      return SendResponse.sendDataToUser(response, 'password changed!');
     });
   }
 }
