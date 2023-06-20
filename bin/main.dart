@@ -57,7 +57,6 @@ void main(List<String> arguments) async {
   ServerService serverService = ServerService(
     app,
     authServerSettings: DefaultAuthServerSettings(
-      app,
       authService,
       cEmailVerificationProvider: DefaultEmailVerificationProvider(
         authService: authService,

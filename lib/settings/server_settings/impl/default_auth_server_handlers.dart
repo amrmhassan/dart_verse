@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:dart_verse/constants/model_fields.dart';
 import 'package:dart_verse/constants/path_fields.dart';
 import 'package:dart_verse/errors/models/auth_errors.dart';
@@ -157,10 +156,10 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
             emailVerificationProvider.verifyLinkExpiresAfter,
       );
 
-      JWT
-          .verify(
-              token, authService.authDbProvider.app.authSettings.jwtSecretKey)
-          .payload;
+      // JWT
+      //     .verify(
+      //         token, authService.authDbProvider.app.authSettings.jwtSecretKey)
+      //     .payload;
       // here i need to send that email to the user
       EmailService emailService = EmailService(authService.authDbProvider.app);
       Message message = getEmailVerificationMessage(
@@ -201,7 +200,7 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
         throw RequestBodyError();
       }
 
-      await authService.markUserAsVerified(jwt);
+      await authService.markUserVerified(jwt);
       return SendResponse.sendDataToUser(
         response,
         'Email verified successfully',

@@ -118,7 +118,7 @@ class AuthService implements DVService {
   }
 
   //! add the ability to update the user auth model
-  Future<void> markUserAsVerified(String jwt) {
+  Future<void> markUserVerified(String jwt) {
     return authDbProvider.verifyUser(jwt);
   }
 
