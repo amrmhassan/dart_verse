@@ -108,16 +108,9 @@ class AuthService implements DVService {
 
   /// delete auth user data with the jwt data
   Future<void> deleteAuthData(String userId) async {
-    //! here delete the user auth data
     return authDbProvider.deleteAuthData(userId);
   }
 
-  //! add the logout and make it delete just the jwt of that session
-  Future<void> logout(String jwt) async {
-    throw UnimplementedError();
-  }
-
-  //! add the ability to update the user auth model
   Future<void> markUserVerified(String jwt) {
     return authDbProvider.verifyUser(jwt);
   }
@@ -145,5 +138,34 @@ class AuthService implements DVService {
   }) {
     return authDbProvider.changePassword(email,
         oldPassword: oldPassword, newPassword: newPassword);
+  }
+
+  // this must run with user email not user id
+  Future<void> forgetPassword(String email) {
+    return authDbProvider.forgetPassword(email);
+  }
+
+  // can run with user id
+  Future<void> deleteUserData(String id) {
+    return authDbProvider.deleteUserData(id);
+  }
+
+  // can run with user id
+  Future<void> fullyDeleteUser(String id) {
+    return authDbProvider.fullyDeleteUser(id);
+  }
+
+  Future<void> logout(String jwt) {
+    return authDbProvider.logout(jwt);
+  }
+
+  // can run with user id
+  Future<void> logoutFromAllDevices(String id) {
+    return authDbProvider.logoutFromAllDevices(id);
+  }
+
+  // can run with user id
+  Future<void> updateUserData(String id, Map<String, dynamic> updateDoc) {
+    return authDbProvider.updateUserData(id, updateDoc);
   }
 }

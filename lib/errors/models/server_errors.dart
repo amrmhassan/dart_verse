@@ -1,5 +1,7 @@
 // ignore_for_file: overridden_fields
 
+import 'dart:io';
+
 import 'package:dart_verse/errors/serverless_exception.dart';
 
 import '../../services/web_server/repo/error_codes.dart';
@@ -9,8 +11,14 @@ class ServerException extends ServerLessException {
   String message;
   @override
   final String code;
+  @override
+  int errorCode;
 
-  ServerException(this.message, this.code) : super(code);
+  ServerException(
+    this.message,
+    this.code, {
+    this.errorCode = HttpStatus.badRequest,
+  }) : super(code, errorCode: errorCode);
 }
 
 //? server exceptions
@@ -32,9 +40,10 @@ class NoAuthServerSettingsException extends ServerException {
 }
 
 class RequestBodyError extends ServerException {
-  RequestBodyError()
+  RequestBodyError([String? msg])
       : super(
-          'bad body data, please check documentation',
+          'bad body data: ${msg ?? "please check documentation"}',
           ErrorCodes.requestBoyError,
+          errorCode: HttpStatus.badRequest,
         );
 }

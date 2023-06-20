@@ -39,4 +39,34 @@ abstract class AuthServerHandlers {
     ResponseHolder response,
     Map<String, dynamic> pathArgs,
   );
+  FutureOr<PassedHttpEntity> forgetPassword(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  );
+  FutureOr<PassedHttpEntity> logoutFromAllDevices(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  );
+  FutureOr<PassedHttpEntity> logout(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  );
+  FutureOr<PassedHttpEntity> updateUserData(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  );
+  FutureOr<PassedHttpEntity> deleteUserData(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  );
+  FutureOr<PassedHttpEntity> fullyDeleteUser(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  );
 }

@@ -1,13 +1,8 @@
 import 'dart:io';
-
-// !
-// @ add the storage management, static files serving with the ability to run html, js css, files, sending messages to a socket server
-// !
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:dart_verse/features/auth_db_provider/impl/mongo_db_auth_provider/mongo_db_auth_provider.dart';
 import 'package:dart_verse/features/email_verification/impl/default_email_verification_provider.dart';
 import 'package:dart_verse/services/auth/auth_service.dart';
-import 'package:dart_verse/services/db_manager/db_providers/impl/memory_db/memory_db_provider.dart';
 import 'package:dart_verse/services/db_manager/db_providers/impl/mongo_db/mongo_db_provider.dart';
 import 'package:dart_verse/services/db_manager/db_service.dart';
 import 'package:dart_verse/services/web_server/server_service.dart';
@@ -27,12 +22,8 @@ import 'shelf_usage_example.dart';
 
 void main(List<String> arguments) async {
   MongoDBProvider mongoDBProvider = MongoDBProvider(localConnLink);
-  MemoryDBProvider memoryDBProvider = MemoryDBProvider({});
 
-  DBSettings dbSettings = DBSettings(
-    mongoDBProvider: mongoDBProvider,
-    memoryDBProvider: memoryDBProvider,
-  );
+  DBSettings dbSettings = DBSettings(mongoDBProvider: mongoDBProvider);
   UserDataSettings userDataSettings = UserDataSettings();
   AuthSettings authSettings = AuthSettings(
     jwtSecretKey: SecretKey('jwtSecretKey'),

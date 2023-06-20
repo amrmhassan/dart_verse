@@ -152,13 +152,7 @@ class MongoDbAuthProvider extends AuthDbProvider
 
   @override
   Future<void> deleteAuthData(String id) async {
-    var res = await dbService.mongoDbController
-        .collection(app.authSettings.activeJWTCollName)
-        .doc(id)
-        .delete();
-    if (res.failure) {
-      throw Exception('cant delete jwt data for the user');
-    }
+    await logoutFromAllDevices(id);
     var userAuthRes = await dbService.mongoDbController
         .collection(app.authSettings.collectionName)
         .doc(id)
@@ -385,10 +379,7 @@ class MongoDbAuthProvider extends AuthDbProvider
     // logout from all devices
     await logoutFromAllDevices(email);
     // delete user auth data
-    var res = await authCollection.doc(id).delete();
-    if (res.failure) {
-      throw Exception('can\'t delete user auth info');
-    }
+    await deleteAuthData(id);
   }
 
   @override
@@ -420,7 +411,10 @@ class MongoDbAuthProvider extends AuthDbProvider
   Future<void> updateUserData(String id, Map<String, dynamic> updateDoc) async {
     var userData = dbService.mongoDbController
         .collection(app.userDataSettings.collectionName);
-    var res = await userData.doc(id).update(updateDoc);
+    var res = await userData.doc(id).update(
+          updateDoc,
+          upsert: true,
+        );
     if (res.failure) {
       throw Exception('can\'t update user data');
     }

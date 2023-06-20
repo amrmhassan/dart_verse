@@ -81,7 +81,11 @@ class DefaultAuthMiddlewares implements AuthServerMiddlewares {
       if (jwt == null) {
         throw NoAuthHeaderException();
       }
-      jwt = jwt.toString().trim();
+
+      jwt = jwt
+        ..toString()
+        ..replaceAll('  ', ' ')
+        ..trim();
       var parts = jwt.split(' ');
       int length = parts.length;
       String bearer = parts.first;

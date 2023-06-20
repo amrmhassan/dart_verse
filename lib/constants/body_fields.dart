@@ -4,4 +4,5 @@ class BodyFields {
   static String email = ModelFields.email;
   static String oldPassword = 'oldPassword';
   static String newPassword = 'newPassword';
+  static String updateDoc = 'updateDoc';
 }

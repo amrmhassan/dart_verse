@@ -76,7 +76,7 @@ class ServerService {
             null,
             HttpMethods.all,
             authServerSettings.authServerMiddlewares.checkJwtInHeaders,
-            signature: 'checkJwtInHeaders',
+            signature: 'checkJwtInHeadersFromUserCustomRoutes',
           )
           .addUpperMiddleware(
             null,
@@ -115,12 +115,20 @@ class ServerService {
   void _addAuthEndpoints() {
     if (_authServerSettings == null) return;
     // endpoints
-    String loginPath = _app.endpoints.authEndpoints.login;
-    String registerPath = _app.endpoints.authEndpoints.register;
+    String login = _app.endpoints.authEndpoints.login;
+    String register = _app.endpoints.authEndpoints.register;
     String getVerificationEmail =
         _app.endpoints.authEndpoints.getVerificationEmail;
     String verifyEmail = _app.endpoints.authEndpoints.verifyEmail;
     String changePassword = _app.endpoints.authEndpoints.changePassword;
+    String forgetPassword = _app.endpoints.authEndpoints.forgetPassword;
+    String logoutFromAllDevices =
+        _app.endpoints.authEndpoints.logoutFromAllDevices;
+    String logout = _app.endpoints.authEndpoints.logout;
+    String updateUserData = _app.endpoints.authEndpoints.updateUserData;
+    String deleteUserData = _app.endpoints.authEndpoints.deleteUserData;
+    String fullyDeleteUser = _app.endpoints.authEndpoints.fullyDeleteUser;
+
     // String forgetPassword = _app.endpoints.authEndpoints.forgetPassword;
 
     // other needed data
@@ -139,21 +147,21 @@ class ServerService {
         authServerSettings.authServerMiddlewares.checkAppId,
       )
       ..post(
-        loginPath,
+        login,
         authServerSettings.authServerHandlers.login,
       )
       ..post(
-        registerPath,
+        register,
         authServerSettings.authServerHandlers.register,
       )
       ..post(
-        changePassword,
-        authServerSettings.authServerHandlers.changePassword,
+        forgetPassword,
+        authServerSettings.authServerHandlers.forgetPassword,
       )
       //? will check for jwt from here
       ..addRouterMiddleware(
         authServerSettings.authServerMiddlewares.checkJwtInHeaders,
-        signature: 'checkJwtInHeaders',
+        signature: 'checkJwtInHeadersFromAuthEndpoints',
       )
       ..addRouterMiddleware(
         authServerSettings.authServerMiddlewares.checkJwtForUserId,
@@ -169,6 +177,30 @@ class ServerService {
           // i need the host here and the port
           '$host:$port$verifyEmail/',
         ),
+      )
+      ..post(
+        changePassword,
+        authServerSettings.authServerHandlers.changePassword,
+      )
+      ..post(
+        logoutFromAllDevices,
+        authServerSettings.authServerHandlers.logoutFromAllDevices,
+      )
+      ..post(
+        logout,
+        authServerSettings.authServerHandlers.logout,
+      )
+      ..post(
+        updateUserData,
+        authServerSettings.authServerHandlers.updateUserData,
+      )
+      ..post(
+        deleteUserData,
+        authServerSettings.authServerHandlers.deleteUserData,
+      )
+      ..post(
+        fullyDeleteUser,
+        authServerSettings.authServerHandlers.fullyDeleteUser,
       );
 
     addRouter(authRouter);

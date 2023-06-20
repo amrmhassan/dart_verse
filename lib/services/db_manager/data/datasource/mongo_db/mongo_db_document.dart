@@ -10,13 +10,16 @@ class MongoDbDocument {
   );
 
   /// this will update certain values presented in the doc object
-  Future<WriteResult> update(Map<String, dynamic> doc) async {
+  Future<WriteResult> update(
+    Map<String, dynamic> doc, {
+    bool upsert = true,
+  }) async {
     var selector = where.eq('_id', _id);
     var updateQuery = modify;
     doc.forEach((key, value) {
       updateQuery = updateQuery.set(key, value);
     });
-    return _collRef.updateOne(selector, updateQuery);
+    return _collRef.updateOne(selector, updateQuery, upsert: upsert);
   }
 
   /// this will delete the document

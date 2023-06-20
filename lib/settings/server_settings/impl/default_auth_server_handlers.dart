@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:dart_verse/constants/body_fields.dart';
+import 'package:dart_verse/constants/context_fields.dart';
 import 'package:dart_verse/constants/model_fields.dart';
 import 'package:dart_verse/constants/path_fields.dart';
 import 'package:dart_verse/errors/models/auth_errors.dart';
@@ -89,7 +91,7 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
         String? email = data[emailKey];
         String? password = data[passwordKey];
         if (email == null || password == null) {
-          throw RequestBodyError();
+          throw RequestBodyError('email and password can\'t be empty');
         }
 
         String jwt = await authService.loginWithEmail(
@@ -122,7 +124,7 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
         Map<String, dynamic>? userData = data[userDataKey];
 
         if (email == null || password == null) {
-          throw RequestBodyError();
+          throw RequestBodyError('email and password can\'t be empty');
         }
 
         String jwt = await authService.registerUser(
@@ -147,7 +149,7 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
       var email = body[ModelFields.email];
 
       if (email is! String) {
-        throw RequestBodyError();
+        throw RequestBodyError('email can\'t be empty');
       }
       String token = await authService.createVerifyEmailToken(
         email,
@@ -198,7 +200,7 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
       //! here just start verifying the email
       String? jwt = pathArgs[PathFields.jwt];
       if (jwt == null) {
-        throw RequestBodyError();
+        throw RequestBodyError('jwt can\'t be empty');
       }
 
       await authService.markUserVerified(jwt);
@@ -210,15 +212,19 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
   }
 
   @override
-  FutureOr<PassedHttpEntity> changePassword(RequestHolder request,
-      ResponseHolder response, Map<String, dynamic> pathArgs) {
+  FutureOr<PassedHttpEntity> changePassword(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  ) {
     return _wrapper(request, response, pathArgs, () async {
       var body = await request.readAsJson();
       String? email = body[ModelFields.email];
       String? oldPassword = body[BodyFields.oldPassword];
       String? newPassword = body[BodyFields.newPassword];
       if (email == null || oldPassword == null || newPassword == null) {
-        throw RequestBodyError();
+        throw RequestBodyError(
+            'email && oldPassword && newPassword can\'t be empty');
       }
 
       await authService.changePassword(
@@ -227,6 +233,117 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
         newPassword: newPassword,
       );
       return SendResponse.sendDataToUser(response, 'password changed!');
+    });
+  }
+
+  @override
+  FutureOr<PassedHttpEntity> deleteUserData(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  ) async {
+    return _wrapper(request, response, pathArgs, () async {
+      String? id = request.context[ContextFields.userId];
+      if (id == null) {
+        throw RequestBodyError('id is null');
+      }
+      try {
+        await authService.deleteUserData(id);
+      } catch (e) {
+        throw Exception('can\'t delete user data id=$id');
+      }
+      return SendResponse.sendDataToUser(response, 'user data deleted');
+    });
+  }
+
+  @override
+  FutureOr<PassedHttpEntity> forgetPassword(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  ) {
+    // TODO: implement forgetPassword
+    throw UnimplementedError();
+  }
+
+  @override
+  FutureOr<PassedHttpEntity> fullyDeleteUser(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  ) async {
+    return _wrapper(request, response, pathArgs, () async {
+      String? id = request.context[ContextFields.userId];
+      if (id == null) {
+        throw RequestBodyError('id can\'t be null');
+      }
+      try {
+        await authService.fullyDeleteUser(id);
+      } catch (e) {
+        throw Exception('can\'t delete full user data id=$id');
+      }
+      return SendResponse.sendDataToUser(response, 'full user data deleted');
+    });
+  }
+
+  @override
+  FutureOr<PassedHttpEntity> logout(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  ) {
+    // TODO: implement logout
+    throw UnimplementedError();
+  }
+
+  @override
+  FutureOr<PassedHttpEntity> logoutFromAllDevices(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  ) {
+    return _wrapper(request, response, pathArgs, () async {
+      String? id = request.context[ContextFields.userId];
+      if (id == null) {
+        throw RequestBodyError('id can\'t be null');
+      }
+      try {
+        await authService.logoutFromAllDevices(id);
+      } catch (e) {
+        throw Exception('can\'t log out from all devices id=$id');
+      }
+      return SendResponse.sendDataToUser(
+          response, 'logged out from all devices');
+    });
+  }
+
+  @override
+  FutureOr<PassedHttpEntity> updateUserData(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  ) {
+    return _wrapper(request, response, pathArgs, () async {
+      var body = await request.readAsJson();
+      String? id = request.context[ContextFields.userId];
+      Map<String, dynamic> updateDoc;
+      try {
+        updateDoc = json.decode(body[BodyFields.updateDoc]);
+      } catch (e) {
+        throw RequestBodyError(
+            'you must provided updateDoc with the user data needed to be updated at the form of Map<String, dynamic>');
+      }
+
+      if (id == null) {
+        throw RequestBodyError('id can\'t be null');
+      }
+      try {
+        await authService.updateUserData(id, updateDoc);
+      } catch (e) {
+        throw Exception('can\'t update user data id=$id');
+      }
+      return SendResponse.sendDataToUser(
+          response, 'user data updated successfully');
     });
   }
 }
