@@ -122,7 +122,7 @@ class MemoryDbAuthProvider extends AuthDbProvider
   }
 
   @override
-  Future<String> createVerifyEmailToken(String userId,
+  Future<String> createVerifyEmailToken(String email,
       {required Duration? allowNewJwtAfter,
       required Duration? verifyLinkExpiresAfter}) {
     // TODO: implement createVerifyEmailToken
@@ -167,7 +167,7 @@ class MemoryDbAuthProvider extends AuthDbProvider
   }
 
   @override
-  Future<void> logoutFromAllDevices(String email) {
+  Future<void> logoutFromAllDevices(String id) {
     // TODO: implement logoutFromAllDevices
     throw UnimplementedError();
   }
