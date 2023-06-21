@@ -43,4 +43,8 @@ class ErrorCodes {
   static const String failedToVerify = 'failed-to-verify';
   static const String earlyEmailVerification = 'early-email-verification';
   static const String userAlreadyVerified = 'user-already-verified';
+
+  //? storage errors
+  static const String storageBucketNameInvalid = 'storage-bucket-name-invalid';
+  static const String storageBucketPathInvalid = 'storage-bucket-path-invalid';
 }
