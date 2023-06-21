@@ -1,5 +1,6 @@
 // ignore_for_file: unused_field
 
+import 'package:dart_verse/errors/models/storage_errors.dart';
 import 'package:dart_verse/settings/storage_settings/models/storage_bucket_model.dart';
 
 import '../../settings/app/app.dart';
@@ -21,7 +22,14 @@ class StorageService {
   }
 
   void _checkDuplicateBuckets() {
-    //! here will be some checks for added buckets to check if there is any duplicate bucket like same name or same folderPath
-    throw UnimplementedError();
+    List<String> names = [];
+    List<String> paths = [];
+    for (var bucket in buckets) {
+      if (paths.contains(bucket.folderPath)) {
+        throw DuplicateBucketPathException(bucket.folderPath);
+      }
+      names.add(bucket.name);
+      paths.add(bucket.folderPath);
+    }
   }
 }

@@ -4,17 +4,17 @@ import 'package:dart_verse/settings/storage_settings/repo/bucket_controller_repo
 String get defaultBucketsContainer => 'Buckets';
 
 class StorageBucket {
-  /// this name is it's id
+  /// this name is it's id, should be unique
   /// must only contain numbers and letters and not exceed 50 letters
   final String name;
 
   /// this is the maximum allowed bucket size in bytes
   /// if null this means that the bucket size can be infinity
-  final int? maxSize;
+  final int? maxAllowedSize;
 
   /// if empty this will create an empty folder in the root path of the project with the name of the storage bucket name
   /// just try not to keep it null
-  late String _folderPath;
+  late String _parentPath;
 
   /// this is the controller for bucket operations like creating validating and much more
   /// if null, this bucket controller will be assigned to a default bucket controller
@@ -22,15 +22,26 @@ class StorageBucket {
 
   StorageBucket(
     this.name, {
-    String? folderPath,
-    this.maxSize,
+    String? parentFolderPath,
+    this.maxAllowedSize,
     BucketControllerRepo? controller,
   }) {
     _controller = controller ?? DefaultBucketController(this);
-    _folderPath = folderPath ?? './$defaultBucketsContainer/$name';
+    _parentPath = parentFolderPath ?? defaultBucketsContainer;
+    _parentPath = _parentPath.replaceAll('//', '/');
+    _parentPath = _parentPath.replaceAll('\\', '/');
     _controller.createBucket();
   }
 
-  String get folderPath => _folderPath;
+  String get folderPath => '$_parentPath/$name';
+  String get parentPath => _parentPath;
   BucketControllerRepo get controller => _controller;
+
+  StorageBucket child(String name) {
+    return StorageBucket(name, parentFolderPath: '$_parentPath/${this.name}');
+  }
+
+  // StorageBucket ref(String path){
+  //   String iterations = path.startsWith('/')?
+  // }
 }

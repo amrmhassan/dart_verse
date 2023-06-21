@@ -8,7 +8,7 @@ import 'package:path/path.dart';
 import '../../../errors/models/storage_errors.dart';
 
 bool _valid(String name) {
-  var letters = name.split('');
+  var letters = name.toLowerCase().split('');
   for (var letter in letters) {
     if (!_validChars.contains(letter)) {
       return false;
@@ -17,7 +17,7 @@ bool _valid(String name) {
   return true;
 }
 
-String _validChars = 'abcdefghijklmnopqratuvwxyz0123456789';
+String _validChars = 'abcdefghijklmnopqrstuvwxyz0123456789';
 
 class DefaultBucketController implements BucketControllerRepo {
   Directory _bucketDir() {
@@ -79,7 +79,7 @@ class DefaultBucketController implements BucketControllerRepo {
       throw StorageBucketNameException('exceeded 50 letters');
     }
     if (!_valid(storageBucket.name)) {
-      throw StorageBucketNameException();
+      throw StorageBucketNameException(storageBucket.name);
     }
     String baseName = basename(storageBucket.folderPath);
     if (baseName == '..' || baseName == '.') {

@@ -46,3 +46,11 @@ class BucketNotCreatedException extends StorageException {
           ErrorCodes.storageBucketPathInvalid,
         );
 }
+
+class DuplicateBucketPathException extends StorageException {
+  DuplicateBucketPathException([String? msg])
+      : super(
+          'duplicate bucket path: ${msg ?? ''}',
+          ErrorCodes.storageBucketPathInvalid,
+        );
+}
