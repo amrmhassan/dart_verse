@@ -38,3 +38,11 @@ class StorageBucketFolderPathException extends StorageException {
           ErrorCodes.storageBucketPathInvalid,
         );
 }
+
+class BucketNotCreatedException extends StorageException {
+  BucketNotCreatedException([String? msg])
+      : super(
+          'storage bucket wasn\'t created! please create it first: ${msg ?? ''}',
+          ErrorCodes.storageBucketPathInvalid,
+        );
+}
