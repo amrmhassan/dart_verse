@@ -402,6 +402,7 @@ class MongoDbAuthProvider extends AuthDbProvider
     var activeJwts = dbService.mongoDbController
         .collection(app.authSettings.activeJWTCollName);
     var res = await activeJwts.doc(id).delete();
+
     if (res.failure) {
       throw Exception('can\'t logout from all devices');
     }

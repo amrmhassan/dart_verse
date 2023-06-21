@@ -95,7 +95,7 @@ class AuthService implements DVService {
     // check for the jwt in the allowed jwt tokens and active
     bool jwtIsActive = await authDbProvider.checkIfJwtIsActive(jwt, model.id);
     if (!jwtIsActive) {
-      return model.id;
+      return null;
     }
     // check for the user id if it is a valid user
     AuthModel? authModel = await authDbProvider.getUserByEmail(model.email);
