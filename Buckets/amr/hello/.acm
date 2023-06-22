@@ -1,5 +1,5 @@
 bucket_acm_never_edit
 creator_id#amr
-max_size#100000
+max_size#null
 -----------------
 {"permissions":[{"name":"read","allowed":["amr"]},{"name":"delete","allowed":["amr"]},{"name":"write","allowed":["amr"]},{"name":"editPermissions","allowed":["amr"]}],"sub_permissions":[]}

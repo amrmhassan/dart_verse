@@ -102,7 +102,12 @@ class ACMPermissionController {
     bool validAcmFile = _validAcm();
     // print('validAcmFile: $validAcmFile');
     if (!validAcmFile) {
-      file.deleteSync();
+      try {
+        file.deleteSync();
+      } catch (e) {
+        // the bucket if first created and the file doesn't exist
+        // but it still need to be deleted
+      }
       var raf = file.openSync(mode: FileMode.append);
       raf.writeStringSync(_acmHeader);
 

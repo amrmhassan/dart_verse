@@ -77,7 +77,12 @@ class StorageBucket {
 //@ the creatorId will be stored in the bucket itself as a file containing the id of the creator
 // in this method parent i will know about a storage bucket by it's .acm file
   StorageBucket? parent() {
-    throw UnimplementedError();
+    try {
+      String parentPath = Directory(folderPath).parent.path;
+      return StorageBucket.fromPath(parentPath);
+    } catch (e) {
+      return null;
+    }
   }
 
   static StorageBucket? fromPath(String path) {

@@ -1,17 +1,13 @@
 import 'package:dart_verse/settings/storage_settings/models/storage_bucket_model.dart';
 
 void main(List<String> args) {
-  // StorageBucket amr = StorageBucket(
-  //   'amr',
-  //   creatorId: 'amr',
-  //   maxAllowedSize: 1000,
-  // );
+  // var images = StorageBucket.fromPath('./Buckets/amr/data/images');
+  // print(images);
+  // print(images?.parent());
+  StorageBucket amr = StorageBucket.fromPath('/Buckets/amr')!;
+  var child = amr.child('hello');
+  print(amr);
 
-  // bool res = amr.permissionsController.isUserAllowed('read', 'esraa');
-  // print(res);
-  // res = amr.permissionsController.isUserAllowed('write', 'esraa');
-  // print(res);
-  // amr.permissionsController.allowAllToPermission('write');
-  StorageBucket? fetched = StorageBucket.fromPath('./Buckets/amr');
-  print(fetched);
+  // var bucket = amr.ref('data/images');
+  // print(bucket.folderPath);
 }
