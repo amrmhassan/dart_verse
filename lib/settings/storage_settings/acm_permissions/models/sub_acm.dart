@@ -1,3 +1,4 @@
+import '../constants/default_permissions.dart';
 import 'acm_permission.dart';
 
 class SubACM {
@@ -14,5 +15,12 @@ class SubACM {
       'sub_path': subPath,
       'permissions': permissions.map((e) => e.toJSON()).toList(),
     };
+  }
+
+  static SubACM fromJson(Map<String, dynamic> obj) {
+    List permissions = obj['permissions'];
+    var tPermissions =
+        permissions.map((e) => ACMPermission.fromJson(e)).toList();
+    return SubACM(obj['sub_path'], permissions: tPermissions);
   }
 }

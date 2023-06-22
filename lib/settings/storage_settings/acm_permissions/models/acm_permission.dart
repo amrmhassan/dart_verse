@@ -13,11 +13,8 @@ class ACMPermission {
   Map<String, dynamic> toJSON() {
     return {'name': name, 'allowed': allowed};
   }
-}
 
-const List<ACMPermission> defaultAcmPermissions = [
-  ACMPermission('read'),
-  ACMPermission('write'),
-  ACMPermission('delete'),
-  ACMPermission('editPermissions'),
-];
+  static ACMPermission fromJson(Map<String, dynamic> obj) {
+    return ACMPermission(obj['name'], allowed: (obj['allowed'] as List).cast());
+  }
+}

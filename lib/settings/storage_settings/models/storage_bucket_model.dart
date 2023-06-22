@@ -1,6 +1,10 @@
+import 'dart:io';
+
+import 'package:dart_verse/settings/storage_settings/acm_permissions/controller/acm_permission_controller.dart';
 import 'package:dart_verse/settings/storage_settings/impl/default_bucket_controller.dart';
 import 'package:dart_verse/settings/storage_settings/repo/bucket_controller_repo.dart';
 import 'package:dart_verse/utils/string_utils.dart';
+import 'package:path/path.dart';
 
 String get defaultBucketsContainer => 'Buckets';
 
@@ -20,6 +24,7 @@ class StorageBucket {
   /// this is the controller for bucket operations like creating validating and much more
   /// if null, this bucket controller will be assigned to a default bucket controller
   late BucketControllerRepo _controller;
+  late ACMPermissionController _permissionsController;
 
   final String creatorId;
 
@@ -36,11 +41,13 @@ class StorageBucket {
     _parentPath = _parentPath.replaceAll('\\', '/');
     _parentPath = _parentPath.strip('/');
     _controller.createBucket();
+    _permissionsController = ACMPermissionController(this);
   }
 
   String get folderPath => '$_parentPath/$name';
   String get parentPath => _parentPath;
   BucketControllerRepo get controller => _controller;
+  ACMPermissionController get permissionsController => _permissionsController;
 
   StorageBucket child(String name) {
     return StorageBucket(
@@ -71,5 +78,23 @@ class StorageBucket {
 // in this method parent i will know about a storage bucket by it's .acm file
   StorageBucket? parent() {
     throw UnimplementedError();
+  }
+
+  static StorageBucket? fromPath(String path) {
+    String acmFileName = ACMPermissionController.acmFileName;
+    String acmFilePath = '${path.strip('/')}/$acmFileName';
+    var acm = ACMPermissionController.isAcmFileValid(acmFilePath);
+    if (acm == null) return null;
+    // here this means that the acm file is valid
+    var name = basename(path);
+    String creatorId = acm['creator_id'];
+    int? maxSize = acm['max_size'];
+    Directory directory = Directory(path);
+    return StorageBucket(
+      name,
+      creatorId: creatorId,
+      maxAllowedSize: maxSize,
+      parentFolderPath: directory.parent.path,
+    );
   }
 }
