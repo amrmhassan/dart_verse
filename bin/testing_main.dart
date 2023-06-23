@@ -1,13 +1,14 @@
-import 'package:dart_verse/settings/storage_settings/models/storage_bucket_model.dart';
+import 'package:dart_verse/utils/encryption.dart';
 
 void main(List<String> args) {
-  // var images = StorageBucket.fromPath('./Buckets/amr/data/images');
-  // print(images);
-  // print(images?.parent());
-  StorageBucket amr = StorageBucket.fromPath('/Buckets/amr')!;
-  var child = amr.child('hello');
-  print(amr);
-
-  // var bucket = amr.ref('data/images');
-  // print(bucket.folderPath);
+  String plainText = 'hello from my dart verse package';
+  Encryption encryption = Encryption('This is my secret key');
+  var res = encryption.encryptAndSave(
+    plainText,
+    './encrypted',
+    override: true,
+  );
+  var content = encryption.readEncryptedFile('./encrypted');
+  print(res);
+  print(content);
 }
