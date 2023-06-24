@@ -1,23 +1,17 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:dart_verse/settings/storage_settings/acm_permissions/constants/default_permissions.dart';
 import 'package:dart_verse/settings/storage_settings/acm_permissions/models/acm.dart';
 import 'package:dart_verse/settings/storage_settings/models/storage_bucket_model.dart';
+import 'package:dart_verse/utils/encryption.dart';
 
 class ACMPermissionController {
-  // add permission
-  // allow all
-  // controlling all permissions stuff and read to the .acm file of the bucket and vice versa
-
   final StorageBucket bucket;
   ACMPermissionController(this.bucket) {
     _init();
   }
 
   late ACM _acm;
-  // ACM get acm => _acm;
-
   bool isUserAllowed(String permissionName, String userId) {
     var permissionInfo = _acm.getPermissionInfo(permissionName);
     if (permissionInfo == null) return false;
@@ -70,24 +64,21 @@ class ACMPermissionController {
   }
 
   void _writeAcmFile() {
-    var file = File(_acmPath);
-    file.deleteSync();
-    var raf = file.openSync(mode: FileMode.append);
-    raf.writeStringSync(_acmHeader);
-    raf.writeStringSync(json.encode(_acm.toJSON()));
-    raf.closeSync();
+    String batchToWrite = _acmHeader + json.encode(_acm.toJSON());
+    encryption.encryptAndSave(batchToWrite, _acmPath);
   }
 
   bool _validAcm() {
-    File acmFile = File(_acmPath);
-    bool exists = acmFile.existsSync();
-    if (!exists) return false;
+    var content = encryption.readEncryptedFile(_acmPath);
+    if (content == null) return false;
     // checking the content of the acm file
+    var firstLine = content.split('\n').first;
     try {
-      if (acmFile.readAsLinesSync()[0] != _firstLine) {
+      if (firstLine != _firstLine) {
         return false;
       }
-      _loadAcmPermissions(acmFile.readAsStringSync());
+      _loadAcmPermissions(content);
+
       return true;
     } catch (e) {
       return false;
@@ -98,22 +89,11 @@ class ACMPermissionController {
 
   // call this only on init constructor
   void _init() {
-    File file = File(_acmPath);
     bool validAcmFile = _validAcm();
-    // print('validAcmFile: $validAcmFile');
     if (!validAcmFile) {
-      try {
-        file.deleteSync();
-      } catch (e) {
-        // the bucket if first created and the file doesn't exist
-        // but it still need to be deleted
-      }
-      var raf = file.openSync(mode: FileMode.append);
-      raf.writeStringSync(_acmHeader);
-
       String content = _initAcmObject();
-      raf.writeStringSync(content);
-      raf.closeSync();
+      String batchToWrite = _acmHeader + content;
+      encryption.encryptAndSave(batchToWrite, _acmPath);
     }
   }
 
@@ -128,13 +108,14 @@ class ACMPermissionController {
   static const String _acmInfoSeparator = '-----------------';
   static const String _firstLine = 'bucket_acm_never_edit';
   static const String acmFileName = '.acm';
+  static Encryption encryption =
+      Encryption('This is a secret key for the acm file');
+
   static Map<String, dynamic>? isAcmFileValid(String acmFilePath) {
-    File acmFile = File(acmFilePath);
-    bool exists = acmFile.existsSync();
-    if (!exists) return null;
+    var content = encryption.readEncryptedFile(acmFilePath);
+    if (content == null) return null;
 
     try {
-      String content = acmFile.readAsStringSync();
       var parts = content.split('\n');
       String firstLine = parts.first;
       String secondLine = parts[1];
