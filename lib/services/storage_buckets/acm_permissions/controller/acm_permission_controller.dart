@@ -43,6 +43,10 @@ class ACMPermissionController {
     _writeAcmFile();
   }
 
+  // void editSubPermission(String ref, List<ACMPermission> permissions) {
+  //   SubACM subACM = SubACM(ref, permissions: permissions);
+  // }
+
 // this will read the content of the file and convert it into acm object
   void _loadAcmPermissions(String fileContent) {
     Map<String, dynamic> acmJson = _getJsonPermissions(fileContent);

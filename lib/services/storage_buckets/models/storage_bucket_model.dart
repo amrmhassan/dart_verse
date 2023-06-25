@@ -102,4 +102,29 @@ class StorageBucket {
       parentFolderPath: directory.parent.path,
     );
   }
+
+  bool containFile(File file) {
+    if (!file.existsSync()) {
+      return false;
+    }
+    String filePath = file.path;
+    String bucketPath = folderPath.strip('./');
+    if (filePath.contains(bucketPath)) {
+      return true;
+    }
+    return false;
+  }
+
+  String? getFileRef(File file) {
+    if (!containFile(file)) return null;
+    String bucketPath = folderPath;
+    // file path: /path/to/bucket/bucket_name/sub/dir/file.ext
+    // bucket path: /path/to/bucket/bucket_name
+    // desired output : sub/dir/file.ext
+    var parts = bucketPath.split(file.path);
+    if (parts.isEmpty) {
+      return null;
+    }
+    return parts.last;
+  }
 }

@@ -1,11 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:dart_verse/constants/header_fields.dart';
 import 'package:dart_verse/errors/models/storage_errors.dart';
-import 'package:dart_verse/services/storage_buckets/acm_permissions/constants/default_permissions.dart';
-import 'package:dart_verse/services/storage_buckets/acm_permissions/models/acm_permission.dart';
 import 'package:dart_verse/services/storage_buckets/models/storage_bucket_model.dart';
 import 'package:dart_verse/settings/storage_settings/repo/storage_server_handlers.dart';
 import 'package:dart_verse/settings/storage_settings/storage_settings.dart';
@@ -98,20 +94,18 @@ class DefaultStorageServerHandlers implements StorageServerHandlers {
       // but now i have a problem
       // the problem is about permissions
       // for the permissions get the permissions from the headers or just let it to be a public file
-      List<ACMPermission> allowed;
-      try {
-        allowed = _parseAllowed(request.headers);
-      } catch (e) {
-        throw BadStorageBodyException(
-            'allowed must be of type List<Map<String, dynamic>> [{"name":permission_name, "allowed":[list of allowed users or groups ids]}]');
-      }
+      // List<ACMPermission>? allowed;
+      // try {
+      //   allowed = _parseAllowed(request.headers);
+      // } catch (e) {
+      //   throw BadStorageBodyException(
+      //       'allowed must be of type List<Map<String, dynamic>> [{"name":permission_name, "allowed":[list of allowed users or groups ids]}]');
+      // }
 
       // the allowed problem was solved
       // but now i need a way to get the path of the file i want to save like
       String ref = request.headers.value(HeaderFields.ref) ?? '/';
       StorageBucket refBucket = ref == '/' ? bucket : bucket.ref(ref);
-      bool private =
-          request.headers.value(HeaderFields.private) == 'true' ? true : false;
 
       var file = await request.receiveFile(refBucket.folderPath);
       return SendResponse.sendDataToUser(response, file.path);
@@ -119,20 +113,20 @@ class DefaultStorageServerHandlers implements StorageServerHandlers {
   }
 }
 
-List<ACMPermission> _parseAllowed(HttpHeaders headers) {
-  String? allowedString = headers.value(HeaderFields.allowed);
-  if (allowedString == null) return defaultAllAllowedAcmPermissions;
-  List<dynamic> allowed = json.decode(allowedString);
-  var res = allowed.map((e) => ACMPermission.fromJson(e)).toList();
-  return res;
+// List<ACMPermission>? _parseAllowed(HttpHeaders headers) {
+//   String? allowedString = headers.value(HeaderFields.allowed);
+//   if (allowedString == null) return null;
+//   List<dynamic> allowed = json.decode(allowedString);
+//   var res = allowed.map((e) => ACMPermission.fromJson(e)).toList();
+//   return res;
 
-  /*
-  allowed should be on the format
-  {
-    'write':[users ids],
-    'read':[users ids],
-    'delete':[users ids],
-    'editPermissions':[users ids],
-  }
-  */
-}
+//   /*
+//   allowed should be on the format
+//   {
+//     'write':[users ids],
+//     'read':[users ids],
+//     'delete':[users ids],
+//     'editPermissions':[users ids],
+//   }
+//   */
+// }

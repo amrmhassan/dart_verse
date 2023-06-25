@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dart_verse/services/storage_buckets/models/storage_bucket_model.dart';
 import 'package:dart_verse/services/storage_buckets/repo/bucket_controller_repo.dart';
+import 'package:dart_webcore/dart_webcore/server/impl/request_holder.dart';
 import 'package:path/path.dart';
 
 import '../../../errors/models/storage_errors.dart';
@@ -91,5 +92,18 @@ class DefaultBucketController implements BucketControllerRepo {
   Future<void> deleteBucket() {
     Directory dir = _bucketDir();
     return dir.delete(recursive: true);
+  }
+
+  @override
+  Future<File> receiveFile(RequestHolder request
+      // , {
+      /// if allowed is null, it will default value equal to the bucket permissions
+      // required List<ACMPermission>? allowed,
+      // }
+      ) async {
+    final file = await request.receiveFile(storageBucket.folderPath);
+    // storageBucket.permissionsController.per
+
+    return file;
   }
 }

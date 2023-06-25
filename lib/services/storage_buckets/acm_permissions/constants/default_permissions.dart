@@ -21,5 +21,5 @@ const List<ACMPermission> defaultAllAllowedAcmPermissions = [
   ACMPermission(ACMPermissions.read, allowed: ['*']),
   ACMPermission(ACMPermissions.delete, allowed: ['*']),
   ACMPermission(ACMPermissions.write, allowed: ['*']),
-  ACMPermission(ACMPermissions.editPermissions, allowed: ['*']),
+  ACMPermission(ACMPermissions.editPermissions),
 ];

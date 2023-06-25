@@ -43,6 +43,10 @@ class ACM {
     }
   }
 
+  // void editSubPermission(String ref) {
+
+  // }
+
   void allowAllToPermission(String permissionName) {
     var permission = getPermissionInfo(permissionName);
     if (permission == null) return;
