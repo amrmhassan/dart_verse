@@ -18,6 +18,7 @@ dev_dependencies:
 dependencies:
 
   archive: ^3.3.7
+  async: ^2.11.0
   crypto: ^3.0.3
   dart_jsonwebtoken: ^2.7.1
   dart_webcore: ^0.1.0
