@@ -8,7 +8,12 @@ import 'package:path/path.dart';
 
 import '../../../errors/models/storage_errors.dart';
 
+List<String> reservedBucketsName = ['null'];
+
 bool _valid(String name) {
+  if (reservedBucketsName.contains(name)) {
+    throw Exception('can\'t use from reserved names: $reservedBucketsName');
+  }
   var letters = name.toLowerCase().split('');
   for (var letter in letters) {
     if (!_validChars.contains(letter)) {

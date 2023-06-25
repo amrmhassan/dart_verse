@@ -51,4 +51,5 @@ class ErrorCodes {
   static const String storageBucketPathInvalid = 'storage-bucket-path-invalid';
   static const String noStorageSettingsProvided = 'no-storage-settings';
   static const String noBucketFound = 'no-bucket-found';
+  static const String fileNotFound = 'file-not-found';
 }

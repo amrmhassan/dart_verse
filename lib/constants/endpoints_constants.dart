@@ -1,3 +1,5 @@
+import 'package:dart_verse/constants/path_fields.dart';
+
 class EndpointsConstants {
   // auth
   static const String login = '/login';
@@ -14,6 +16,7 @@ class EndpointsConstants {
 
   // storage
   static const String uploadFile = '/upload';
-  static const String downloadFile = '/download';
+  static const String downloadFile =
+      '/download/<${PathFields.bucketName}>/*<${PathFields.filePath}>';
   static const String deleteFile = '/delete';
 }

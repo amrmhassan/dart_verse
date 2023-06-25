@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dart_verse/constants/header_fields.dart';
+import 'package:dart_verse/constants/path_fields.dart';
 import 'package:dart_verse/errors/models/storage_errors.dart';
 import 'package:dart_verse/services/storage_buckets/models/storage_bucket_model.dart';
 import 'package:dart_verse/settings/storage_settings/repo/storage_server_handlers.dart';
@@ -62,10 +63,32 @@ class DefaultStorageServerHandlers implements StorageServerHandlers {
   }
 
   @override
-  FutureOr<PassedHttpEntity> download(RequestHolder request,
-      ResponseHolder response, Map<String, dynamic> pathArgs) {
-    // TODO: implement download
-    throw UnimplementedError();
+  FutureOr<PassedHttpEntity> download(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  ) {
+    return _wrapper(request, response, pathArgs, () async {
+      // the download process will be from the link, but the user must be logged in first to access this route
+      // so i can check for his permissions
+      // but later i will add a public route for downloading files from the server(but protected files will still be protected)
+      String fileRef = pathArgs[PathFields.filePath];
+      String? bucketName = pathArgs[PathFields.bucketName] == 'null'
+          ? null
+          : pathArgs[PathFields.bucketName];
+      print(bucketName);
+      print(fileRef);
+      StorageBucket? storageBucket = storageSettings.getBucket(bucketName);
+      if (storageBucket == null) {
+        throw NoBucketException(bucketName);
+      }
+      String? filePath = storageBucket.getFilePath(fileRef);
+      if (filePath == null) {
+        throw FileNotFound(fileRef);
+      }
+
+      return response.writeFile(filePath);
+    });
   }
 
 // headers

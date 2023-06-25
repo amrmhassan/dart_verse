@@ -90,3 +90,12 @@ class BadStorageBodyException extends StorageException {
           errorCode: HttpStatus.badRequest,
         );
 }
+
+class FileNotFound extends StorageException {
+  FileNotFound(String msg)
+      : super(
+          'file not found: $msg',
+          ErrorCodes.noBucketFound,
+          errorCode: HttpStatus.notFound,
+        );
+}

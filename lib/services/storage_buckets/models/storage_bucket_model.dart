@@ -127,4 +127,12 @@ class StorageBucket {
     }
     return parts.last;
   }
+
+  String? getFilePath(String fileRef) {
+    String filePath = '${folderPath.strip('/')}/$fileRef';
+    File file = File(filePath);
+    if (!file.existsSync()) return null;
+    if (!containFile(file)) return null;
+    return file.path;
+  }
 }
