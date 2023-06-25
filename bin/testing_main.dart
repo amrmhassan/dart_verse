@@ -1,8 +1,12 @@
-import 'package:dart_verse/settings/storage_settings/models/storage_bucket_model.dart';
+import 'dart:io';
+
+import 'package:dart_webcore/dart_webcore.dart';
 
 void main(List<String> args) {
-  // var amr = StorageBucket('amr', creatorId: 'amr');
-  // var child = amr.child('data');
-  var data = StorageBucket.fromPath('./Buckets/amr/data');
-  print(data);
+  Handler handler =
+      Handler('/upload', HttpMethods.post, (request, response, pathArgs) async {
+    return response.write('hello world');
+  });
+  ServerHolder serverHolder = ServerHolder(handler);
+  serverHolder.bind(InternetAddress.anyIPv4, 3000);
 }
