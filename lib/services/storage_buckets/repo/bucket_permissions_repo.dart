@@ -1,4 +1,4 @@
-import 'package:dart_verse/settings/storage_settings/models/storage_bucket_model.dart';
+import 'package:dart_verse/services/storage_buckets/models/storage_bucket_model.dart';
 
 //! bucket can only contain other buckets or files
 //! so no thing called createSubFolder inside a bucket

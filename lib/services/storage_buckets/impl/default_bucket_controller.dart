@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dart_verse/settings/storage_settings/models/storage_bucket_model.dart';
-import 'package:dart_verse/settings/storage_settings/repo/bucket_controller_repo.dart';
+import 'package:dart_verse/services/storage_buckets/models/storage_bucket_model.dart';
+import 'package:dart_verse/services/storage_buckets/repo/bucket_controller_repo.dart';
 import 'package:path/path.dart';
 
 import '../../../errors/models/storage_errors.dart';

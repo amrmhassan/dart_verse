@@ -8,6 +8,9 @@ import 'package:dart_webcore/dart_webcore.dart';
 import '../../errors/models/server_errors.dart';
 import '../../settings/server_settings/repo/auth_server_settings.dart';
 
+//! move handlers  of the auth service to a middle step between the authService and serverService
+//! you can call this step serverAuth
+//! and for the storage service you can add a step called serverStorage
 class ServerService {
   final App _app;
   final AuthServerSettings? _authServerSettings;

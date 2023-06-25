@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:dart_verse/settings/storage_settings/acm_permissions/controller/acm_permission_controller.dart';
-import 'package:dart_verse/settings/storage_settings/impl/default_bucket_controller.dart';
-import 'package:dart_verse/settings/storage_settings/repo/bucket_controller_repo.dart';
+import 'package:dart_verse/services/storage_buckets/acm_permissions/controller/acm_permission_controller.dart';
+import 'package:dart_verse/services/storage_buckets/impl/default_bucket_controller.dart';
+import 'package:dart_verse/services/storage_buckets/repo/bucket_controller_repo.dart';
 import 'package:dart_verse/utils/string_utils.dart';
 import 'package:path/path.dart';
 

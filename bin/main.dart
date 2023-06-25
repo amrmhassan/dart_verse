@@ -5,6 +5,7 @@ import 'package:dart_verse/features/email_verification/impl/default_email_verifi
 import 'package:dart_verse/services/auth/auth_service.dart';
 import 'package:dart_verse/services/db_manager/db_providers/impl/mongo_db/mongo_db_provider.dart';
 import 'package:dart_verse/services/db_manager/db_service.dart';
+import 'package:dart_verse/services/storage_service/storage_service.dart';
 import 'package:dart_verse/services/web_server/server_service.dart';
 import 'package:dart_verse/settings/app/app.dart';
 import 'package:dart_verse/settings/auth_settings/auth_settings.dart';
@@ -12,6 +13,7 @@ import 'package:dart_verse/settings/db_settings/db_settings.dart';
 import 'package:dart_verse/settings/email_settings/email_settings.dart';
 import 'package:dart_verse/settings/server_settings/impl/default_auth_server_settings.dart';
 import 'package:dart_verse/settings/server_settings/server_settings.dart';
+import 'package:dart_verse/settings/storage_settings/storage_settings.dart';
 import 'package:dart_verse/settings/user_data_settings/user_data_settings.dart';
 import 'package:dart_webcore/dart_webcore.dart';
 
@@ -31,12 +33,14 @@ void main(List<String> arguments) async {
   );
   ServerSettings serverSettings = ServerSettings(InternetAddress.anyIPv4, 3000);
   EmailSettings emailSettings = EmailSettings(testSmtpServer);
+  StorageSettings storageSettings = StorageSettings();
   App app = App(
     dbSettings: dbSettings,
     authSettings: authSettings,
     userDataSettings: userDataSettings,
     serverSettings: serverSettings,
     emailSettings: emailSettings,
+    storageSettings: storageSettings,
   );
 
   DbService dbService = DbService(app);
@@ -67,6 +71,7 @@ void main(List<String> arguments) async {
     jwtSecured: true,
     emailMustBeVerified: true,
   );
+  StorageService(app, serverService);
   await serverService.runServer();
 }
 

@@ -1,4 +1,4 @@
-import 'package:dart_verse/settings/storage_settings/models/storage_bucket_model.dart';
+import 'package:dart_verse/services/storage_buckets/models/storage_bucket_model.dart';
 
 abstract class BucketControllerRepo {
   late StorageBucket storageBucket;

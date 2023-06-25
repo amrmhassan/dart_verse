@@ -35,6 +35,7 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
     this.defaultAuthBodyKeys,
     this.emailVerificationProvider,
   );
+
   FutureOr<PassedHttpEntity> _wrapper(
     RequestHolder request,
     ResponseHolder response,

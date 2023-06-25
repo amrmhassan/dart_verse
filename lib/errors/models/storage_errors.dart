@@ -1,5 +1,7 @@
 // ignore_for_file: overridden_fields
 
+import 'dart:io';
+
 import 'package:dart_verse/services/web_server/repo/error_codes.dart';
 
 import '../serverless_exception.dart';
@@ -52,5 +54,39 @@ class DuplicateBucketPathException extends StorageException {
       : super(
           'duplicate bucket path: ${msg ?? ''}',
           ErrorCodes.storageBucketPathInvalid,
+        );
+}
+
+class DuplicateBucketNameException extends StorageException {
+  DuplicateBucketNameException([String? msg])
+      : super(
+          'duplicate bucket name: ${msg ?? ''}',
+          ErrorCodes.storageBucketNameInvalid,
+        );
+}
+
+class NoStorageSettingsProvided extends StorageException {
+  NoStorageSettingsProvided()
+      : super(
+          'no storage settings provided in the app',
+          ErrorCodes.noStorageSettingsProvided,
+        );
+}
+
+class NoBucketException extends StorageException {
+  NoBucketException(String? name)
+      : super(
+          'please provide a valid bucket name or don\'t provide any name for using the default bucket: $name',
+          ErrorCodes.noBucketFound,
+          errorCode: 404,
+        );
+}
+
+class BadStorageBodyException extends StorageException {
+  BadStorageBodyException(String msg)
+      : super(
+          'bad body for storage options: $msg',
+          ErrorCodes.badRequestBody,
+          errorCode: HttpStatus.badRequest,
         );
 }

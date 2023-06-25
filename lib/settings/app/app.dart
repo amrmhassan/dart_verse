@@ -1,11 +1,13 @@
 // this app is the starting point of the server
 // it will require settings for auth, database, realtime database, etc...
 import 'package:dart_verse/errors/models/app_exceptions.dart';
+import 'package:dart_verse/errors/models/storage_errors.dart';
 import 'package:dart_verse/settings/auth_settings/auth_settings.dart';
 import 'package:dart_verse/settings/db_settings/db_settings.dart';
 import 'package:dart_verse/settings/email_settings/email_settings.dart';
 import 'package:dart_verse/settings/endpoints/endpoints.dart';
 import 'package:dart_verse/settings/server_settings/server_settings.dart';
+import 'package:dart_verse/settings/storage_settings/storage_settings.dart';
 import 'package:dart_verse/settings/user_data_settings/user_data_settings.dart';
 
 //! i should keep track of collections and sub collections names in a string file or something
@@ -16,6 +18,7 @@ class App {
   final UserDataSettings? _userDataSettings;
   final ServerSettings? _serverSettings;
   final EmailSettings? _emailSettings;
+  final StorageSettings? _storageSettings;
   late EndpointsSettings _endpoints;
 
   App({
@@ -24,25 +27,16 @@ class App {
     UserDataSettings? userDataSettings,
     ServerSettings? serverSettings,
     EmailSettings? emailSettings,
+    StorageSettings? storageSettings,
     EndpointsSettings? endpoints,
   })  : _authSettings = authSettings,
         _dbSettings = dbSettings,
         _userDataSettings = userDataSettings,
         _serverSettings = serverSettings,
-        _emailSettings = emailSettings {
-    _endpoints = defaultEndpoints;
+        _emailSettings = emailSettings,
+        _storageSettings = storageSettings {
+    _endpoints = endpoints ?? defaultEndpoints;
   }
-
-  //? the app starting point
-  // Future<App> run({
-  //   bool connectToDb = true,
-  // }) async {
-  //   if (connectToDb) {
-  //     await _connectToDb();
-  //   }
-
-  //   return this;
-  // }
 
   //# getting difference settings instances
   AuthSettings get authSettings {
@@ -81,9 +75,13 @@ class App {
   }
 
   EndpointsSettings get endpoints {
-    if (_emailSettings == null) {
-      throw NoEmailSettingsException();
-    }
     return _endpoints;
+  }
+
+  StorageSettings get storageSettings {
+    if (_storageSettings == null) {
+      throw NoStorageSettingsProvided();
+    }
+    return _storageSettings!;
   }
 }

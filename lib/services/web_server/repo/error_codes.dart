@@ -1,4 +1,6 @@
 class ErrorCodes {
+  //? global request
+  static const String badRequestBody = 'bad-request-body';
   //? app error codes
   static const String noDbSettingsCode = 'no-db-settings-provided';
   static const String noMongoDbProvider = 'no-mongo-db-provider';
@@ -47,4 +49,6 @@ class ErrorCodes {
   //? storage errors
   static const String storageBucketNameInvalid = 'storage-bucket-name-invalid';
   static const String storageBucketPathInvalid = 'storage-bucket-path-invalid';
+  static const String noStorageSettingsProvided = 'no-storage-settings';
+  static const String noBucketFound = 'no-bucket-found';
 }
