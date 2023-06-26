@@ -136,7 +136,7 @@ class ServerService {
 
     // other needed data
     int port = _app.serverSettings.port;
-    String host = authServerSettings.backendHost;
+    String host = _app.backendHost;
 
     // adding auth endpoints pipeline
     var authRouter = Router()

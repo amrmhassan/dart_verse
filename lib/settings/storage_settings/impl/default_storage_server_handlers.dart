@@ -4,8 +4,8 @@ import 'package:dart_verse/constants/header_fields.dart';
 import 'package:dart_verse/constants/path_fields.dart';
 import 'package:dart_verse/errors/models/storage_errors.dart';
 import 'package:dart_verse/services/storage_buckets/models/storage_bucket_model.dart';
+import 'package:dart_verse/settings/app/app.dart';
 import 'package:dart_verse/settings/storage_settings/repo/storage_server_handlers.dart';
-import 'package:dart_verse/settings/storage_settings/storage_settings.dart';
 import 'package:dart_webcore/dart_webcore/server/impl/request_holder.dart';
 import 'package:dart_webcore/dart_webcore/server/impl/response_holder.dart';
 import 'package:dart_webcore/dart_webcore/server/repo/passed_http_entity.dart';
@@ -16,10 +16,11 @@ import '../../server_settings/utils/send_response.dart';
 
 class DefaultStorageServerHandlers implements StorageServerHandlers {
   DefaultStorageServerHandlers({
-    required this.storageSettings,
+    required this.app,
   });
+
   @override
-  StorageSettings storageSettings;
+  App app;
 
   FutureOr<PassedHttpEntity> _wrapper(
     RequestHolder request,
@@ -78,7 +79,7 @@ class DefaultStorageServerHandlers implements StorageServerHandlers {
           : pathArgs[PathFields.bucketName];
       print(bucketName);
       print(fileRef);
-      StorageBucket? storageBucket = storageSettings.getBucket(bucketName);
+      StorageBucket? storageBucket = app.storageSettings.getBucket(bucketName);
       if (storageBucket == null) {
         throw NoBucketException(bucketName);
       }
@@ -108,7 +109,7 @@ class DefaultStorageServerHandlers implements StorageServerHandlers {
       // if the bucket name is null or not sent then the user will upload or deal with the default bucket
       // if the user user sent bucket not found an error will be returned to the user
       String? bucketName = request.headers.value(HeaderFields.bucketName);
-      StorageBucket? bucket = storageSettings.getBucket(bucketName);
+      StorageBucket? bucket = app.storageSettings.getBucket(bucketName);
       if (bucket == null) {
         throw NoBucketException(bucketName);
       }
@@ -131,7 +132,16 @@ class DefaultStorageServerHandlers implements StorageServerHandlers {
       StorageBucket refBucket = ref == '/' ? bucket : bucket.ref(ref);
 
       var file = await request.receiveFile(refBucket.folderPath);
-      return SendResponse.sendDataToUser(response, file.path);
+      String downloadEndpoint =
+          app.endpoints.storageEndpoints.download.split('/')[1];
+      String? fileRef = bucket.getFileRef(file);
+      if (fileRef == null) {
+        return SendResponse.sendDataToUser(
+            response, 'file uploaded to: ${file.path}');
+      }
+      String downloadLink =
+          '${app.backendHost}/$downloadEndpoint/${bucket.name}/$fileRef';
+      return SendResponse.sendDataToUser(response, downloadLink);
     });
   }
 }

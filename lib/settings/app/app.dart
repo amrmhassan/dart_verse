@@ -9,6 +9,7 @@ import 'package:dart_verse/settings/endpoints/endpoints.dart';
 import 'package:dart_verse/settings/server_settings/server_settings.dart';
 import 'package:dart_verse/settings/storage_settings/storage_settings.dart';
 import 'package:dart_verse/settings/user_data_settings/user_data_settings.dart';
+import 'package:dart_verse/utils/string_utils.dart';
 
 //! i should keep track of collections and sub collections names in a string file or something
 
@@ -21,6 +22,10 @@ class App {
   final StorageSettings? _storageSettings;
   late EndpointsSettings _endpoints;
 
+  /// this is the host you want to send to users in responses or emails <br>
+  /// include the port also <br>
+  /// this is basically the base url <br>
+  late String _backendHost;
   App({
     AuthSettings? authSettings,
     DBSettings? dbSettings,
@@ -29,6 +34,7 @@ class App {
     EmailSettings? emailSettings,
     StorageSettings? storageSettings,
     EndpointsSettings? endpoints,
+    required String backendHost,
   })  : _authSettings = authSettings,
         _dbSettings = dbSettings,
         _userDataSettings = userDataSettings,
@@ -36,6 +42,7 @@ class App {
         _emailSettings = emailSettings,
         _storageSettings = storageSettings {
     _endpoints = endpoints ?? defaultEndpoints;
+    _backendHost = backendHost.strip('/');
   }
 
   //# getting difference settings instances
@@ -83,5 +90,9 @@ class App {
       throw NoStorageSettingsProvided();
     }
     return _storageSettings!;
+  }
+
+  String get backendHost {
+    return _backendHost;
   }
 }

@@ -14,7 +14,9 @@ class StorageService {
     StorageServerHandlers? storageServerHandlers,
   }) {
     _serverHandlers = storageServerHandlers ??
-        DefaultStorageServerHandlers(storageSettings: _app.storageSettings);
+        DefaultStorageServerHandlers(
+          app: _app,
+        );
     _addEndpoints();
   }
   // here i want to allowed adding files from http request by getting the file from the request then saving it here on the server

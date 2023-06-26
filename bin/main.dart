@@ -41,6 +41,7 @@ void main(List<String> arguments) async {
     serverSettings: serverSettings,
     emailSettings: emailSettings,
     storageSettings: storageSettings,
+    backendHost: 'http://localhost:3000',
   );
 
   DbService dbService = DbService(app);

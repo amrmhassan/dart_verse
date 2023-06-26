@@ -53,9 +53,5 @@ class DefaultAuthServerSettings implements AuthServerSettings {
           authBodyKeys,
           emailVerificationProvider,
         );
-    backendHost = cBackendHost ?? 'http://localhost';
   }
-
-  @override
-  late String backendHost;
 }

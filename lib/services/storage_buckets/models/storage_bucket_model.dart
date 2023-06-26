@@ -121,11 +121,11 @@ class StorageBucket {
     // file path: /path/to/bucket/bucket_name/sub/dir/file.ext
     // bucket path: /path/to/bucket/bucket_name
     // desired output : sub/dir/file.ext
-    var parts = bucketPath.split(file.path);
+    var parts = file.path.split(bucketPath);
     if (parts.isEmpty) {
       return null;
     }
-    return parts.last;
+    return parts.last.strip('/');
   }
 
   String? getFilePath(String fileRef) {
