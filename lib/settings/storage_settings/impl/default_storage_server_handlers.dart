@@ -77,8 +77,6 @@ class DefaultStorageServerHandlers implements StorageServerHandlers {
       String? bucketName = pathArgs[PathFields.bucketName] == 'null'
           ? null
           : pathArgs[PathFields.bucketName];
-      print(bucketName);
-      print(fileRef);
       StorageBucket? storageBucket = app.storageSettings.getBucket(bucketName);
       if (storageBucket == null) {
         throw NoBucketException(bucketName);

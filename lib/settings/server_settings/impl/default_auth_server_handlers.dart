@@ -102,11 +102,15 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
 
         UserDataService userDataService = UserDataService(authService);
         var userData = await userDataService.getUserDataByEmail(email) ?? {};
-        userData['jwt'] = jwt;
+
+        Map<String, dynamic> resData = {
+          BodyFields.userData: userData,
+          ContextFields.jwt: jwt,
+        };
+
         return SendResponse.sendDataToUser(
           response,
-          userData,
-          dataFieldName: 'data',
+          resData,
         );
       },
     );
@@ -130,7 +134,7 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
 
         String? email = data[emailKey];
         String? password = data[passwordKey];
-        Map<String, dynamic>? userData = data[userDataKey];
+        Map<String, dynamic> userData = data[userDataKey] ?? {};
 
         if (email == null || password == null) {
           throw RequestBodyError('email and password can\'t be empty');
@@ -140,9 +144,22 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
           email: email,
           password: password,
           userData: userData,
+          customUserID: null,
         );
 
-        return SendResponse.sendDataToUser(response, jwt, dataFieldName: 'jwt');
+        UserDataService userDataService = UserDataService(authService);
+        var loadedUserData =
+            await userDataService.getUserDataByEmail(email) ?? {};
+
+        Map<String, dynamic> resData = {
+          BodyFields.userData: loadedUserData,
+          ContextFields.jwt: jwt,
+        };
+
+        return SendResponse.sendDataToUser(
+          response,
+          resData,
+        );
       },
     );
   }

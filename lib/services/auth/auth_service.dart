@@ -21,7 +21,7 @@ class AuthService implements DVService {
   Future<String> registerUser({
     required String email,
     required String password,
-    Map<String, dynamic>? userData,
+    Map<String, dynamic> userData = const {},
     String? customUserID,
   }) async {
     //! i want to add the functionality of reverting everything if an error occurred
@@ -45,12 +45,11 @@ class AuthService implements DVService {
     if (!authModelSaved) {
       throw DBWriteException('failed to register user');
     }
-    if (userData != null) {
-      userData[DBRKeys.id] = authModel.id;
-      var userDataSaved = await authDbProvider.saveUserData(userData);
-      if (!userDataSaved) {
-        throw DBWriteException('failed to save user data');
-      }
+    // saving user data
+    userData[DBRKeys.id] = authModel.id;
+    var userDataSaved = await authDbProvider.saveUserData(userData);
+    if (!userDataSaved) {
+      throw DBWriteException('failed to save user data');
     }
 
     String jwtToken =

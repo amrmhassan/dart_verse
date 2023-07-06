@@ -8,6 +8,7 @@ class StorageService {
   final App _app;
   final ServerService _serverService;
   late StorageServerHandlers _serverHandlers;
+
   StorageService(
     this._app,
     this._serverService, {
@@ -17,7 +18,9 @@ class StorageService {
         DefaultStorageServerHandlers(
           app: _app,
         );
-    _addEndpoints();
+    _addEndpoints(
+        //!
+        );
   }
   // here i want to allowed adding files from http request by getting the file from the request then saving it here on the server
   // and providing a link for getting the percentage done from the file operation and that link will be for a ws server
@@ -34,7 +37,6 @@ class StorageService {
     // handlers
     var router = Router()
       ..post(upload, _serverHandlers.upload)
-      ..get(download, _serverHandlers.download)
       ..delete(delete, _serverHandlers.delete);
     _serverService.addRouter(
       router,
@@ -42,5 +44,7 @@ class StorageService {
       emailMustBeVerified: emailMustBeVerified,
       jwtSecured: jwtSecured,
     );
+    Router downloadRouter = Router()..get(download, _serverHandlers.download);
+    _serverService.addRouter(downloadRouter);
   }
 }
