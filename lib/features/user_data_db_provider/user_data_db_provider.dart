@@ -21,4 +21,6 @@ abstract class UserDataDbProvider {
     String userId,
     Map<String, dynamic> newDoc,
   );
+  Future<Map<String, dynamic>?> getUserData(String userId);
+  Future<Map<String, dynamic>?> getUserDataByEmail(String email);
 }

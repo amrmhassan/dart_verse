@@ -1,10 +1,7 @@
 import 'package:dart_verse/features/email_verification/impl/default_email_verification_provider.dart';
 import 'package:dart_verse/services/auth/auth_service.dart';
 import 'package:dart_verse/services/web_server/repo/auth_middlewares.dart';
-import 'package:dart_verse/settings/server_settings/impl/default_auth_body_keys.dart';
-// import 'package:dart_verse/settings/server_settings/impl/default_auth_endpoints.dart';
 import 'package:dart_verse/settings/server_settings/impl/default_auth_server_handlers.dart';
-import 'package:dart_verse/settings/server_settings/repo/auth_body_keys.dart';
 import 'package:dart_verse/settings/server_settings/repo/auth_server_handlers.dart';
 import 'package:dart_verse/settings/server_settings/repo/auth_server_settings.dart';
 
@@ -18,8 +15,8 @@ class DefaultAuthServerSettings implements AuthServerSettings {
 
   @override
   late AuthServerHandlers authServerHandlers;
-  @override
-  late AuthBodyKeys authBodyKeys;
+  // @override
+  // late AuthBodyKeys authBodyKeys;
 
   @override
   late AuthService authService;
@@ -32,14 +29,14 @@ class DefaultAuthServerSettings implements AuthServerSettings {
 
   DefaultAuthServerSettings(
     this.authService, {
-    AuthBodyKeys? cAuthBodyKeys,
+    // AuthBodyKeys? cAuthBodyKeys,
     AuthServerHandlers? cAuthServerHandlers,
     AuthEndpoints? cAuthEndpoints,
     AuthServerMiddlewares? cAuthServerMiddlewares,
     EmailVerificationProvider? cEmailVerificationProvider,
     String? cBackendHost,
   }) {
-    authBodyKeys = cAuthBodyKeys ?? DefaultAuthBodyKeys();
+    // authBodyKeys = cAuthBodyKeys ?? DefaultAuthBodyKeys();
     authServerMiddlewares =
         cAuthServerMiddlewares ?? DefaultAuthMiddlewares(authService);
     emailVerificationProvider = cEmailVerificationProvider ??
@@ -50,7 +47,7 @@ class DefaultAuthServerSettings implements AuthServerSettings {
     authServerHandlers = cAuthServerHandlers ??
         DefaultAuthServerHandlers(
           authService,
-          authBodyKeys,
+          // authBodyKeys,
           emailVerificationProvider,
         );
   }

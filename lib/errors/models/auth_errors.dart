@@ -181,6 +181,15 @@ class UserNotFoundToVerify extends JwtAuthException {
         );
 }
 
+class UserNotFoundException extends JwtAuthException {
+  UserNotFoundException()
+      : super(
+          'can\'t find the user ',
+          ErrorCodes.userNotFound,
+          errorCode: HttpStatus.notFound,
+        );
+}
+
 class NonAuthorizedAppId extends JwtAuthException {
   NonAuthorizedAppId()
       : super(

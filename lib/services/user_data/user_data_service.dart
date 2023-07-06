@@ -80,7 +80,38 @@ class UserDataService implements DVService {
         throw NoUserRegisteredException();
       }
     }
-    //! make sure that the user auth already exist
     return userDataDbProvider.setUserData(userId, newDoc);
+  }
+
+  Future<Map<String, dynamic>?> getUserData(
+    String userId, {
+    /// this will make sure that the auth data for user exist first before setting the
+    /// user data
+    bool authDataMustExist = true,
+  }) async {
+    if (authDataMustExist) {
+      AuthModel? authModel =
+          await _authService.authDbProvider.getUserById(userId);
+      if (authModel == null) {
+        throw NoUserRegisteredException();
+      }
+    }
+    return userDataDbProvider.getUserData(userId);
+  }
+
+  Future<Map<String, dynamic>?> getUserDataByEmail(
+    String email, {
+    /// this will make sure that the auth data for user exist first before setting the
+    /// user data
+    bool authDataMustExist = true,
+  }) async {
+    if (authDataMustExist) {
+      AuthModel? authModel =
+          await _authService.authDbProvider.getUserByEmail(email);
+      if (authModel == null) {
+        throw NoUserRegisteredException();
+      }
+    }
+    return userDataDbProvider.getUserDataByEmail(email);
   }
 }

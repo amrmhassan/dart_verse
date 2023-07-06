@@ -1,3 +1,6 @@
+// you can apply acm permissions with sql db local file in the bucket itself
+// instead of making your own custom one
+
 import 'dart:io';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:dart_verse/features/auth_db_provider/impl/mongo_db_auth_provider/mongo_db_auth_provider.dart';
@@ -15,7 +18,6 @@ import 'package:dart_verse/settings/server_settings/impl/default_auth_server_set
 import 'package:dart_verse/settings/server_settings/server_settings.dart';
 import 'package:dart_verse/settings/storage_settings/storage_settings.dart';
 import 'package:dart_verse/settings/user_data_settings/user_data_settings.dart';
-import 'package:dart_webcore/dart_webcore.dart';
 
 import 'constants.dart';
 import 'shelf_usage_example.dart';
@@ -62,16 +64,6 @@ void main(List<String> arguments) async {
     ),
   );
 
-  var userDataRouter = Router()
-    ..get('/user/<id>', (request, response, pathArgs) {
-      return response.writeJson(
-          'user data fetched successfully with id: ${pathArgs["id"]}');
-    });
-  serverService.addRouter(
-    userDataRouter,
-    jwtSecured: true,
-    emailMustBeVerified: true,
-  );
   StorageService(app, serverService);
   await serverService.runServer();
 }

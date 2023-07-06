@@ -79,6 +79,8 @@ class AuthService implements DVService {
     String jwtToken =
         await authDbProvider.createJwtAndSave(savedModel.id, email);
 
+    // get the user data to return it to the
+
     return jwtToken;
   }
 

@@ -17,22 +17,22 @@ import 'package:dart_webcore/dart_webcore/server/impl/response_holder.dart';
 import 'package:dart_webcore/dart_webcore/server/repo/passed_http_entity.dart';
 import 'package:mailer/mailer.dart';
 
-import '../repo/auth_body_keys.dart';
+import '../../../services/user_data/user_data_service.dart';
 import '../utils/send_response.dart';
 
 class DefaultAuthServerHandlers implements AuthServerHandlers {
   @override
   AuthService authService;
 
-  @override
-  AuthBodyKeys defaultAuthBodyKeys;
+  // @override
+  // AuthBodyKeys defaultAuthBodyKeys;
 
   @override
   EmailVerificationProvider emailVerificationProvider;
 
   DefaultAuthServerHandlers(
     this.authService,
-    this.defaultAuthBodyKeys,
+    // this.defaultAuthBodyKeys,
     this.emailVerificationProvider,
   );
 
@@ -87,8 +87,8 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
         } catch (e) {
           throw RequestBodyError();
         }
-        String emailKey = defaultAuthBodyKeys.email;
-        String passwordKey = defaultAuthBodyKeys.password;
+        String emailKey = BodyFields.email;
+        String passwordKey = BodyFields.password;
         String? email = data[emailKey];
         String? password = data[passwordKey];
         if (email == null || password == null) {
@@ -99,7 +99,15 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
           email: email,
           password: password,
         );
-        return SendResponse.sendDataToUser(response, jwt, dataFieldName: 'jwt');
+
+        UserDataService userDataService = UserDataService(authService);
+        var userData = await userDataService.getUserDataByEmail(email) ?? {};
+        userData['jwt'] = jwt;
+        return SendResponse.sendDataToUser(
+          response,
+          userData,
+          dataFieldName: 'data',
+        );
       },
     );
   }
@@ -116,9 +124,9 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
       pathArgs,
       () async {
         var data = await request.readAsJson();
-        String emailKey = defaultAuthBodyKeys.email;
-        String passwordKey = defaultAuthBodyKeys.password;
-        String userDataKey = defaultAuthBodyKeys.userData;
+        String emailKey = BodyFields.email;
+        String passwordKey = BodyFields.password;
+        String userDataKey = BodyFields.userData;
 
         String? email = data[emailKey];
         String? password = data[passwordKey];
@@ -133,6 +141,7 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
           password: password,
           userData: userData,
         );
+
         return SendResponse.sendDataToUser(response, jwt, dataFieldName: 'jwt');
       },
     );

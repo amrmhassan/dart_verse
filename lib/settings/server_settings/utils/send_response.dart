@@ -3,7 +3,7 @@ import 'package:dart_webcore/dart_webcore/server/impl/response_holder.dart';
 class SendResponse {
   static ResponseHolder sendDataToUser(
     ResponseHolder response,
-    String msg, {
+    dynamic msg, {
     String? dataFieldName,
   }) {
     return response.writeJson(

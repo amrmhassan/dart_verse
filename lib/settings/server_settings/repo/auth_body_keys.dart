@@ -1,5 +1,5 @@
-abstract class AuthBodyKeys {
-  late String email;
-  late String password;
-  late String userData;
-}
+// abstract class AuthBodyKeys {
+//   late String email;
+//   late String password;
+//   late String userData;
+// }
