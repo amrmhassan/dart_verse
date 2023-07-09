@@ -323,6 +323,8 @@ class DefaultAuthServerHandlers implements AuthServerHandlers {
     throw UnimplementedError();
   }
 
+  //? this method will require the user to be logged in
+  //! make another endpoint for not logged in users which will accept the user email and password then logging out from all devices
   @override
   FutureOr<PassedHttpEntity> logoutFromAllDevices(
     RequestHolder request,
