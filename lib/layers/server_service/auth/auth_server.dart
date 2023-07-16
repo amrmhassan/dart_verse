@@ -1,6 +1,6 @@
 import 'package:dart_verse/constants/path_fields.dart';
 import 'package:dart_verse/layers/settings/app/app.dart';
-import 'package:dart_verse/layers/settings/server_settings/repo/auth_server_settings.dart';
+import 'package:dart_verse/layers/server_service/auth/repo/auth_server_settings.dart';
 import 'package:dart_webcore/dart_webcore.dart';
 
 class AuthServer {
