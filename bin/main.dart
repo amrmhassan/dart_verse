@@ -3,9 +3,6 @@
 
 import 'dart:io';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
-import 'package:dart_verse/features/auth_db_provider/impl/mongo_db_auth_provider/mongo_db_auth_provider.dart';
-import 'package:dart_verse/features/email_verification/impl/default_email_verification_provider.dart';
-import 'package:dart_verse/layers/services/auth/auth_service.dart';
 import 'package:dart_verse/layers/services/db_manager/db_providers/impl/mongo_db/mongo_db_provider.dart';
 import 'package:dart_verse/layers/services/db_manager/db_service.dart';
 import 'package:dart_verse/layers/services/storage_service/storage_service.dart';
@@ -14,7 +11,6 @@ import 'package:dart_verse/layers/settings/app/app.dart';
 import 'package:dart_verse/layers/settings/auth_settings/auth_settings.dart';
 import 'package:dart_verse/layers/settings/db_settings/db_settings.dart';
 import 'package:dart_verse/layers/settings/email_settings/email_settings.dart';
-import 'package:dart_verse/layers/settings/server_settings/impl/default_auth_server_settings.dart';
 import 'package:dart_verse/layers/settings/server_settings/server_settings.dart';
 import 'package:dart_verse/layers/settings/storage_settings/storage_settings.dart';
 import 'package:dart_verse/layers/settings/user_data_settings/user_data_settings.dart';
@@ -47,21 +43,21 @@ void main(List<String> arguments) async {
   );
 
   DbService dbService = DbService(app);
-  AuthService authService = AuthService(
-    MongoDbAuthProvider(app, dbService),
-  );
+  // AuthService authService = AuthService(
+  //   MongoDbAuthProvider(app, dbService),
+  // );
   await dbService.connectToDb();
   // UserDataService userDataService = UserDataService(authService);
   ServerService serverService = ServerService(
     app,
-    authServerSettings: DefaultAuthServerSettings(
-      authService,
-      cEmailVerificationProvider: DefaultEmailVerificationProvider(
-        authService: authService,
-        allowNewVerificationEmailAfter: Duration(minutes: 1),
-        verifyLinkExpiresAfter: Duration(minutes: 5),
-      ),
-    ),
+    // authServerSettings: DefaultAuthServerSettings(
+    //   authService,
+    //   cEmailVerificationProvider: DefaultEmailVerificationProvider(
+    //     authService: authService,
+    //     allowNewVerificationEmailAfter: Duration(minutes: 1),
+    //     verifyLinkExpiresAfter: Duration(minutes: 5),
+    //   ),
+    // ),
   );
 
   var storageService = StorageService(app, serverService);

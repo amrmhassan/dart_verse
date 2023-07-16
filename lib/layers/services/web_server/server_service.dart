@@ -1,24 +1,20 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dart_verse/constants/path_fields.dart';
-import 'package:dart_verse/errors/models/server_errors.dart';
+import 'package:dart_verse/errors/models/auth_server_exceptions.dart';
+import 'package:dart_verse/layers/server_service/auth/auth_server.dart';
 import 'package:dart_verse/layers/settings/app/app.dart';
 import 'package:dart_webcore/dart_webcore.dart';
-
-import '../../settings/server_settings/repo/auth_server_settings.dart';
 
 //! move handlers  of the auth service to a middle step between the authService and serverService
 //! you can call this step serverAuth
 //! and for the storage service you can add a step called serverStorage
 class ServerService {
   final App _app;
-  final AuthServerSettings? _authServerSettings;
+  final AuthServer? _authServer;
 
-  ServerService(
-    this._app, {
-    AuthServerSettings? authServerSettings,
-  }) : _authServerSettings = authServerSettings {
+  ServerService(this._app, {AuthServer? authServer})
+      : _authServer = authServer {
     _cascade = Cascade();
   }
 
@@ -29,7 +25,7 @@ class ServerService {
   }) async {
     InternetAddress ip = _app.serverSettings.ip;
     int port = _app.serverSettings.port;
-    _addAuthEndpoints();
+    _addServicesEndpoints();
     ServerHolder serverHolder = ServerHolder(_cascade);
     serverHolder.addGlobalMiddleware(logRequest);
     var server = await serverHolder.bind(ip, port);
@@ -69,7 +65,7 @@ class ServerService {
       router.addUpperMiddleware(
         null,
         HttpMethods.all,
-        authServerSettings.authServerMiddlewares.checkAppId,
+        authServer.authServerSettings.authServerMiddlewares.checkAppId,
       );
     }
     // checking if jwt is added and user logged in
@@ -78,13 +74,15 @@ class ServerService {
           .addUpperMiddleware(
             null,
             HttpMethods.all,
-            authServerSettings.authServerMiddlewares.checkJwtInHeaders,
+            authServer
+                .authServerSettings.authServerMiddlewares.checkJwtInHeaders,
             signature: 'checkJwtInHeadersFromUserCustomRoutes',
           )
           .addUpperMiddleware(
             null,
             HttpMethods.all,
-            authServerSettings.authServerMiddlewares.checkJwtForUserId,
+            authServer
+                .authServerSettings.authServerMiddlewares.checkJwtForUserId,
             signature: 'checkJwtForUserId',
           );
     }
@@ -93,7 +91,8 @@ class ServerService {
       router.addUpperMiddleware(
         null,
         HttpMethods.all,
-        authServerSettings.authServerMiddlewares.checkUserEmailVerified,
+        authServer
+            .authServerSettings.authServerMiddlewares.checkUserEmailVerified,
       );
     }
     Pipeline pipeline = Pipeline().addRouter(router);
@@ -108,104 +107,16 @@ class ServerService {
     return _cascade;
   }
 
-  AuthServerSettings get authServerSettings {
-    if (_authServerSettings == null) {
-      throw NoAuthServerSettingsException();
+  AuthServer get authServer {
+    if (_authServer == null) {
+      throw NoAuthServerSettings();
     }
-    return _authServerSettings!;
+    return _authServer!;
   }
 
-  void _addAuthEndpoints() {
-    if (_authServerSettings == null) return;
-    // endpoints
-    String login = _app.endpoints.authEndpoints.login;
-    String register = _app.endpoints.authEndpoints.register;
-    String getVerificationEmail =
-        _app.endpoints.authEndpoints.getVerificationEmail;
-    String verifyEmail = _app.endpoints.authEndpoints.verifyEmail;
-    String changePassword = _app.endpoints.authEndpoints.changePassword;
-    String forgetPassword = _app.endpoints.authEndpoints.forgetPassword;
-    String logoutFromAllDevices =
-        _app.endpoints.authEndpoints.logoutFromAllDevices;
-    String logout = _app.endpoints.authEndpoints.logout;
-    String updateUserData = _app.endpoints.authEndpoints.updateUserData;
-    String deleteUserData = _app.endpoints.authEndpoints.deleteUserData;
-    String fullyDeleteUser = _app.endpoints.authEndpoints.fullyDeleteUser;
-
-    // String forgetPassword = _app.endpoints.authEndpoints.forgetPassword;
-
-    // other needed data
-    int port = _app.serverSettings.port;
-    String host = _app.backendHost;
-
-    // adding auth endpoints pipeline
-    var authRouter = Router()
-      //? won't check for app id here (can be used from a browser)
-      ..get(
-        '$verifyEmail/<${PathFields.jwt}>',
-        authServerSettings.authServerHandlers.verifyEmail,
-      )
-      //? will check for app id from here
-      ..addRouterMiddleware(
-        authServerSettings.authServerMiddlewares.checkAppId,
-      )
-      ..post(
-        login,
-        authServerSettings.authServerHandlers.login,
-      )
-      ..post(
-        register,
-        authServerSettings.authServerHandlers.register,
-      )
-      ..post(
-        forgetPassword,
-        authServerSettings.authServerHandlers.forgetPassword,
-      )
-      //? will check for jwt from here
-      ..addRouterMiddleware(
-        authServerSettings.authServerMiddlewares.checkJwtInHeaders,
-        signature: 'checkJwtInHeadersFromAuthEndpoints',
-      )
-      ..addRouterMiddleware(
-        authServerSettings.authServerMiddlewares.checkJwtForUserId,
-        signature: 'checkJwtForUserId',
-      )
-      ..post(
-        getVerificationEmail,
-        (request, response, pathArgs) =>
-            authServerSettings.authServerHandlers.getVerificationEmail(
-          request,
-          response,
-          pathArgs,
-          // i need the host here and the port
-          '$host:$port$verifyEmail/',
-        ),
-      )
-      ..post(
-        changePassword,
-        authServerSettings.authServerHandlers.changePassword,
-      )
-      ..post(
-        logoutFromAllDevices,
-        authServerSettings.authServerHandlers.logoutFromAllDevices,
-      )
-      ..post(
-        logout,
-        authServerSettings.authServerHandlers.logout,
-      )
-      ..post(
-        updateUserData,
-        authServerSettings.authServerHandlers.updateUserData,
-      )
-      ..post(
-        deleteUserData,
-        authServerSettings.authServerHandlers.deleteUserData,
-      )
-      ..post(
-        fullyDeleteUser,
-        authServerSettings.authServerHandlers.fullyDeleteUser,
-      );
-
-    addRouter(authRouter);
+  void _addServicesEndpoints() {
+    if (_authServer != null) {
+      addRouter(_authServer!.getRouter());
+    }
   }
 }

@@ -10,7 +10,7 @@ import 'package:dart_verse/errors/models/server_errors.dart';
 import 'package:dart_verse/errors/serverless_exception.dart';
 import 'package:dart_verse/features/email_verification/repo/email_verification_provider.dart';
 import 'package:dart_verse/layers/services/auth/auth_service.dart';
-import 'package:dart_verse/layers/services/email_service/email_service.dart';
+import 'package:dart_verse/layers/services/email/email_service.dart';
 import 'package:dart_verse/layers/services/user_data/user_data_service.dart';
 import 'package:dart_verse/layers/settings/server_settings/repo/auth_server_handlers.dart';
 import 'package:dart_webcore/dart_webcore/server/impl/request_holder.dart';
