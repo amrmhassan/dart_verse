@@ -19,10 +19,12 @@ class ErrorCodes {
   //? db error codes
   static const String dbReadCode = 'db-read-error';
   static const String dbWriteCode = 'db-write-error';
+  static const String dbDeleteCode = 'db-delete-error';
   static const String dbDocValidation = 'db-doc-validation';
   static const String mongoDbNotInitialized = 'mongo-db-not-initialized';
   static const String dbNotConnoted = 'db-not-connected';
   static const String dbAlreadyConnoted = 'db-already-connected';
+  static const String docNotFound = 'doc-not-found';
   //? auth errors
   static const String duplicateEmail = 'duplicate-email-register';
   static const String noUserRegistered = 'no-user-registered';

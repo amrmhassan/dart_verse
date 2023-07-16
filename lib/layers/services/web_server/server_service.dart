@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dart_verse/errors/models/auth_server_exceptions.dart';
-import 'package:dart_verse/layers/server_service/auth/auth_server.dart';
+import 'package:dart_verse/layers/service_server/auth_server/auth_server.dart';
 import 'package:dart_verse/layers/settings/app/app.dart';
 import 'package:dart_webcore/dart_webcore.dart';
 
@@ -115,8 +115,10 @@ class ServerService {
   }
 
   void _addServicesEndpoints() {
+    // adding routers for auth service
     if (_authServer != null) {
       addRouter(_authServer!.getRouter());
     }
+    // adding routers for storage service
   }
 }

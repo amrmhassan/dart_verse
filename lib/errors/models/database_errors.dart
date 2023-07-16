@@ -35,6 +35,17 @@ class DBWriteException extends DBException {
         );
 }
 
+class DBDeleteException extends DBException {
+  @override
+  String message;
+
+  DBDeleteException(this.message)
+      : super(
+          message,
+          ErrorCodes.dbDeleteCode,
+        );
+}
+
 class DbDocValidationException extends DBException {
   @override
   String message;
@@ -67,5 +78,13 @@ class DbAlreadyConnectedException extends DBException {
       : super(
           'db already connected before.',
           ErrorCodes.dbAlreadyConnoted,
+        );
+}
+
+class DocNotFoundException extends DBException {
+  DocNotFoundException(String docId)
+      : super(
+          'the doc with id $docId not found',
+          ErrorCodes.docNotFound,
         );
 }

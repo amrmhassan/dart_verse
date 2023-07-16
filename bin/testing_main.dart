@@ -1,4 +1,6 @@
+import 'package:dart_verse/layers/services/db_manager/db_service.dart';
 import 'package:dart_verse/layers/services/storage_service/utils/buckets_store.dart';
+import 'package:dart_verse/layers/settings/app/app.dart';
 
 void main(List<String> args) async {
   // Handler handler =
@@ -17,4 +19,7 @@ void main(List<String> args) async {
   BucketsStore.bucketsBox.put('test', 'test');
   var bucketPath = BucketsStore.getBucketPath('test');
   print(bucketPath);
+  App app = App(backendHost: 'http://localhost:3000');
+  DbService dbService = DbService(app);
+  dbService.mongoDbController.collection('name').doc();
 }

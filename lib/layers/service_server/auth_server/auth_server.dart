@@ -1,9 +1,10 @@
 import 'package:dart_verse/constants/path_fields.dart';
+import 'package:dart_verse/layers/service_server/service_server.dart';
 import 'package:dart_verse/layers/settings/app/app.dart';
-import 'package:dart_verse/layers/server_service/auth/repo/auth_server_settings.dart';
+import 'package:dart_verse/layers/service_server/auth_server/repo/auth_server_settings.dart';
 import 'package:dart_webcore/dart_webcore.dart';
 
-class AuthServer {
+class AuthServer implements ServiceServerLayer {
   final App _app;
   final AuthServerSettings _authServerSettings;
   const AuthServer(this._app, this._authServerSettings);
@@ -12,6 +13,7 @@ class AuthServer {
     return _authServerSettings;
   }
 
+  @override
   Router getRouter() {
     String login = _app.endpoints.authEndpoints.login;
     String register = _app.endpoints.authEndpoints.register;

@@ -5,14 +5,15 @@ class SendResponse {
     ResponseHolder response,
     dynamic msg, {
     String? dataFieldName,
+    int httpCode = 200,
   }) {
     return response.writeJson(
       {
         "msg": 'success',
-        'code': 200,
+        'code': httpCode,
         dataFieldName ?? 'data': msg,
       },
-      code: 200,
+      code: httpCode,
     );
   }
 

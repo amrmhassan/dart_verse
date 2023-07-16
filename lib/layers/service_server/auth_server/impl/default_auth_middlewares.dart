@@ -5,7 +5,7 @@ import 'package:dart_verse/constants/header_fields.dart';
 import 'package:dart_verse/errors/models/auth_errors.dart';
 import 'package:dart_verse/errors/serverless_exception.dart';
 import 'package:dart_verse/layers/services/auth/auth_service.dart';
-import 'package:dart_verse/layers/server_service/auth/repo/auth_middlewares.dart';
+import 'package:dart_verse/layers/service_server/auth_server/repo/auth_middlewares.dart';
 import 'package:dart_webcore/dart_webcore/server/impl/request_holder.dart';
 import 'package:dart_webcore/dart_webcore/server/impl/response_holder.dart';
 import 'package:dart_webcore/dart_webcore/server/repo/passed_http_entity.dart';

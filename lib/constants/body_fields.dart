@@ -7,4 +7,6 @@ class BodyFields {
   static const String newPassword = 'newPassword';
   static const String updateDoc = 'updateDoc';
   static const String userData = 'userData';
+  static const String collection = 'collection';
+  static const String docId = 'docId';
 }
