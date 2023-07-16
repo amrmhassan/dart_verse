@@ -1,5 +1,6 @@
-import '../../services/db_manager/db_service.dart';
-import '../../settings/app/app.dart';
+import 'package:dart_verse/layers/services/db_manager/db_service.dart';
+
+import '../../layers/settings/app/app.dart';
 
 abstract class UserDataDbProvider {
   final App app;

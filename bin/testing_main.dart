@@ -1,6 +1,4 @@
-import 'package:dart_verse/helpers/buckets_hive.dart';
-import 'package:dart_verse/services/storage_service/storage_service.dart';
-import 'package:dart_verse/services/storage_service/utils/buckets_store.dart';
+import 'package:dart_verse/layers/services/storage_service/utils/buckets_store.dart';
 
 void main(List<String> args) async {
   // Handler handler =

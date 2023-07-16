@@ -5,10 +5,10 @@ import 'package:dart_verse/constants/reserved_keys.dart';
 import 'package:dart_verse/errors/models/auth_errors.dart';
 import 'package:dart_verse/features/auth_db_provider/repo/mongo_db_repo_provider.dart';
 import 'package:dart_verse/features/user_data_db_provider/user_data_db_provider.dart';
+import 'package:dart_verse/layers/services/db_manager/db_service.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
-import '../../../services/db_manager/db_service.dart';
-import '../../../settings/app/app.dart';
+import '../../../layers/settings/app/app.dart';
 
 class MongoDbUserDataProvider extends UserDataDbProvider
     implements MongoDbRepoProvider {

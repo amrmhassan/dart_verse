@@ -1,13 +1,13 @@
 import 'package:dart_verse/features/app_database/controllers/db_connect/memory_db_connect.dart';
 import 'package:dart_verse/features/app_database/controllers/db_connect/mongo_db_connect.dart';
-import 'package:dart_verse/settings/app/app.dart';
-import 'package:dart_verse/settings/db_settings/repo/conn_link.dart';
+import 'package:dart_verse/layers/services/db_manager/data/repositories/db_controllers/memory_db_controller.dart';
+import 'package:dart_verse/layers/settings/app/app.dart';
+import 'package:dart_verse/layers/settings/db_settings/repo/conn_link.dart';
 import 'package:mongo_dart/mongo_dart.dart';
-
-import '../../../services/db_manager/data/repositories/db_controllers/memory_db_controller.dart';
 
 class DbConnect {
   final App _app;
+
   const DbConnect(this._app);
   Future<void> connectAllProvidedDBs({
     required Function(MemoryDbController) setMemoryController,
