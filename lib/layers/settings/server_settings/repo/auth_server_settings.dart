@@ -1,6 +1,6 @@
 import 'package:dart_verse/features/email_verification/repo/email_verification_provider.dart';
 import 'package:dart_verse/layers/services/auth/auth_service.dart';
-import 'package:dart_verse/layers/services/web_server/repo/auth_middlewares.dart';
+import 'package:dart_verse/layers/server_service/auth/repo/auth_middlewares.dart';
 import 'package:dart_verse/layers/settings/server_settings/repo/auth_server_handlers.dart';
 
 abstract class AuthServerSettings {

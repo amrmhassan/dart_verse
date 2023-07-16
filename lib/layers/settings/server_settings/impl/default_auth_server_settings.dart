@@ -1,7 +1,7 @@
 import 'package:dart_verse/features/email_verification/impl/default_email_verification_provider.dart';
 import 'package:dart_verse/layers/services/auth/auth_service.dart';
-import 'package:dart_verse/layers/services/web_server/impl/default_auth_middlewares.dart';
-import 'package:dart_verse/layers/services/web_server/repo/auth_middlewares.dart';
+import 'package:dart_verse/layers/server_service/auth/impl/default_auth_middlewares.dart';
+import 'package:dart_verse/layers/server_service/auth/repo/auth_middlewares.dart';
 import 'package:dart_verse/layers/settings/server_settings/impl/default_auth_server_handlers.dart';
 import 'package:dart_verse/layers/settings/server_settings/repo/auth_server_handlers.dart';
 import 'package:dart_verse/layers/settings/server_settings/repo/auth_server_settings.dart';
