@@ -1,7 +1,6 @@
-import 'dart:io';
-
-import 'package:dart_verse/constants/global_constants.dart';
-import 'package:hive/hive.dart';
+import 'package:dart_verse/helpers/buckets_hive.dart';
+import 'package:dart_verse/services/storage_service/storage_service.dart';
+import 'package:dart_verse/services/storage_service/utils/buckets_store.dart';
 
 void main(List<String> args) async {
   // Handler handler =
@@ -15,6 +14,9 @@ void main(List<String> args) async {
   // print('end');
 
   // box.put('name', 'Amr');
-  var data = box.get('name');
-  print(data);
+
+  await BucketsStore().init();
+  BucketsStore.bucketsBox.put('test', 'test');
+  var bucketPath = BucketsStore.getBucketPath('test');
+  print(bucketPath);
 }

@@ -1,13 +1,44 @@
+import 'package:dart_verse/errors/models/storage_errors.dart';
+import 'package:dart_verse/services/storage_buckets/models/storage_bucket_model.dart';
+import 'package:dart_verse/services/storage_service/utils/buckets_store.dart';
 import 'package:dart_verse/services/web_server/server_service.dart';
 import 'package:dart_verse/settings/app/app.dart';
 import 'package:dart_verse/settings/storage_settings/impl/default_storage_server_handlers.dart';
 import 'package:dart_verse/settings/storage_settings/repo/storage_server_handlers.dart';
 import 'package:dart_webcore/dart_webcore.dart';
 
+import '../storage_buckets/repo/bucket_controller_repo.dart';
+
 class StorageService {
   final App _app;
   final ServerService _serverService;
   late StorageServerHandlers _serverHandlers;
+  bool _initialized = false;
+
+  Future<void> init() async {
+    await BucketsStore().init();
+    _initialized = true;
+  }
+
+  Future<StorageBucket> createBucket(
+    String name, {
+    String? parentFolderPath,
+    int? maxAllowedSize,
+    BucketControllerRepo? controller,
+    required String creatorId,
+  }) async {
+    if (!_initialized) {
+      throw StorageServiceNotInitializedException();
+    }
+    StorageBucket storageBucket = StorageBucket(
+      name,
+      creatorId: creatorId,
+      controller: controller,
+      maxAllowedSize: maxAllowedSize,
+      parentFolderPath: parentFolderPath,
+    );
+    return storageBucket;
+  }
 
   StorageService(
     this._app,

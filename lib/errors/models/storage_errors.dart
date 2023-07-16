@@ -99,3 +99,21 @@ class FileNotFound extends StorageException {
           errorCode: HttpStatus.notFound,
         );
 }
+
+class StorageServiceNotInitializedException extends StorageException {
+  StorageServiceNotInitializedException()
+      : super(
+          'storage service not initialized call init()',
+          ErrorCodes.storageServiceNotInit,
+          errorCode: HttpStatus.internalServerError,
+        );
+}
+
+class StorageBucketExistsException extends StorageException {
+  StorageBucketExistsException(String name)
+      : super(
+          'storage bucket ($name) already exists with different path',
+          ErrorCodes.storageBucketPathChange,
+          errorCode: HttpStatus.internalServerError,
+        );
+}

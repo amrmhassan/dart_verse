@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dart_verse/services/storage_buckets/models/storage_bucket_model.dart';
 import 'package:dart_verse/services/storage_buckets/repo/bucket_controller_repo.dart';
+import 'package:dart_verse/services/storage_service/utils/buckets_store.dart';
 import 'package:dart_webcore/dart_webcore/server/impl/request_holder.dart';
 import 'package:path/path.dart';
 
@@ -43,6 +44,8 @@ class DefaultBucketController implements BucketControllerRepo {
     if (!directory.existsSync()) {
       try {
         directory.createSync(recursive: true);
+        // here just add the bucket id to the buckets data
+        saveBucketId();
       } catch (e) {
         throw StorageBucketFolderPathException(
             'can\'t create the bucket folder');
@@ -110,5 +113,19 @@ class DefaultBucketController implements BucketControllerRepo {
     // storageBucket.permissionsController.per
 
     return file;
+  }
+
+  @override
+  void saveBucketId() {
+    String name = storageBucket.name;
+    String path = storageBucket.folderPath;
+    var bucketExist = BucketsStore.bucketsBox.get(name);
+    if (bucketExist != null) {
+      if (bucketExist != path) {
+        throw StorageBucketExistsException(name);
+      }
+    }
+
+    BucketsStore.putBucket(name, path);
   }
 }

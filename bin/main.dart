@@ -64,7 +64,8 @@ void main(List<String> arguments) async {
     ),
   );
 
-  StorageService(app, serverService);
+  var storageService = StorageService(app, serverService);
+  await storageService.init();
   await serverService.runServer();
 }
 
