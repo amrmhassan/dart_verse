@@ -10,7 +10,6 @@ class HiveHelper {
     if (!bucketsDir.existsSync()) {
       bucketsDir.createSync(recursive: true);
     }
-    print(bucketsDir.absolute.path);
     Hive.init(GlobalConst.bucketsDataDir);
   }
 
