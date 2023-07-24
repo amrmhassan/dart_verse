@@ -47,7 +47,7 @@ class DefaultBucketController implements BucketControllerRepo {
         saveBucketId();
       } catch (e) {
         throw StorageBucketFolderPathException(
-            'can\'t create the bucket folder');
+            'can\'t create the bucket folder, $e');
       }
     }
     // check if the storage bucket is created or not

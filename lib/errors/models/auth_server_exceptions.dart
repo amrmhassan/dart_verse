@@ -23,7 +23,7 @@ class AuthServerExceptions extends ServerLessException {
 class NoAuthServerSettings extends AuthServerExceptions {
   NoAuthServerSettings()
       : super(
-          'please provider authServer to ServerService',
+          'please provide authServer to ServerService',
           ErrorCodes.noAuthServerProvided,
         );
 }
