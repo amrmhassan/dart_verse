@@ -3,6 +3,7 @@
 
 import 'dart:io';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+import 'package:dart_verse/dart_verse.dart';
 import 'package:dart_verse/features/auth_db_provider/impl/mongo_db_auth_provider/mongo_db_auth_provider.dart';
 import 'package:dart_verse/layers/service_server/auth_server/auth_server.dart';
 import 'package:dart_verse/layers/service_server/auth_server/impl/default_auth_server_settings.dart';
@@ -10,7 +11,6 @@ import 'package:dart_verse/layers/services/auth/auth_service.dart';
 import 'package:dart_verse/layers/services/db_manager/db_providers/impl/mongo_db/mongo_db_provider.dart';
 import 'package:dart_verse/layers/services/db_manager/db_service.dart';
 import 'package:dart_verse/layers/services/storage_service/storage_service.dart';
-import 'package:dart_verse/layers/services/storage_service/utils/buckets_store.dart';
 import 'package:dart_verse/layers/services/web_server/server_service.dart';
 import 'package:dart_verse/layers/settings/app/app.dart';
 import 'package:dart_verse/layers/settings/auth_settings/auth_settings.dart';
@@ -27,6 +27,7 @@ import 'shelf_usage_example.dart';
 //! this init method must run before any use of the app
 
 void main(List<String> arguments) async {
+  await DartVerse.initializeApp();
   MongoDBProvider mongoDBProvider = MongoDBProvider(localConnLink);
 
   DBSettings dbSettings = DBSettings(mongoDBProvider: mongoDBProvider);
@@ -37,8 +38,6 @@ void main(List<String> arguments) async {
   );
   ServerSettings serverSettings = ServerSettings(InternetAddress.anyIPv4, 3000);
   EmailSettings emailSettings = EmailSettings(testSmtpServer);
-  //! i must call this buckets store before using any buckets
-  await BucketsStore().init();
 
   StorageSettings storageSettings = StorageSettings();
   App app = App(
