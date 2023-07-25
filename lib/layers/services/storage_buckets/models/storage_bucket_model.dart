@@ -57,16 +57,34 @@ class StorageBucket {
     );
   }
 
+  ///? this will migrate from the requested bucket in the headers to <br>
+  ///? another bucket reached from the ref, but the allowing rules will be applied from the referenced bucket <br>
+  ///? but if there is no storage bucket from the ref, this will return the original bucket with it's rule <br>
+  ///? and the ref will only be used as a sub dir inside the original bucket <br>
+  ///? so that ref method must return the nearest bucket in the path from it's end <br>
+  ///? like if the path is /{storage}/users/{amr}/images <br>
+  ///? if this is the ref and the {} means this is a bucket then the amr bucket will be returned from this path <br>
+  ///? so this must return a bucket
+  ///? but not necessarily the current bucket
   StorageBucket ref(String path) {
-    List<String> iterations = path.strip('/').split('/');
-    String localFolderPath =
-        iterations.sublist(0, iterations.length - 1).join('/');
-    var res = StorageBucket(
-      iterations.last,
-      parentFolderPath: '$folderPath/$localFolderPath',
-      creatorId: creatorId,
-    );
-    return res;
+    StorageBucket? bucketFromPath = fromPath(path);
+    if (bucketFromPath == null) {
+      List<String> iterations = path.strip('/').split('/');
+
+      String newPath = iterations.sublist(0, iterations.length - 1).join('/');
+      return ref(newPath);
+    } else {
+      return bucketFromPath;
+    }
+    // List<String> iterations = path.strip('/').split('/');
+    // String localFolderPath =
+    //     iterations.sublist(0, iterations.length - 1).join('/');
+    // var res = StorageBucket(
+    //   iterations.last,
+    //   parentFolderPath: '$folderPath/$localFolderPath',
+    //   creatorId: creatorId,
+    // );
+    // return res;
   }
 
 //! every storage bucket must contain .acm file which will contain it's permissions

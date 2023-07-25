@@ -23,9 +23,6 @@ import 'package:dart_verse/layers/settings/user_data_settings/user_data_settings
 import 'constants.dart';
 import 'shelf_usage_example.dart';
 
-//! make an initialization method for the package and init the hive boxes
-//! this init method must run before any use of the app
-
 void main(List<String> arguments) async {
   await DartVerse.initializeApp();
   MongoDBProvider mongoDBProvider = MongoDBProvider(localConnLink);

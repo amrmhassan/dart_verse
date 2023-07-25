@@ -126,8 +126,11 @@ class DefaultStorageServerHandlers implements StorageServerHandlers {
 
       // the allowed problem was solved
       // but now i need a way to get the path of the file i want to save like
+
       String ref = request.headers.value(HeaderFields.ref) ?? '/';
       StorageBucket refBucket = ref == '/' ? bucket : bucket.ref(ref);
+      //? bucket permissions will be checked for the refBucket not the original bucket
+      //? because the ref might refer to a child bucket inside the original one
 
       var file = await request.receiveFile(refBucket.folderPath);
       String downloadEndpoint =
