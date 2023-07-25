@@ -67,10 +67,13 @@ class StorageBucket {
   ///? so this must return a bucket
   ///? but not necessarily the current bucket
   StorageBucket ref(String path) {
+    List<String> iterations = path.strip('/').split('/');
     StorageBucket? bucketFromPath = fromPath(path);
+    if (bucketFromPath == null && iterations.length == 1) {
+      // return the current storage bucket if the ref is just one
+      return this;
+    }
     if (bucketFromPath == null) {
-      List<String> iterations = path.strip('/').split('/');
-
       String newPath = iterations.sublist(0, iterations.length - 1).join('/');
       return ref(newPath);
     } else {

@@ -80,7 +80,7 @@ class DefaultStorageServerHandlers implements StorageServerHandlers {
       }
       StorageUtils.deleteRef(
         path,
-        bucketName: bucketName!,
+        bucketName: refBucket.name,
         ref: ref,
       );
 
