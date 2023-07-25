@@ -74,7 +74,7 @@ class DefaultStorageServerHandlers implements StorageServerHandlers {
       StorageBucket refBucket = ref == '/' ? bucket : bucket.ref(ref);
       //! here i should check if this permission is allowed from the refBucket and the operation delete
       // here if allowed just delete the ref
-      String? path = refBucket.getFilePath(ref);
+      String? path = refBucket.getRefAbsPath(ref);
       if (path == null) {
         throw RefNotFound(refBucket.name, ref);
       }
@@ -106,7 +106,7 @@ class DefaultStorageServerHandlers implements StorageServerHandlers {
       if (storageBucket == null) {
         throw NoBucketException(bucketName);
       }
-      String? filePath = storageBucket.getFilePath(fileRef);
+      String? filePath = storageBucket.getRefAbsPath(fileRef);
       if (filePath == null) {
         throw FileNotFound(fileRef);
       }

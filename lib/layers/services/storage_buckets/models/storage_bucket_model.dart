@@ -124,36 +124,45 @@ class StorageBucket {
     );
   }
 
-  bool containFile(File file) {
-    if (!file.existsSync()) {
-      return false;
-    }
-    String filePath = file.path;
+  bool containFile(String path) {
     String bucketPath = folderPath.strip('./');
-    if (filePath.contains(bucketPath)) {
+    if (path.contains(bucketPath)) {
       return true;
     }
     return false;
   }
 
-  String? getFileRef(File file) {
-    if (!containFile(file)) return null;
+  String? getFileRef(FileSystemEntity entity) {
+    if (!containFile(entity.path)) return null;
     String bucketPath = folderPath;
     // file path: /path/to/bucket/bucket_name/sub/dir/file.ext
     // bucket path: /path/to/bucket/bucket_name
     // desired output : sub/dir/file.ext
-    var parts = file.path.split(bucketPath);
+    var parts = entity.path.split(bucketPath);
     if (parts.isEmpty) {
       return null;
     }
     return parts.last.strip('/');
   }
 
-  String? getFilePath(String fileRef) {
-    String filePath = '${folderPath.strip('/')}/$fileRef';
-    File file = File(filePath);
-    if (!file.existsSync()) return null;
-    if (!containFile(file)) return null;
-    return file.path;
+  String? getRefAbsPath(String ref) {
+    String entityPath = '${folderPath.strip('/')}/$ref';
+    FileSystemEntity? entity = _entity(entityPath);
+    if (entity == null) return null;
+
+    if (!containFile(entityPath)) return null;
+    return entity.path;
   }
+}
+
+FileSystemEntity? _entity(String path) {
+  File file = File(path);
+  if (file.existsSync()) {
+    return file;
+  }
+  Directory directory = Directory(path);
+  if (directory.existsSync()) {
+    return directory;
+  }
+  return null;
 }

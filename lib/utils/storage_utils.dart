@@ -23,7 +23,7 @@ class StorageUtils {
     }
     Directory directory = Directory(path);
     if (directory.existsSync()) {
-      directory.deleteSync();
+      directory.deleteSync(recursive: true);
       return;
     }
     throw RefNotFound(bucketName, ref);
