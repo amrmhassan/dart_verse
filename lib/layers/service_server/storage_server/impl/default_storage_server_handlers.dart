@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:dart_verse/constants/header_fields.dart';
 import 'package:dart_verse/constants/path_fields.dart';
@@ -57,10 +58,30 @@ class DefaultStorageServerHandlers implements StorageServerHandlers {
   }
 
   @override
-  FutureOr<PassedHttpEntity> delete(RequestHolder request,
-      ResponseHolder response, Map<String, dynamic> pathArgs) {
-    // TODO: implement delete
-    throw UnimplementedError();
+  FutureOr<PassedHttpEntity> delete(
+    RequestHolder request,
+    ResponseHolder response,
+    Map<String, dynamic> pathArgs,
+  ) {
+    return _wrapper(request, response, pathArgs, () async {
+      String? bucketName = request.headers.value(HeaderFields.bucketName);
+      StorageBucket? bucket = app.storageSettings.getBucket(bucketName);
+      if (bucket == null) {
+        throw NoBucketException(bucketName);
+      }
+
+      String ref = request.headers.value(HeaderFields.ref) ?? '/';
+      StorageBucket refBucket = ref == '/' ? bucket : bucket.ref(ref);
+      //! here i should check if this permission is allowed from the refBucket and the operation delete
+      // here if allowed just delete the ref
+      String? path = refBucket.getFilePath(ref);
+      if (path == null) {
+        throw RefNotFound(refBucket.name, ref);
+      }
+      File file = File(path);
+
+      return SendResponse.sendDataToUser(response, 'deleted');
+    });
   }
 
   @override
@@ -90,10 +111,10 @@ class DefaultStorageServerHandlers implements StorageServerHandlers {
     });
   }
 
-// headers
-// bucketName: String
-// allowed: List<Map<String, dynamic>>
-// private: bool
+  // headers
+  // bucketName: String
+  // allowed: List<Map<String, dynamic>>
+  // private: bool
 
   @override
   FutureOr<PassedHttpEntity> upload(
@@ -129,6 +150,8 @@ class DefaultStorageServerHandlers implements StorageServerHandlers {
 
       String ref = request.headers.value(HeaderFields.ref) ?? '/';
       StorageBucket refBucket = ref == '/' ? bucket : bucket.ref(ref);
+      //! here i should check if this permission is allowed from the refBucket and the operation write
+
       //? bucket permissions will be checked for the refBucket not the original bucket
       //? because the ref might refer to a child bucket inside the original one
 
@@ -147,20 +170,20 @@ class DefaultStorageServerHandlers implements StorageServerHandlers {
   }
 }
 
-// List<ACMPermission>? _parseAllowed(HttpHeaders headers) {
-//   String? allowedString = headers.value(HeaderFields.allowed);
-//   if (allowedString == null) return null;
-//   List<dynamic> allowed = json.decode(allowedString);
-//   var res = allowed.map((e) => ACMPermission.fromJson(e)).toList();
-//   return res;
+      // List<ACMPermission>? _parseAllowed(HttpHeaders headers) {
+      //   String? allowedString = headers.value(HeaderFields.allowed);
+      //   if (allowedString == null) return null;
+      //   List<dynamic> allowed = json.decode(allowedString);
+      //   var res = allowed.map((e) => ACMPermission.fromJson(e)).toList();
+      //   return res;
 
-//   /*
-//   allowed should be on the format
-//   {
-//     'write':[users ids],
-//     'read':[users ids],
-//     'delete':[users ids],
-//     'editPermissions':[users ids],
-//   }
-//   */
-// }
+      //   /*
+      //   allowed should be on the format
+      //   {
+      //     'write':[users ids],
+      //     'read':[users ids],
+      //     'delete':[users ids],
+      //     'editPermissions':[users ids],
+      //   }
+      //   */
+      // }

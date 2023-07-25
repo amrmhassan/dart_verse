@@ -100,6 +100,15 @@ class FileNotFound extends StorageException {
         );
 }
 
+class RefNotFound extends StorageException {
+  RefNotFound(String bucketName, String ref)
+      : super(
+          'path not found for this ref:BucketName: $bucketName\nRef: $ref',
+          ErrorCodes.refNotFound,
+          errorCode: HttpStatus.notFound,
+        );
+}
+
 class StorageServiceNotInitializedException extends StorageException {
   StorageServiceNotInitializedException()
       : super(
