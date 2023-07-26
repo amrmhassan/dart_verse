@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:dart_verse/constants/body_fields.dart';
 import 'package:dart_verse/errors/models/database_errors.dart';
 import 'package:dart_verse/errors/models/server_errors.dart';
@@ -18,10 +19,10 @@ class DefaultDbServerHandlers implements DbServerHandlers {
   @override
   DbService dbService;
 
-  DefaultDbServerHandlers(
-    this.app,
-    this.dbService,
-  );
+  DefaultDbServerHandlers({
+    required this.app,
+    required this.dbService,
+  });
 
   FutureOr<PassedHttpEntity> _wrapper(
     RequestHolder request,
@@ -58,98 +59,21 @@ class DefaultDbServerHandlers implements DbServerHandlers {
   }
 
   @override
-  FutureOr<PassedHttpEntity> deleteDoc(
+  FutureOr<PassedHttpEntity> getConnLink(
     RequestHolder request,
     ResponseHolder response,
     Map<String, dynamic> pathArgs,
   ) {
     return _wrapper(request, response, pathArgs, () async {
-      dynamic data;
-      try {
-        data = await request.readAsJson();
-      } catch (e) {
-        throw RequestBodyError();
+      String? dbConnLink = app.dbSettings.mongoDBProvider?.connLink.getConnLink;
+      if (dbConnLink == null) {
+        throw MongoDbNotConnectedException();
       }
-      String? collectionName = data[BodyFields.collection];
-      if (collectionName == null) {
-        throw RequestBodyError(
-            'please provide `collection` name in the request body');
-      }
-      String? docId = data[BodyFields.docId];
-      if (docId == null) {
-        throw RequestBodyError(
-            'please provide `docId` you want to delete in the request body');
-      }
-
-      //! here i must request the doc ref from the user
-      //! in order to allow the front end to benefit from the sub collections concept
-      var res = await dbService.mongoDbController
-          .collection(collectionName)
-          .doc(docId)
-          .delete();
-      if (res.failure) {
-        throw DBDeleteException('can\'t delete the doc with id $docId');
-      }
-      // this will return the doc model itself
-      return SendResponse.sendDataToUser(response, docId);
+      return SendResponse.sendDataToUser(
+        response,
+        dbConnLink,
+        dataFieldName: BodyFields.connLink,
+      );
     });
-  }
-
-  @override
-  FutureOr<PassedHttpEntity> getDoc(
-    RequestHolder request,
-    ResponseHolder response,
-    Map<String, dynamic> pathArgs,
-  ) {
-    return _wrapper(request, response, pathArgs, () async {
-      dynamic data;
-      try {
-        data = await request.readAsJson();
-      } catch (e) {
-        throw RequestBodyError();
-      }
-      String? collectionName = data[BodyFields.collection];
-      if (collectionName == null) {
-        throw RequestBodyError(
-            'please provide `collection` name in the request body');
-      }
-      String? docId = data[BodyFields.docId];
-      if (docId == null) {
-        throw RequestBodyError(
-            'please provide `docId` you want to delete in the request body');
-      }
-
-      //! here i must request the doc ref from the user
-      //! in order to allow the front end to benefit from the sub collections concept
-      var res = await dbService.mongoDbController
-          .collection(collectionName)
-          .doc(docId)
-          .getData();
-      if (res == null) {
-        throw DocNotFoundException(docId);
-      }
-      // here i will send the doc itself
-      return SendResponse.sendDataToUser(response, res);
-    });
-  }
-
-  @override
-  FutureOr<PassedHttpEntity> setDoc(
-    RequestHolder request,
-    ResponseHolder response,
-    Map<String, dynamic> pathArgs,
-  ) {
-    // TODO: implement setDoc
-    throw UnimplementedError();
-  }
-
-  @override
-  FutureOr<PassedHttpEntity> updateDoc(
-    RequestHolder request,
-    ResponseHolder response,
-    Map<String, dynamic> pathArgs,
-  ) {
-    // TODO: implement updateDoc
-    throw UnimplementedError();
   }
 }

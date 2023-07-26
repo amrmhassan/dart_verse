@@ -25,6 +25,7 @@ class ErrorCodes {
   static const String dbNotConnoted = 'db-not-connected';
   static const String dbAlreadyConnoted = 'db-already-connected';
   static const String docNotFound = 'doc-not-found';
+  static const String mongoDbNotConnected = 'mongo-db-not-connected';
   //? auth errors
   static const String duplicateEmail = 'duplicate-email-register';
   static const String noUserRegistered = 'no-user-registered';

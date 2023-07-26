@@ -10,25 +10,7 @@ abstract class DbServerHandlers {
   late App app;
   late DbService dbService;
 
-  FutureOr<PassedHttpEntity> setDoc(
-    RequestHolder request,
-    ResponseHolder response,
-    Map<String, dynamic> pathArgs,
-  );
-
-  FutureOr<PassedHttpEntity> updateDoc(
-    RequestHolder request,
-    ResponseHolder response,
-    Map<String, dynamic> pathArgs,
-  );
-
-  FutureOr<PassedHttpEntity> deleteDoc(
-    RequestHolder request,
-    ResponseHolder response,
-    Map<String, dynamic> pathArgs,
-  );
-
-  FutureOr<PassedHttpEntity> getDoc(
+  FutureOr<PassedHttpEntity> getConnLink(
     RequestHolder request,
     ResponseHolder response,
     Map<String, dynamic> pathArgs,

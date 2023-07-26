@@ -88,3 +88,11 @@ class DocNotFoundException extends DBException {
           ErrorCodes.docNotFound,
         );
 }
+
+class MongoDbNotConnectedException extends DBException {
+  MongoDbNotConnectedException()
+      : super(
+          'mongo db not connected exception',
+          ErrorCodes.mongoDbNotConnected,
+        );
+}

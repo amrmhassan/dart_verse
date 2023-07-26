@@ -9,4 +9,5 @@ class BodyFields {
   static const String userData = 'userData';
   static const String collection = 'collection';
   static const String docId = 'docId';
+  static const String connLink = 'connLink';
 }
