@@ -7,6 +7,8 @@ import 'package:dart_verse/dart_verse.dart';
 import 'package:dart_verse/features/auth_db_provider/impl/mongo_db_auth_provider/mongo_db_auth_provider.dart';
 import 'package:dart_verse/layers/service_server/auth_server/auth_server.dart';
 import 'package:dart_verse/layers/service_server/auth_server/impl/default_auth_server_settings.dart';
+import 'package:dart_verse/layers/service_server/db_server/db_server.dart';
+import 'package:dart_verse/layers/service_server/db_server/impl/default_db_server_settings.dart';
 import 'package:dart_verse/layers/services/auth/auth_service.dart';
 import 'package:dart_verse/layers/services/db_manager/db_providers/impl/mongo_db/mongo_db_provider.dart';
 import 'package:dart_verse/layers/services/db_manager/db_service.dart';
@@ -53,9 +55,12 @@ void main(List<String> arguments) async {
   );
   await dbService.connectToDb();
   var authServer = AuthServer(app, DefaultAuthServerSettings(authService));
+  var dbServer = DBServer(app, DefaultDbServerSettings(dbService));
+
   ServerService serverService = ServerService(
     app,
     authServer: authServer,
+    dbServer: dbServer,
   );
 
   var storageService = StorageService(app, serverService);

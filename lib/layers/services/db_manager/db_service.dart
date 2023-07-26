@@ -92,4 +92,6 @@ class DbService implements DVService {
   void _setMemoryController(MemoryDbController controller) {
     _memoryDbController = controller;
   }
+
+  App get app => _app;
 }

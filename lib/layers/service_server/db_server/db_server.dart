@@ -13,7 +13,10 @@ class DBServer implements ServiceServerLayer {
     String getConnLinkEndpoint = _app.endpoints.dbEndpoints.getDbConnLink;
 
     Router router = Router()
-      ..get(getConnLinkEndpoint, _dbServerSettings.handlers.getConnLink);
+      ..get(
+        getConnLinkEndpoint,
+        _dbServerSettings.handlers.getConnLink,
+      );
     return router;
   }
 }
