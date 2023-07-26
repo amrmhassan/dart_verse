@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dart_verse/errors/models/auth_server_exceptions.dart';
 import 'package:dart_verse/layers/service_server/auth_server/auth_server.dart';
+import 'package:dart_verse/layers/service_server/db_server/db_server.dart';
 import 'package:dart_verse/layers/settings/app/app.dart';
 import 'package:dart_webcore/dart_webcore.dart';
 
@@ -12,9 +13,14 @@ import 'package:dart_webcore/dart_webcore.dart';
 class ServerService {
   final App _app;
   final AuthServer? _authServer;
+  final DBServer? _dbServer;
 
-  ServerService(this._app, {AuthServer? authServer})
-      : _authServer = authServer {
+  ServerService(
+    this._app, {
+    AuthServer? authServer,
+    DBServer? dbServer,
+  })  : _authServer = authServer,
+        _dbServer = dbServer {
     _cascade = Cascade();
   }
 
@@ -114,11 +120,22 @@ class ServerService {
     return _authServer!;
   }
 
+  DBServer get dbServer {
+    if (_dbServer == null) {
+      throw NoAuthServerSettings();
+    }
+    return _dbServer!;
+  }
+
   void _addServicesEndpoints() {
     // adding routers for auth service
     if (_authServer != null) {
       addRouter(_authServer!.getRouter());
     }
-    // adding routers for storage service
+
+    // adding routers for db service
+    if (_dbServer != null) {
+      addRouter(_dbServer!.getRouter());
+    }
   }
 }

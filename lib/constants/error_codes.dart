@@ -63,4 +63,6 @@ class ErrorCodes {
 
   //? auth server errors
   static const String noAuthServerProvided = 'no-auth-server-provided';
+  //? db server errors
+  static const String noDbServerProvided = 'no-db-server-provided';
 }
