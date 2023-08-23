@@ -2,7 +2,7 @@
 
 import 'package:dart_verse/errors/serverless_exception.dart';
 
-import '../../services/web_server/repo/error_codes.dart';
+import 'package:dart_verse/constants/error_codes.dart';
 
 class DBException extends ServerLessException {
   @override
@@ -32,6 +32,17 @@ class DBWriteException extends DBException {
       : super(
           message,
           ErrorCodes.dbWriteCode,
+        );
+}
+
+class DBDeleteException extends DBException {
+  @override
+  String message;
+
+  DBDeleteException(this.message)
+      : super(
+          message,
+          ErrorCodes.dbDeleteCode,
         );
 }
 
@@ -67,5 +78,21 @@ class DbAlreadyConnectedException extends DBException {
       : super(
           'db already connected before.',
           ErrorCodes.dbAlreadyConnoted,
+        );
+}
+
+class DocNotFoundException extends DBException {
+  DocNotFoundException(String docId)
+      : super(
+          'the doc with id $docId not found',
+          ErrorCodes.docNotFound,
+        );
+}
+
+class MongoDbNotConnectedException extends DBException {
+  MongoDbNotConnectedException()
+      : super(
+          'mongo db not connected exception',
+          ErrorCodes.mongoDbNotConnected,
         );
 }

@@ -6,14 +6,14 @@ import 'package:dart_verse/constants/reserved_keys.dart';
 import 'package:dart_verse/errors/models/email_verification_error.dart';
 import 'package:dart_verse/features/auth_db_provider/auth_db_provider.dart';
 import 'package:dart_verse/features/auth_db_provider/repo/mongo_db_repo_provider.dart';
-import 'package:dart_verse/services/auth/models/auth_model.dart';
+import 'package:dart_verse/layers/services/auth/controllers/jwt_controller.dart';
+import 'package:dart_verse/layers/services/auth/controllers/secure_password.dart';
+import 'package:dart_verse/layers/services/auth/models/auth_model.dart';
+import 'package:dart_verse/layers/services/db_manager/db_service.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
 import '../../../../errors/models/auth_errors.dart';
-import '../../../../services/auth/controllers/jwt_controller.dart';
-import '../../../../services/auth/controllers/secure_password.dart';
-import '../../../../services/db_manager/db_service.dart';
-import '../../../../settings/app/app.dart';
+import '../../../../layers/settings/app/app.dart';
 
 class MongoDbAuthProvider extends AuthDbProvider
     implements MongoDbRepoProvider {

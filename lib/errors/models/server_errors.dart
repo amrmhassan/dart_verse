@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:dart_verse/errors/serverless_exception.dart';
 
-import '../../services/web_server/repo/error_codes.dart';
+import 'package:dart_verse/constants/error_codes.dart';
 
 class ServerException extends ServerLessException {
   @override

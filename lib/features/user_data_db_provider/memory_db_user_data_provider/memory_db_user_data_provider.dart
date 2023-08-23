@@ -29,4 +29,16 @@ class MemoryDbUserDataProvider extends UserDataDbProvider
     // TODO: implement updateUserData
     throw UnimplementedError();
   }
+
+  @override
+  Future<Map<String, dynamic>?> getUserData(String userId) {
+    // TODO: implement getUserData
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Map<String, dynamic>?> getUserDataByEmail(String email) {
+    // TODO: implement getUserDataByEmail
+    throw UnimplementedError();
+  }
 }

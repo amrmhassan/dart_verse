@@ -1,6 +1,6 @@
 import 'package:mongo_dart/mongo_dart.dart';
 
-import '../../../../settings/db_settings/repo/conn_link.dart';
+import '../../../../layers/settings/db_settings/repo/conn_link.dart';
 
 class MongoDbConnect {
   final MongoDbConnLink? _connLink;

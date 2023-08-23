@@ -2,7 +2,7 @@
 
 import 'dart:io';
 
-import 'package:dart_verse/services/web_server/repo/error_codes.dart';
+import 'package:dart_verse/constants/error_codes.dart';
 
 import '../serverless_exception.dart';
 
@@ -97,5 +97,32 @@ class FileNotFound extends StorageException {
           'file not found: $msg',
           ErrorCodes.noBucketFound,
           errorCode: HttpStatus.notFound,
+        );
+}
+
+class RefNotFound extends StorageException {
+  RefNotFound(String bucketName, String ref)
+      : super(
+          'path not found for this ref:BucketName: $bucketName\nRef: $ref',
+          ErrorCodes.refNotFound,
+          errorCode: HttpStatus.notFound,
+        );
+}
+
+class StorageServiceNotInitializedException extends StorageException {
+  StorageServiceNotInitializedException()
+      : super(
+          'storage service not initialized call init()',
+          ErrorCodes.storageServiceNotInit,
+          errorCode: HttpStatus.internalServerError,
+        );
+}
+
+class StorageBucketExistsException extends StorageException {
+  StorageBucketExistsException(String name)
+      : super(
+          'storage bucket ($name) already exists with different path',
+          ErrorCodes.storageBucketPathChange,
+          errorCode: HttpStatus.internalServerError,
         );
 }

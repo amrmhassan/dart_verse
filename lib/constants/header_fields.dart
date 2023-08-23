@@ -6,4 +6,5 @@ class HeaderFields {
   static const String bucketName = 'bucketName';
   static const String allowed = 'allowed';
   static const String ref = 'ref';
+  static const String fileName = 'fileName';
 }

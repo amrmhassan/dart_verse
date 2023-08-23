@@ -1,7 +1,7 @@
-import 'package:dart_verse/services/auth/models/auth_model.dart';
-import 'package:dart_verse/services/db_manager/db_service.dart';
+import 'package:dart_verse/layers/services/auth/models/auth_model.dart';
+import 'package:dart_verse/layers/services/db_manager/db_service.dart';
 
-import '../../settings/app/app.dart';
+import '../../layers/settings/app/app.dart';
 
 /// this is to provide the auth service with db provider
 /// either memory or mongo db or other db to auth users

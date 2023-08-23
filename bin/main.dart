@@ -1,28 +1,32 @@
+// you can apply acm permissions with sql db local file in the bucket itself
+// instead of making your own custom one
+
 import 'dart:io';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+import 'package:dart_verse/dart_verse.dart';
 import 'package:dart_verse/features/auth_db_provider/impl/mongo_db_auth_provider/mongo_db_auth_provider.dart';
-import 'package:dart_verse/features/email_verification/impl/default_email_verification_provider.dart';
-import 'package:dart_verse/services/auth/auth_service.dart';
-import 'package:dart_verse/services/db_manager/db_providers/impl/mongo_db/mongo_db_provider.dart';
-import 'package:dart_verse/services/db_manager/db_service.dart';
-import 'package:dart_verse/services/storage_service/storage_service.dart';
-import 'package:dart_verse/services/web_server/server_service.dart';
-import 'package:dart_verse/settings/app/app.dart';
-import 'package:dart_verse/settings/auth_settings/auth_settings.dart';
-import 'package:dart_verse/settings/db_settings/db_settings.dart';
-import 'package:dart_verse/settings/email_settings/email_settings.dart';
-import 'package:dart_verse/settings/server_settings/impl/default_auth_server_settings.dart';
-import 'package:dart_verse/settings/server_settings/server_settings.dart';
-import 'package:dart_verse/settings/storage_settings/storage_settings.dart';
-import 'package:dart_verse/settings/user_data_settings/user_data_settings.dart';
-import 'package:dart_webcore/dart_webcore.dart';
+import 'package:dart_verse/layers/service_server/auth_server/auth_server.dart';
+import 'package:dart_verse/layers/service_server/auth_server/impl/default_auth_server_settings.dart';
+import 'package:dart_verse/layers/service_server/db_server/db_server.dart';
+import 'package:dart_verse/layers/service_server/db_server/impl/default_db_server_settings.dart';
+import 'package:dart_verse/layers/services/auth/auth_service.dart';
+import 'package:dart_verse/layers/services/db_manager/db_providers/impl/mongo_db/mongo_db_provider.dart';
+import 'package:dart_verse/layers/services/db_manager/db_service.dart';
+import 'package:dart_verse/layers/services/storage_service/storage_service.dart';
+import 'package:dart_verse/layers/services/web_server/server_service.dart';
+import 'package:dart_verse/layers/settings/app/app.dart';
+import 'package:dart_verse/layers/settings/auth_settings/auth_settings.dart';
+import 'package:dart_verse/layers/settings/db_settings/db_settings.dart';
+import 'package:dart_verse/layers/settings/email_settings/email_settings.dart';
+import 'package:dart_verse/layers/settings/server_settings/server_settings.dart';
+import 'package:dart_verse/layers/settings/storage_settings/storage_settings.dart';
+import 'package:dart_verse/layers/settings/user_data_settings/user_data_settings.dart';
 
 import 'constants.dart';
 import 'shelf_usage_example.dart';
 
-//! create tests for db and for auth services and for user data service
-
 void main(List<String> arguments) async {
+  await DartVerse.initializeApp();
   MongoDBProvider mongoDBProvider = MongoDBProvider(localConnLink);
 
   DBSettings dbSettings = DBSettings(mongoDBProvider: mongoDBProvider);
@@ -33,7 +37,9 @@ void main(List<String> arguments) async {
   );
   ServerSettings serverSettings = ServerSettings(InternetAddress.anyIPv4, 3000);
   EmailSettings emailSettings = EmailSettings(testSmtpServer);
+
   StorageSettings storageSettings = StorageSettings();
+
   App app = App(
     dbSettings: dbSettings,
     authSettings: authSettings,
@@ -49,30 +55,17 @@ void main(List<String> arguments) async {
     MongoDbAuthProvider(app, dbService),
   );
   await dbService.connectToDb();
-  // UserDataService userDataService = UserDataService(authService);
+  var authServer = AuthServer(app, DefaultAuthServerSettings(authService));
+  var dbServer = DBServer(app, DefaultDbServerSettings(dbService));
+
   ServerService serverService = ServerService(
     app,
-    authServerSettings: DefaultAuthServerSettings(
-      authService,
-      cEmailVerificationProvider: DefaultEmailVerificationProvider(
-        authService: authService,
-        allowNewVerificationEmailAfter: Duration(minutes: 1),
-        verifyLinkExpiresAfter: Duration(minutes: 5),
-      ),
-    ),
+    authServer: authServer,
+    dbServer: dbServer,
   );
 
-  var userDataRouter = Router()
-    ..get('/user/<id>', (request, response, pathArgs) {
-      return response.writeJson(
-          'user data fetched successfully with id: ${pathArgs["id"]}');
-    });
-  serverService.addRouter(
-    userDataRouter,
-    jwtSecured: true,
-    emailMustBeVerified: true,
-  );
-  StorageService(app, serverService);
+  var storageService = StorageService(app, serverService);
+  await storageService.init();
   await serverService.runServer();
 }
 

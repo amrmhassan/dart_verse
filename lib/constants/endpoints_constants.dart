@@ -1,6 +1,9 @@
 import 'package:dart_verse/constants/path_fields.dart';
 
 class EndpointsConstants {
+  // server
+  static const String serverAlive = '/checkServerAlive';
+
   // auth
   static const String login = '/login';
   static const String register = '/register';
@@ -19,4 +22,7 @@ class EndpointsConstants {
   static const String downloadFile =
       '/download/<${PathFields.bucketName}>/*<${PathFields.filePath}>';
   static const String deleteFile = '/delete';
+
+  // db
+  static const String getDbConnLink = '/getDbConnLink';
 }

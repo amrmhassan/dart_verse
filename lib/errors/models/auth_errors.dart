@@ -3,8 +3,7 @@
 import 'dart:io';
 
 import 'package:dart_verse/errors/serverless_exception.dart';
-
-import '../../services/web_server/repo/error_codes.dart';
+import 'package:dart_verse/constants/error_codes.dart';
 
 //# auth exceptions
 class AuthException extends ServerLessException {
@@ -177,6 +176,15 @@ class UserNotFoundToVerify extends JwtAuthException {
       : super(
           'can\'t find the user to verify',
           ErrorCodes.userNotFoundToVerify,
+          errorCode: HttpStatus.notFound,
+        );
+}
+
+class UserNotFoundException extends JwtAuthException {
+  UserNotFoundException()
+      : super(
+          'can\'t find the user ',
+          ErrorCodes.userNotFound,
           errorCode: HttpStatus.notFound,
         );
 }
