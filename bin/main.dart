@@ -3,27 +3,25 @@
 
 import 'dart:io';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
-import 'package:dart_verse/dart_verse.dart';
-import 'package:dart_verse/features/auth_db_provider/impl/mongo_db_auth_provider/mongo_db_auth_provider.dart';
-import 'package:dart_verse/layers/service_server/auth_server/auth_server.dart';
-import 'package:dart_verse/layers/service_server/auth_server/impl/default_auth_server_settings.dart';
-import 'package:dart_verse/layers/service_server/db_server/db_server.dart';
-import 'package:dart_verse/layers/service_server/db_server/impl/default_db_server_settings.dart';
-import 'package:dart_verse/layers/services/auth/auth_service.dart';
-import 'package:dart_verse/layers/services/db_manager/db_providers/impl/mongo_db/mongo_db_provider.dart';
-import 'package:dart_verse/layers/services/db_manager/db_service.dart';
-import 'package:dart_verse/layers/services/storage_service/storage_service.dart';
-import 'package:dart_verse/layers/services/web_server/server_service.dart';
-import 'package:dart_verse/layers/settings/app/app.dart';
-import 'package:dart_verse/layers/settings/auth_settings/auth_settings.dart';
-import 'package:dart_verse/layers/settings/db_settings/db_settings.dart';
-import 'package:dart_verse/layers/settings/email_settings/email_settings.dart';
-import 'package:dart_verse/layers/settings/server_settings/server_settings.dart';
-import 'package:dart_verse/layers/settings/storage_settings/storage_settings.dart';
-import 'package:dart_verse/layers/settings/user_data_settings/user_data_settings.dart';
+import 'package:dart_verse_backend/dart_verse.dart';
+import 'package:dart_verse_backend/features/auth_db_provider/impl/mongo_db_auth_provider/mongo_db_auth_provider.dart';
+import 'package:dart_verse_backend/layers/service_server/auth_server/auth_server.dart';
+import 'package:dart_verse_backend/layers/service_server/auth_server/impl/default_auth_server_settings.dart';
+import 'package:dart_verse_backend/layers/service_server/db_server/db_server.dart';
+import 'package:dart_verse_backend/layers/service_server/db_server/impl/default_db_server_settings.dart';
+import 'package:dart_verse_backend/layers/services/auth/auth_service.dart';
+import 'package:dart_verse_backend/layers/services/db_manager/db_providers/impl/mongo_db/mongo_db_provider.dart';
+import 'package:dart_verse_backend/layers/services/db_manager/db_service.dart';
+import 'package:dart_verse_backend/layers/services/storage_service/storage_service.dart';
+import 'package:dart_verse_backend/layers/services/web_server/server_service.dart';
+import 'package:dart_verse_backend/layers/settings/app/app.dart';
+import 'package:dart_verse_backend/layers/settings/auth_settings/auth_settings.dart';
+import 'package:dart_verse_backend/layers/settings/db_settings/db_settings.dart';
+import 'package:dart_verse_backend/layers/settings/server_settings/server_settings.dart';
+import 'package:dart_verse_backend/layers/settings/storage_settings/storage_settings.dart';
+import 'package:dart_verse_backend/layers/settings/user_data_settings/user_data_settings.dart';
 
 import 'constants.dart';
-import 'shelf_usage_example.dart';
 
 void main(List<String> arguments) async {
   await DartVerse.initializeApp();
@@ -36,7 +34,6 @@ void main(List<String> arguments) async {
     allowedAppsIds: ['amrhassan'],
   );
   ServerSettings serverSettings = ServerSettings(InternetAddress.anyIPv4, 3000);
-  EmailSettings emailSettings = EmailSettings(testSmtpServer);
 
   StorageSettings storageSettings = StorageSettings();
 
@@ -45,7 +42,6 @@ void main(List<String> arguments) async {
     authSettings: authSettings,
     userDataSettings: userDataSettings,
     serverSettings: serverSettings,
-    emailSettings: emailSettings,
     storageSettings: storageSettings,
     backendHost: 'http://localhost:3000',
   );
