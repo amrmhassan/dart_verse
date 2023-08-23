@@ -128,6 +128,11 @@ class ServerService {
   }
 
   void _addServicesEndpoints() {
+    // adding server check router
+    addRouter(Router()
+      ..get('/',
+          (request, response, pathArgs) => response.write('server is live')));
+
     // adding routers for auth service
     if (_authServer != null) {
       addRouter(_authServer!.getRouter());

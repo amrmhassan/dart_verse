@@ -57,8 +57,8 @@ class StorageService {
   // and providing a link for getting the percentage done from the file operation and that link will be for a ws server
 
   void _addEndpoints({
-    bool jwtSecured = true,
-    bool emailMustBeVerified = true,
+    bool jwtSecured = false,
+    bool emailMustBeVerified = false,
     bool appIdSecured = true,
   }) {
     // paths

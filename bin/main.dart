@@ -39,6 +39,7 @@ void main(List<String> arguments) async {
   EmailSettings emailSettings = EmailSettings(testSmtpServer);
 
   StorageSettings storageSettings = StorageSettings();
+
   App app = App(
     dbSettings: dbSettings,
     authSettings: authSettings,
