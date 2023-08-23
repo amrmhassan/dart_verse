@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:dart_verse/constants/endpoints_constants.dart';
 import 'package:dart_verse/errors/models/auth_server_exceptions.dart';
 import 'package:dart_verse/layers/service_server/auth_server/auth_server.dart';
 import 'package:dart_verse/layers/service_server/db_server/db_server.dart';
@@ -130,7 +131,7 @@ class ServerService {
   void _addServicesEndpoints() {
     // adding server check router
     addRouter(Router()
-      ..get('/',
+      ..get(EndpointsConstants.serverAlive,
           (request, response, pathArgs) => response.write('server is live')));
 
     // adding routers for auth service
